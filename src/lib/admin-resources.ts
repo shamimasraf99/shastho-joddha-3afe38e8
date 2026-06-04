@@ -7,6 +7,12 @@ export interface FieldDef {
   required?: boolean;
   options?: { value: string; label: string }[];
   placeholder?: string;
+  optionsFrom?: {
+    table: string;
+    valueColumn: string;
+    labelColumn: string;
+    orderBy?: { column: string; ascending: boolean };
+  };
 }
 
 export interface ResourceDef {
