@@ -45,7 +45,20 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-white/10">
         <div className="container mx-auto px-4 py-4 text-center text-xs text-primary-foreground/70">
-          © {new Date().getFullYear()} স্বাস্থ্যপিডিয়া — সকল অধিকার সংরক্ষিত।
+          <p>
+            © {new Date().getFullYear()} স্বাস্থ্যপিডিয়া — সকল অধিকার সংরক্ষিত।
+          </p>
+          <p className="mt-1">
+            Developer by{" "}
+            <a
+              href="https://www.shamimasraf.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-accent"
+            >
+              Shamim Asraf
+            </a>
+          </p>
         </div>
       </div>
     </footer>
