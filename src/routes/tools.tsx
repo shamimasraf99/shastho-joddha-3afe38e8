@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Calculator, Scale, Baby, Flame, Utensils } from "lucide-react";
+import { Calculator, Scale, Baby, Flame, Utensils, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/tools")({
   head: () => ({
@@ -44,20 +44,14 @@ function ToolsPage() {
               <button
                 key={t.id}
                 type="button"
-                onClick={() => !t.soon && setActive(t.id)}
-                disabled={t.soon}
-                className="group relative flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:border-border disabled:hover:shadow-sm"
+                onClick={() => setActive(t.id)}
+                className="group relative flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
               >
                 <span className={`grid h-14 w-14 place-items-center rounded-full bg-secondary ${t.color} transition-transform group-hover:scale-110`}>
                   <t.Icon className="h-7 w-7" />
                 </span>
                 <span className="text-sm font-semibold text-foreground">{t.title}</span>
                 <span className="text-xs text-muted-foreground">{t.desc}</span>
-                {t.soon && (
-                  <span className="absolute right-2 top-2 rounded bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                    শীঘ্রই
-                  </span>
-                )}
               </button>
             ))}
           </div>
