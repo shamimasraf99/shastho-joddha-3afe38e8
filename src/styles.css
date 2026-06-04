@@ -55,6 +55,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: "Hind Siliguri", "Noto Sans Bengali", system-ui, -apple-system, sans-serif;
   --font-display: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif;
+  --font-kalpurush: "Kalpurush", "Noto Sans Bengali", system-ui, sans-serif;
 }
 
 :root {
