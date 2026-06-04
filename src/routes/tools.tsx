@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Calculator } from "lucide-react";
+import { Calculator, Scale, Heart, Activity, Baby, Droplet, Flame, Ruler, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/tools")({
   head: () => ({
@@ -15,6 +15,18 @@ export const Route = createFileRoute("/tools")({
 });
 
 function ToolsPage() {
+  const [active, setActive] = useState<string | null>(null);
+
+  const tools = [
+    { id: "bmi", title: "BMI ক্যালকুলেটর", desc: "শরীরের ওজন বিশ্লেষণ", Icon: Scale, color: "text-emerald-600" },
+    { id: "bp", title: "ব্লাড প্রেসার", desc: "রক্তচাপ বিশ্লেষণ", Icon: Heart, color: "text-rose-600", soon: true },
+    { id: "sugar", title: "ব্লাড সুগার", desc: "ডায়াবেটিস চেক", Icon: Droplet, color: "text-sky-600", soon: true },
+    { id: "calorie", title: "ক্যালরি ক্যালকুলেটর", desc: "দৈনিক ক্যালরি প্রয়োজন", Icon: Flame, color: "text-orange-500", soon: true },
+    { id: "pregnancy", title: "প্রেগন্যান্সি ডেট", desc: "সম্ভাব্য তারিখ", Icon: Baby, color: "text-pink-600", soon: true },
+    { id: "bsa", title: "BSA ক্যালকুলেটর", desc: "শরীরের পৃষ্ঠতল", Icon: Ruler, color: "text-violet-600", soon: true },
+    { id: "heart", title: "হার্ট রেট জোন", desc: "ব্যায়ামের জন্য", Icon: Activity, color: "text-amber-600", soon: true },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -29,9 +41,41 @@ function ToolsPage() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <BMICalculator />
-        </div>
+        {!active ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {tools.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => !t.soon && setActive(t.id)}
+                disabled={t.soon}
+                className="group relative flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:border-border disabled:hover:shadow-sm"
+              >
+                <span className={`grid h-14 w-14 place-items-center rounded-full bg-secondary ${t.color} transition-transform group-hover:scale-110`}>
+                  <t.Icon className="h-7 w-7" />
+                </span>
+                <span className="text-sm font-semibold text-foreground">{t.title}</span>
+                <span className="text-xs text-muted-foreground">{t.desc}</span>
+                {t.soon && (
+                  <span className="absolute right-2 top-2 rounded bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                    শীঘ্রই
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="mx-auto max-w-xl">
+            <button
+              type="button"
+              onClick={() => setActive(null)}
+              className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-dark"
+            >
+              <ArrowLeft className="h-4 w-4" /> সব ক্যালকুলেটর
+            </button>
+            {active === "bmi" && <BMICalculator />}
+          </div>
+        )}
       </main>
       <SiteFooter />
     </div>
