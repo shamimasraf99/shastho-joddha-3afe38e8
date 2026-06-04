@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VideosRouteImport } from './routes/videos'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
@@ -23,6 +24,11 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminAdminsRouteImport } from './routes/_authenticated/admin.admins'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 
+const VideosRoute = VideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
+  '/videos': typeof VideosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByTo {
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
+  '/videos': typeof VideosRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
+  '/videos': typeof VideosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
@@ -144,6 +153,7 @@ export interface FileRouteTypes {
     | '/hospitals'
     | '/news'
     | '/tools'
+    | '/videos'
     | '/admin'
     | '/admin/$resource'
     | '/admin/admins'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/hospitals'
     | '/news'
     | '/tools'
+    | '/videos'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/hospitals'
     | '/news'
     | '/tools'
+    | '/videos'
     | '/_authenticated/admin'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/admins'
@@ -188,10 +200,18 @@ export interface RootRouteChildren {
   HospitalsRoute: typeof HospitalsRoute
   NewsRoute: typeof NewsRoute
   ToolsRoute: typeof ToolsRoute
+  VideosRoute: typeof VideosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/videos': {
+      id: '/videos'
+      path: '/videos'
+      fullPath: '/videos'
+      preLoaderRoute: typeof VideosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools': {
       id: '/tools'
       path: '/tools'
@@ -323,6 +343,7 @@ const rootRouteChildren: RootRouteChildren = {
   HospitalsRoute: HospitalsRoute,
   NewsRoute: NewsRoute,
   ToolsRoute: ToolsRoute,
+  VideosRoute: VideosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
