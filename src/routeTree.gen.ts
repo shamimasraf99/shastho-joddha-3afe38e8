@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as NewsRouteImport } from './routes/news'
+import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as DonorsRouteImport } from './routes/donors'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -23,6 +25,16 @@ import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authen
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HospitalsRoute = HospitalsRouteImport.update({
+  id: '/hospitals',
+  path: '/hospitals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonorsRoute = DonorsRouteImport.update({
@@ -77,6 +89,8 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/hospitals': typeof HospitalsRoute
+  '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
@@ -88,6 +102,8 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/hospitals': typeof HospitalsRoute
+  '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
@@ -100,6 +116,8 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/hospitals': typeof HospitalsRoute
+  '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
@@ -113,6 +131,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/doctors'
     | '/donors'
+    | '/hospitals'
+    | '/news'
     | '/tools'
     | '/admin'
     | '/admin/$resource'
@@ -124,6 +144,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/doctors'
     | '/donors'
+    | '/hospitals'
+    | '/news'
     | '/tools'
     | '/admin/$resource'
     | '/admin/admins'
@@ -135,6 +157,8 @@ export interface FileRouteTypes {
     | '/auth'
     | '/doctors'
     | '/donors'
+    | '/hospitals'
+    | '/news'
     | '/tools'
     | '/_authenticated/admin'
     | '/_authenticated/admin/$resource'
@@ -148,6 +172,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DoctorsRoute: typeof DoctorsRoute
   DonorsRoute: typeof DonorsRoute
+  HospitalsRoute: typeof HospitalsRoute
+  NewsRoute: typeof NewsRoute
   ToolsRoute: typeof ToolsRoute
 }
 
@@ -158,6 +184,20 @@ declare module '@tanstack/react-router' {
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hospitals': {
+      id: '/hospitals'
+      path: '/hospitals'
+      fullPath: '/hospitals'
+      preLoaderRoute: typeof HospitalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donors': {
@@ -259,8 +299,20 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DoctorsRoute: DoctorsRoute,
   DonorsRoute: DonorsRoute,
+  HospitalsRoute: HospitalsRoute,
+  NewsRoute: NewsRoute,
   ToolsRoute: ToolsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
