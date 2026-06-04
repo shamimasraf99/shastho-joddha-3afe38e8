@@ -53,12 +53,13 @@ function ResourcePage() {
   const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState<unknown>(null);
 
-  const queryKey = ["admin-list", def.table, search];
+  const queryKey = ["admin-list", def.table, def.filter?.value ?? null, search];
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
       let q = supabase.from(def.table as never).select("*");
+      if (def.filter) q = q.eq(def.filter.column, def.filter.value as never);
       if (def.orderBy) q = q.order(def.orderBy.column, { ascending: def.orderBy.ascending });
       if (search && def.searchColumn) q = q.ilike(def.searchColumn, `%${search}%`);
       const { data, error } = await q.limit(500);
@@ -69,7 +70,8 @@ function ResourcePage() {
 
   const upsertMut = useMutation({
     mutationFn: async (values: Record<string, unknown>) => {
-      const { error } = await supabase.from(def.table as never).upsert(values as never);
+      const merged = { ...(def.defaults ?? {}), ...values };
+      const { error } = await supabase.from(def.table as never).upsert(merged as never);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -113,7 +115,7 @@ function ResourcePage() {
               />
             </div>
           )}
-          <Button onClick={() => { setEditing({}); setShowForm(true); }}>
+          <Button onClick={() => { setEditing({ ...(def.defaults ?? {}) }); setShowForm(true); }}>
             <Plus className="h-4 w-4 mr-1" /> নতুন
           </Button>
         </div>

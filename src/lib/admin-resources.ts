@@ -18,6 +18,8 @@ export interface ResourceDef {
   fields: FieldDef[];
   orderBy?: { column: string; ascending: boolean };
   searchColumn?: string;
+  filter?: { column: string; value: string | number | boolean };
+  defaults?: Record<string, unknown>;
 }
 
 export const resources: Record<string, ResourceDef> = {
@@ -50,6 +52,57 @@ export const resources: Record<string, ResourceDef> = {
           { value: "news", label: "News" },
         ],
       },
+      { key: "tags", label: "ট্যাগ (কমা দিয়ে)", type: "tags" },
+      { key: "meta_title", label: "Meta Title", type: "text" },
+      { key: "meta_description", label: "Meta Description", type: "textarea" },
+      { key: "is_published", label: "প্রকাশিত", type: "boolean" },
+    ],
+  },
+  news: {
+    table: "articles",
+    title: "স্বাস্থ্য সংবাদ",
+    singular: "সংবাদ",
+    orderBy: { column: "created_at", ascending: false },
+    searchColumn: "title",
+    filter: { column: "article_type", value: "news" },
+    defaults: { article_type: "news" },
+    listColumns: [
+      { key: "title", label: "শিরোনাম" },
+      { key: "is_published", label: "প্রকাশিত" },
+      { key: "views", label: "ভিউ" },
+    ],
+    fields: [
+      { key: "title", label: "শিরোনাম", type: "text", required: true },
+      { key: "slug", label: "Slug", type: "text", required: true },
+      { key: "excerpt", label: "সংক্ষিপ্ত", type: "textarea" },
+      { key: "content", label: "কন্টেন্ট", type: "richtext", required: true },
+      { key: "cover_image", label: "কভার ছবি URL", type: "text" },
+      { key: "tags", label: "ট্যাগ (কমা দিয়ে)", type: "tags" },
+      { key: "meta_title", label: "Meta Title", type: "text" },
+      { key: "meta_description", label: "Meta Description", type: "textarea" },
+      { key: "is_published", label: "প্রকাশিত", type: "boolean" },
+    ],
+  },
+  encyclopedia: {
+    table: "articles",
+    title: "স্বাস্থ্যকোষ (Encyclopedia)",
+    singular: "এন্ট্রি",
+    orderBy: { column: "created_at", ascending: false },
+    searchColumn: "title",
+    filter: { column: "article_type", value: "encyclopedia" },
+    defaults: { article_type: "encyclopedia" },
+    listColumns: [
+      { key: "title", label: "শিরোনাম" },
+      { key: "is_published", label: "প্রকাশিত" },
+      { key: "views", label: "ভিউ" },
+    ],
+    fields: [
+      { key: "title", label: "শিরোনাম", type: "text", required: true },
+      { key: "slug", label: "Slug", type: "text", required: true },
+      { key: "excerpt", label: "সংক্ষিপ্ত", type: "textarea" },
+      { key: "content", label: "কন্টেন্ট", type: "richtext", required: true },
+      { key: "cover_image", label: "কভার ছবি URL", type: "text" },
+      { key: "audio_url", label: "অডিও URL", type: "text" },
       { key: "tags", label: "ট্যাগ (কমা দিয়ে)", type: "tags" },
       { key: "meta_title", label: "Meta Title", type: "text" },
       { key: "meta_description", label: "Meta Description", type: "textarea" },
