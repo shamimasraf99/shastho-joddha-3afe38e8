@@ -18,6 +18,8 @@ export interface ResourceDef {
   fields: FieldDef[];
   orderBy?: { column: string; ascending: boolean };
   searchColumn?: string;
+  filter?: { column: string; value: string | number | boolean };
+  defaults?: Record<string, unknown>;
 }
 
 export const resources: Record<string, ResourceDef> = {
