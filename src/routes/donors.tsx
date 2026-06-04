@@ -3,14 +3,13 @@ import { useEffect, useMemo, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, MapPin, Phone, Droplet, User } from "lucide-react";
+import { Search, MapPin, Droplet, User } from "lucide-react";
 
 type Donor = {
   id: string;
   name: string;
   blood_group: string;
   district: string;
-  phone: string;
   last_donation_date: string | null;
   is_available: boolean;
 };
@@ -50,7 +49,7 @@ function DonorsPage() {
     setLoading(true);
     supabase
       .from("blood_donors")
-      .select("id,name,blood_group,district,phone,last_donation_date,is_available")
+      .select("id,name,blood_group,district,last_donation_date,is_available")
       .eq("is_available", true)
       .order("created_at", { ascending: false })
       .limit(500)
@@ -161,14 +160,6 @@ function DonorsPage() {
                     <div className="flex items-start gap-2">
                       <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                       <span className="text-foreground">{d.district}</span>
-                    </div>
-                  )}
-                  {d.phone && (
-                    <div className="flex items-start gap-2">
-                      <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                      <a href={`tel:${d.phone}`} className="font-kalpurush font-medium text-primary hover:underline">
-                        {d.phone}
-                      </a>
                     </div>
                   )}
                   {d.last_donation_date && (
