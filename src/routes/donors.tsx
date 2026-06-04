@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, MapPin, Phone, Droplet, User } from "lucide-react";
+import { Search, MapPin, Droplet, User } from "lucide-react";
 
 type Donor = {
   id: string;
