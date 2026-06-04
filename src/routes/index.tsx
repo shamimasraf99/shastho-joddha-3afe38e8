@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Heart, Droplet, Activity, Ribbon, Brain, Baby, Apple,
-  Hand, Eye, Smile, Pill, User, Search, Stethoscope,
+  Hand, Eye, Smile, Pill, User, Search, Stethoscope, Newspaper, Calendar,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -135,6 +137,9 @@ function Index() {
           </div>
         </section>
 
+        {/* Health News */}
+        <NewsSection />
+
         {/* Placeholder for upcoming sections */}
         <section className="container mx-auto px-4 pb-16">
           <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
@@ -149,5 +154,104 @@ function Index() {
       </main>
       <SiteFooter />
     </div>
+  );
+}
+
+type NewsItem = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  cover_image: string | null;
+  published_at: string | null;
+  created_at: string;
+};
+
+function NewsSection() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["home", "news"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("id,title,slug,excerpt,cover_image,published_at,created_at")
+        .eq("article_type", "news")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(6);
+      if (error) throw error;
+      return (data ?? []) as NewsItem[];
+    },
+  });
+
+  return (
+    <section className="container mx-auto px-4 pb-12">
+      <div className="mb-6 flex items-end justify-between">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-accent">
+            <Newspaper className="h-4 w-4" /> সর্বশেষ
+          </div>
+          <h2 className="text-2xl font-bold md:text-3xl">স্বাস্থ্য সংবাদ</h2>
+        </div>
+        <a href="/news" className="text-sm font-medium text-primary hover:text-primary-dark">
+          সব সংবাদ →
+        </a>
+      </div>
+
+      {isLoading ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-56 animate-pulse rounded-lg border border-border bg-secondary/40" />
+          ))}
+        </div>
+      ) : !data || data.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            এখনও কোনো স্বাস্থ্য সংবাদ প্রকাশিত হয়নি। অ্যাডমিন প্যানেল থেকে সংবাদ পোস্ট করলে এখানে স্বয়ংক্রিয়ভাবে দেখা যাবে।
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {data.map((n) => (
+            <a
+              key={n.id}
+              href={`/news/${n.slug}`}
+              className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <div className="aspect-[16/9] w-full overflow-hidden bg-secondary">
+                {n.cover_image ? (
+                  <img
+                    src={n.cover_image}
+                    alt={n.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="grid h-full w-full place-items-center text-muted-foreground">
+                    <Newspaper className="h-10 w-10" />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-1 flex-col p-4">
+                <h3 className="line-clamp-2 text-base font-bold text-foreground group-hover:text-primary">
+                  {n.title}
+                </h3>
+                {n.excerpt && (
+                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{n.excerpt}</p>
+                )}
+                <div className="mt-auto flex items-center gap-1.5 pt-3 text-xs text-muted-foreground">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {new Date(n.published_at ?? n.created_at).toLocaleDateString("bn-BD", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
