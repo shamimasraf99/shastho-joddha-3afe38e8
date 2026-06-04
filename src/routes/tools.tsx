@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Calculator, Scale, Heart, Activity, Baby, Droplet, Flame, Ruler, ArrowLeft, Utensils } from "lucide-react";
+import { Calculator, Scale, Baby, Flame, Utensils, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/tools")({
   head: () => ({
@@ -19,13 +19,9 @@ function ToolsPage() {
 
   const tools = [
     { id: "bmi", title: "BMI ক্যালকুলেটর", desc: "শরীরের ওজন বিশ্লেষণ", Icon: Scale, color: "text-emerald-600" },
-    { id: "bp", title: "ব্লাড প্রেসার", desc: "রক্তচাপ বিশ্লেষণ", Icon: Heart, color: "text-rose-600", soon: true },
-    { id: "sugar", title: "ব্লাড সুগার", desc: "ডায়াবেটিস চেক", Icon: Droplet, color: "text-sky-600", soon: true },
     { id: "calorie", title: "ক্যালরি ক্যালকুলেটর", desc: "দৈনিক ক্যালরি প্রয়োজন", Icon: Flame, color: "text-orange-500" },
     { id: "diet", title: "ডায়েট প্ল্যানার", desc: "ক্যালরি ও দেশি মেনু", Icon: Utensils, color: "text-lime-600" },
     { id: "pregnancy", title: "ডেলিভারি ডেট ও চেকাপ", desc: "গর্ভকালীন ক্যালকুলেটর", Icon: Baby, color: "text-pink-600" },
-    { id: "bsa", title: "BSA ক্যালকুলেটর", desc: "শরীরের পৃষ্ঠতল", Icon: Ruler, color: "text-violet-600", soon: true },
-    { id: "heart", title: "হার্ট রেট জোন", desc: "ব্যায়ামের জন্য", Icon: Activity, color: "text-amber-600", soon: true },
   ];
 
   return (
@@ -48,20 +44,14 @@ function ToolsPage() {
               <button
                 key={t.id}
                 type="button"
-                onClick={() => !t.soon && setActive(t.id)}
-                disabled={t.soon}
-                className="group relative flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:border-border disabled:hover:shadow-sm"
+                onClick={() => setActive(t.id)}
+                className="group relative flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-5 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
               >
                 <span className={`grid h-14 w-14 place-items-center rounded-full bg-secondary ${t.color} transition-transform group-hover:scale-110`}>
                   <t.Icon className="h-7 w-7" />
                 </span>
                 <span className="text-sm font-semibold text-foreground">{t.title}</span>
                 <span className="text-xs text-muted-foreground">{t.desc}</span>
-                {t.soon && (
-                  <span className="absolute right-2 top-2 rounded bg-secondary px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                    শীঘ্রই
-                  </span>
-                )}
               </button>
             ))}
           </div>
