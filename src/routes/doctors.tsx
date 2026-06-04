@@ -145,7 +145,7 @@ function DoctorsPage() {
                 className="group rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
               >
                 <div className="flex items-start gap-3">
-                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary/10 text-primary font-bold">
+                  <span className="font-kalpurush grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary/10 text-primary font-bold">
                     {idx + 1}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -179,7 +179,7 @@ function DoctorsPage() {
                   {d.phone && (
                     <div className="flex items-start gap-2">
                       <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                      <a href={`tel:${d.phone}`} className="font-medium text-primary hover:underline">
+                      <a href={`tel:${d.phone}`} className="font-kalpurush font-medium text-primary hover:underline">
                         {d.phone}
                       </a>
                     </div>

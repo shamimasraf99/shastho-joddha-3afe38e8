@@ -37,9 +37,9 @@ export function SiteFooter() {
         <div>
           <div className="mb-2 text-sm font-semibold uppercase tracking-wide opacity-80">জরুরি নম্বর</div>
           <ul className="space-y-1.5 text-sm">
-            <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-accent" /> জাতীয় জরুরি সেবা — <strong>999</strong></li>
-            <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-accent" /> সরকারি তথ্যসেবা — <strong>333</strong></li>
-            <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-accent" /> স্বাস্থ্য বাতায়ন — <strong>16263</strong></li>
+            <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-accent" /> জাতীয় জরুরি সেবা — <strong className="font-kalpurush">999</strong></li>
+            <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-accent" /> সরকারি তথ্যসেবা — <strong className="font-kalpurush">333</strong></li>
+            <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-accent" /> স্বাস্থ্য বাতায়ন — <strong className="font-kalpurush">16263</strong></li>
           </ul>
         </div>
       </div>
