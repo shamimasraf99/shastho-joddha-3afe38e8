@@ -14,16 +14,605 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      advertisements: {
+        Row: {
+          created_at: string
+          end_date: string | null
+          html_code: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          link_url: string | null
+          placement: Database["public"]["Enums"]["ad_placement"]
+          start_date: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_date?: string | null
+          html_code?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          link_url?: string | null
+          placement: Database["public"]["Enums"]["ad_placement"]
+          start_date?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string | null
+          html_code?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          link_url?: string | null
+          placement?: Database["public"]["Enums"]["ad_placement"]
+          start_date?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      articles: {
+        Row: {
+          article_type: Database["public"]["Enums"]["article_type"]
+          audio_url: string | null
+          author_id: string | null
+          category_id: string | null
+          content: string
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_published: boolean | null
+          meta_description: string | null
+          meta_title: string | null
+          published_at: string | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          views: number | null
+        }
+        Insert: {
+          article_type?: Database["public"]["Enums"]["article_type"]
+          audio_url?: string | null
+          author_id?: string | null
+          category_id?: string | null
+          content: string
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          views?: number | null
+        }
+        Update: {
+          article_type?: Database["public"]["Enums"]["article_type"]
+          audio_url?: string | null
+          author_id?: string | null
+          category_id?: string | null
+          content?: string
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      blood_donors: {
+        Row: {
+          blood_group: Database["public"]["Enums"]["blood_group"]
+          created_at: string
+          district: string
+          id: string
+          is_available: boolean | null
+          last_donation_date: string | null
+          name: string
+          phone: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          blood_group: Database["public"]["Enums"]["blood_group"]
+          created_at?: string
+          district: string
+          id?: string
+          is_available?: boolean | null
+          last_donation_date?: string | null
+          name: string
+          phone: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          blood_group?: Database["public"]["Enums"]["blood_group"]
+          created_at?: string
+          district?: string
+          id?: string
+          is_available?: boolean | null
+          last_donation_date?: string | null
+          name?: string
+          phone?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          content: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          slug: string
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          slug: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          slug?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      doctors: {
+        Row: {
+          bio: string | null
+          chamber: string | null
+          created_at: string
+          designation: string | null
+          district: string | null
+          fee: string | null
+          hospital: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          photo: string | null
+          slug: string
+          speciality: string | null
+          updated_at: string
+          visiting_time: string | null
+        }
+        Insert: {
+          bio?: string | null
+          chamber?: string | null
+          created_at?: string
+          designation?: string | null
+          district?: string | null
+          fee?: string | null
+          hospital?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          photo?: string | null
+          slug: string
+          speciality?: string | null
+          updated_at?: string
+          visiting_time?: string | null
+        }
+        Update: {
+          bio?: string | null
+          chamber?: string | null
+          created_at?: string
+          designation?: string | null
+          district?: string | null
+          fee?: string | null
+          hospital?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          photo?: string | null
+          slug?: string
+          speciality?: string | null
+          updated_at?: string
+          visiting_time?: string | null
+        }
+        Relationships: []
+      }
+      hospitals: {
+        Row: {
+          address: string | null
+          created_at: string
+          description: string | null
+          district: string | null
+          emergency_number: string | null
+          google_map: string | null
+          id: string
+          image: string | null
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          emergency_number?: string | null
+          google_map?: string | null
+          id?: string
+          image?: string | null
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          emergency_number?: string | null
+          google_map?: string | null
+          id?: string
+          image?: string | null
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      labs: {
+        Row: {
+          address: string | null
+          created_at: string
+          district: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          price: number | null
+          test_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          district?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          price?: number | null
+          test_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          district?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          price?: number | null
+          test_type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      mythbusters: {
+        Row: {
+          claim: string
+          created_at: string
+          doctor_name: string | null
+          fact: string
+          id: string
+          is_published: boolean | null
+          title: string
+          updated_at: string
+          video: string | null
+        }
+        Insert: {
+          claim: string
+          created_at?: string
+          doctor_name?: string | null
+          fact: string
+          id?: string
+          is_published?: boolean | null
+          title: string
+          updated_at?: string
+          video?: string | null
+        }
+        Update: {
+          claim?: string
+          created_at?: string
+          doctor_name?: string | null
+          fact?: string
+          id?: string
+          is_published?: boolean | null
+          title?: string
+          updated_at?: string
+          video?: string | null
+        }
+        Relationships: []
+      }
+      podcasts: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean | null
+          spotify_link: string | null
+          thumbnail: string | null
+          title: string
+          updated_at: string
+          youtube_link: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean | null
+          spotify_link?: string | null
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+          youtube_link?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean | null
+          spotify_link?: string | null
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+          youtube_link?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          district: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          district?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          district?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          answer: string | null
+          answered_by: string | null
+          created_at: string
+          email: string
+          id: string
+          is_published: boolean | null
+          name: string
+          question: string
+          updated_at: string
+        }
+        Insert: {
+          answer?: string | null
+          answered_by?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          is_published?: boolean | null
+          name: string
+          question: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string | null
+          answered_by?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          is_published?: boolean | null
+          name?: string
+          question?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      seo: {
+        Row: {
+          description: string | null
+          id: string
+          keywords: string | null
+          og_image: string | null
+          route: string
+          schema_jsonld: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          description?: string | null
+          id?: string
+          keywords?: string | null
+          og_image?: string | null
+          route: string
+          schema_jsonld?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          description?: string | null
+          id?: string
+          keywords?: string | null
+          og_image?: string | null
+          route?: string
+          schema_jsonld?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      videos: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean | null
+          thumbnail: string | null
+          title: string
+          updated_at: string
+          youtube_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean | null
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+          youtube_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean | null
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+          youtube_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      ad_placement: "top_banner" | "sidebar" | "article" | "popup"
+      app_role: "admin" | "editor" | "user"
+      article_type: "encyclopedia" | "news" | "tip" | "research"
+      blood_group: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +739,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      ad_placement: ["top_banner", "sidebar", "article", "popup"],
+      app_role: ["admin", "editor", "user"],
+      article_type: ["encyclopedia", "news", "tip", "research"],
+      blood_group: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+    },
   },
 } as const
