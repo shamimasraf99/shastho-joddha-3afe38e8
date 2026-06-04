@@ -1,7 +1,8 @@
-import { Search, LogIn, Menu, X, Heart } from "lucide-react";
+import { Search, LogIn, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { TopBar } from "./TopBar";
 import { BreakingTicker } from "./BreakingTicker";
+import logoAsset from "@/assets/shasthopedia-logo.png.asset.json";
 
 const nav = [
   { to: "/", label: "হোম" },
@@ -27,11 +28,16 @@ export function SiteHeader() {
       <div className="bg-card border-b border-border shadow-sm">
         <div className="container mx-auto flex items-center gap-4 px-4 py-3">
           <a href="/" className="flex shrink-0 items-center gap-2">
-            <span className="grid h-10 w-10 place-items-center rounded-md bg-primary text-primary-foreground">
-              <Heart className="h-5 w-5 fill-current" />
-            </span>
+            <img
+              src={logoAsset.url}
+              alt="স্বাস্থ্যপিডিয়া"
+              className="h-12 w-12 shrink-0 object-contain md:h-14 md:w-14"
+            />
             <div className="leading-tight">
-              <div className="text-2xl font-extrabold text-primary md:text-3xl">স্বাস্থ্যপিডিয়া</div>
+              <div className="text-2xl font-extrabold md:text-3xl">
+                <span style={{ color: "#1f7a3a" }}>স্বাস্থ্য</span>
+                <span style={{ color: "#e63946" }}>পিডিয়া</span>
+              </div>
               <div className="text-[11px] text-muted-foreground md:text-xs">HealthPedia • Bangladesh</div>
             </div>
           </a>
