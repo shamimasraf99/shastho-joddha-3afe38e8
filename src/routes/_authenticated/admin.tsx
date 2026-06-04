@@ -52,7 +52,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 const items: { url: string; title: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { url: "/admin", title: "ড্যাশবোর্ড", icon: LayoutDashboard, exact: true },
-  { url: "/admin/articles", title: "আর্টিকেল", icon: FileText },
+  { url: "/admin/news", title: "স্বাস্থ্য সংবাদ", icon: FileText },
+  { url: "/admin/encyclopedia", title: "স্বাস্থ্যকোষ (Encyclopedia)", icon: FileText },
   { url: "/admin/categories", title: "ক্যাটাগরি", icon: FolderTree },
   { url: "/admin/doctors", title: "ডাক্তার", icon: Stethoscope },
   { url: "/admin/hospitals", title: "হাসপাতাল", icon: Building2 },
@@ -60,8 +61,8 @@ const items: { url: string; title: string; icon: typeof LayoutDashboard; exact?:
   { url: "/admin/videos", title: "ভিডিও", icon: Video },
   { url: "/admin/podcasts", title: "পডকাস্ট", icon: Mic },
   { url: "/admin/mythbusters", title: "মিথবাস্টার", icon: ShieldAlert },
-  { url: "/admin/questions", title: "প্রশ্ন-উত্তর", icon: HelpCircle },
-  { url: "/admin/blood-donors", title: "রক্তদাতা", icon: Droplet },
+  { url: "/admin/questions", title: "Q&A", icon: HelpCircle },
+  { url: "/admin/blood-donors", title: "রক্তদান (Roktodan)", icon: Droplet },
   { url: "/admin/advertisements", title: "বিজ্ঞাপন", icon: Megaphone },
   { url: "/admin/seo", title: "SEO", icon: Search },
   { url: "/admin/settings", title: "সাইট সেটিংস", icon: SettingsIcon },
