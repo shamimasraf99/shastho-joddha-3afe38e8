@@ -159,6 +159,115 @@ function CalorieCalculator() {
   );
 }
 
+function PregnancyCalculator() {
+  const [lmp, setLmp] = useState("");
+  const [result, setResult] = useState<null | {
+    edd: string;
+    currentWeek: number;
+    schedule: { week: number; date: string; goal: string }[];
+    error?: string;
+  }>(null);
+
+  const calc = () => {
+    if (!lmp) {
+      setResult({ edd: "", currentWeek: 0, schedule: [], error: "অনুগ্রহ করে শেষ মাসিকের তারিখ দিন।" });
+      return;
+    }
+    const lmpDate = new Date(lmp);
+    const edd = new Date(lmpDate);
+    edd.setDate(edd.getDate() + 280);
+    const today = new Date();
+    const diffDays = Math.floor((today.getTime() - lmpDate.getTime()) / (1000 * 60 * 60 * 24));
+    const currentWeek = Math.max(0, Math.floor(diffDays / 7));
+
+    const goals: Record<number, string> = {
+      8: "প্রথম চেক-আপ, রক্ত ও প্রস্রাব পরীক্ষা",
+      20: "অ্যানোমালি স্ক্যান (আল্ট্রাসনোগ্রাম)",
+      26: "ব্লাড সুগার ও TT টিকা",
+      30: "তৃতীয় ত্রৈমাসিক চেক-আপ",
+      34: "ওজন, BP ও বাচ্চার পজিশন",
+      36: "গ্রোথ স্ক্যান",
+      38: "প্রসব প্রস্তুতি",
+      40: "সম্ভাব্য ডেলিভারি",
+    };
+    const weeks = [8, 20, 26, 30, 34, 36, 38, 40];
+    const schedule = weeks.map((w) => {
+      const d = new Date(lmpDate);
+      d.setDate(d.getDate() + w * 7);
+      return {
+        week: w,
+        date: d.toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" }),
+        goal: goals[w],
+      };
+    });
+
+    setResult({
+      edd: edd.toLocaleDateString("bn-BD", { day: "numeric", month: "long", year: "numeric" }),
+      currentWeek,
+      schedule,
+    });
+  };
+
+  const inputCls = "w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30";
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <h2 className="mb-4 text-center text-xl font-bold text-primary">গর্ভকালীন ক্যালকুলেটর</h2>
+
+      <label className="mb-1 block text-sm font-medium text-foreground">শেষ মাসিকের প্রথম তারিখ (LMP):</label>
+      <input type="date" value={lmp} onChange={(e) => setLmp(e.target.value)} className={inputCls} />
+
+      <button
+        type="button"
+        onClick={calc}
+        className="mt-5 w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
+      >
+        হিসাব করুন
+      </button>
+
+      {result && (
+        <div className="mt-5 rounded-md border border-primary/30 bg-secondary/60 p-4">
+          {result.error ? (
+            <div className="text-center text-sm font-semibold text-destructive">{result.error}</div>
+          ) : (
+            <>
+              <div className="text-center">
+                <div className="text-sm text-muted-foreground">সম্ভাব্য ডেলিভারি তারিখ (EDD)</div>
+                <div className="mt-1 text-lg font-bold text-primary">{result.edd}</div>
+                {result.currentWeek > 0 && result.currentWeek <= 42 && (
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    বর্তমান গর্ভকাল: <b className="text-foreground">{result.currentWeek} সপ্তাহ</b>
+                  </div>
+                )}
+              </div>
+              <div className="mt-4 overflow-hidden rounded-md border border-border">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-primary text-primary-foreground">
+                    <tr>
+                      <th className="px-3 py-2">সপ্তাহ</th>
+                      <th className="px-3 py-2">তারিখ</th>
+                      <th className="px-3 py-2">লক্ষ্য</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-card">
+                    {result.schedule.map((s) => (
+                      <tr key={s.week} className="border-t border-border">
+                        <td className="px-3 py-2 font-semibold text-primary">{s.week}</td>
+                        <td className="px-3 py-2">{s.date}</td>
+                        <td className="px-3 py-2 text-muted-foreground">{s.goal}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DietPlanner() {
   const [ft, setFt] = useState("");
   const [inch, setInch] = useState("");
