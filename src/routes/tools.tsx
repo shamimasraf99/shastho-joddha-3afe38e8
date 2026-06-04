@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Calculator, Scale, Heart, Activity, Baby, Droplet, Flame, Ruler, ArrowLeft, Utensils } from "lucide-react";
+import { Calculator, Scale, Baby, Flame, Utensils } from "lucide-react";
 
 export const Route = createFileRoute("/tools")({
   head: () => ({
@@ -19,13 +19,9 @@ function ToolsPage() {
 
   const tools = [
     { id: "bmi", title: "BMI ক্যালকুলেটর", desc: "শরীরের ওজন বিশ্লেষণ", Icon: Scale, color: "text-emerald-600" },
-    { id: "bp", title: "ব্লাড প্রেসার", desc: "রক্তচাপ বিশ্লেষণ", Icon: Heart, color: "text-rose-600", soon: true },
-    { id: "sugar", title: "ব্লাড সুগার", desc: "ডায়াবেটিস চেক", Icon: Droplet, color: "text-sky-600", soon: true },
     { id: "calorie", title: "ক্যালরি ক্যালকুলেটর", desc: "দৈনিক ক্যালরি প্রয়োজন", Icon: Flame, color: "text-orange-500" },
     { id: "diet", title: "ডায়েট প্ল্যানার", desc: "ক্যালরি ও দেশি মেনু", Icon: Utensils, color: "text-lime-600" },
     { id: "pregnancy", title: "ডেলিভারি ডেট ও চেকাপ", desc: "গর্ভকালীন ক্যালকুলেটর", Icon: Baby, color: "text-pink-600" },
-    { id: "bsa", title: "BSA ক্যালকুলেটর", desc: "শরীরের পৃষ্ঠতল", Icon: Ruler, color: "text-violet-600", soon: true },
-    { id: "heart", title: "হার্ট রেট জোন", desc: "ব্যায়ামের জন্য", Icon: Activity, color: "text-amber-600", soon: true },
   ];
 
   return (
