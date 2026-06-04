@@ -312,6 +312,7 @@ export const resources: Record<string, ResourceDef> = {
     table: "settings",
     title: "সাইট সেটিংস",
     singular: "সেটিংস",
+    pk: "key",
     searchColumn: "key",
     listColumns: [
       { key: "key", label: "Key" },
