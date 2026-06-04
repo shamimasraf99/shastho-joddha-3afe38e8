@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Mail, Phone, MapPin, Facebook, Youtube } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -15,6 +16,13 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const { data: settings } = useSiteSettings();
+  const c = settings?.contact ?? {};
+  const email = c.email || "info@helthpidia.pp.ua";
+  const phone = c.phone || "+880 1700-000000";
+  const address = c.address || "ঢাকা, বাংলাদেশ";
+  const facebook = c.facebook || "#";
+  const youtube = c.youtube || "#";
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -31,27 +39,32 @@ function ContactPage() {
               <Mail className="mt-0.5 h-5 w-5 text-primary" />
               <div>
                 <div className="text-xs text-muted-foreground">ইমেইল</div>
-                <a href="mailto:info@helthpidia.pp.ua" className="font-medium text-foreground hover:text-primary">info@helthpidia.pp.ua</a>
+                <a href={`mailto:${email}`} className="font-medium text-foreground hover:text-primary">{email}</a>
               </div>
             </div>
             <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
               <Phone className="mt-0.5 h-5 w-5 text-primary" />
               <div>
                 <div className="text-xs text-muted-foreground">ফোন</div>
-                <a href="tel:+8801700000000" className="font-kalpurush font-medium text-foreground hover:text-primary">+880 1700-000000</a>
+                <a href={`tel:${phone.replace(/\s+/g, "")}`} className="font-kalpurush font-medium text-foreground hover:text-primary">{phone}</a>
               </div>
             </div>
             <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4">
               <MapPin className="mt-0.5 h-5 w-5 text-primary" />
               <div>
                 <div className="text-xs text-muted-foreground">ঠিকানা</div>
-                <div className="font-medium text-foreground">ঢাকা, বাংলাদেশ</div>
+                <div className="font-medium text-foreground whitespace-pre-line">{address}</div>
               </div>
             </div>
             <div className="flex gap-3">
-              <a href="#" className="inline-flex items-center gap-2 rounded-md bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20"><Facebook className="h-4 w-4" /> Facebook</a>
-              <a href="#" className="inline-flex items-center gap-2 rounded-md bg-destructive/10 px-4 py-2 text-sm font-semibold text-destructive hover:bg-destructive/20"><Youtube className="h-4 w-4" /> YouTube</a>
+              <a href={facebook} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-primary/10 px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/20"><Facebook className="h-4 w-4" /> Facebook</a>
+              <a href={youtube} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-md bg-destructive/10 px-4 py-2 text-sm font-semibold text-destructive hover:bg-destructive/20"><Youtube className="h-4 w-4" /> YouTube</a>
             </div>
+            {c.map_url && (
+              <div className="overflow-hidden rounded-lg border border-border">
+                <iframe src={c.map_url} className="h-64 w-full" loading="lazy" />
+              </div>
+            )}
           </div>
 
           <form

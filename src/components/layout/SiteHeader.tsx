@@ -3,6 +3,7 @@ import { useState } from "react";
 import { TopBar } from "./TopBar";
 import { BreakingTicker } from "./BreakingTicker";
 import logoAsset from "@/assets/shasthopedia-logo-user.png.asset.json";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const nav = [
   { to: "/", label: "হোম" },
@@ -22,6 +23,10 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { data: settings } = useSiteSettings();
+  const logoUrl = settings?.site.logo_url || logoAsset.url;
+  const siteName = settings?.site.name || "স্বাস্থ্যপিডিয়া";
+  const tagline = settings?.site.tagline || "HealthPedia • Bangladesh";
   return (
     <header className="sticky top-0 z-50 w-full">
       <TopBar />
@@ -29,16 +34,22 @@ export function SiteHeader() {
         <div className="container mx-auto flex items-center gap-4 px-4 py-3">
           <a href="/" className="flex shrink-0 items-center gap-2">
             <img
-              src={logoAsset.url}
-              alt="স্বাস্থ্যপিডিয়া"
+              src={logoUrl}
+              alt={siteName}
               className="h-16 w-16 shrink-0 object-contain md:h-20 md:w-20"
             />
             <div className="leading-tight">
               <div className="text-2xl font-extrabold md:text-3xl">
-                <span style={{ color: "#1f7a3a" }}>স্বাস্থ্য</span>
-                <span style={{ color: "#e63946" }}>পিডিয়া</span>
+                {settings?.site.name ? (
+                  <span style={{ color: "#1f7a3a" }}>{siteName}</span>
+                ) : (
+                  <>
+                    <span style={{ color: "#1f7a3a" }}>স্বাস্থ্য</span>
+                    <span style={{ color: "#e63946" }}>পিডিয়া</span>
+                  </>
+                )}
               </div>
-              <div className="text-[11px] text-muted-foreground md:text-xs">HealthPedia • Bangladesh</div>
+              <div className="text-[11px] text-muted-foreground md:text-xs">{tagline}</div>
             </div>
           </a>
 
