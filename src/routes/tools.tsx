@@ -21,7 +21,7 @@ function ToolsPage() {
     { id: "bmi", title: "BMI ক্যালকুলেটর", desc: "শরীরের ওজন বিশ্লেষণ", Icon: Scale, color: "text-emerald-600" },
     { id: "bp", title: "ব্লাড প্রেসার", desc: "রক্তচাপ বিশ্লেষণ", Icon: Heart, color: "text-rose-600", soon: true },
     { id: "sugar", title: "ব্লাড সুগার", desc: "ডায়াবেটিস চেক", Icon: Droplet, color: "text-sky-600", soon: true },
-    { id: "calorie", title: "ক্যালরি ক্যালকুলেটর", desc: "দৈনিক ক্যালরি প্রয়োজন", Icon: Flame, color: "text-orange-500", soon: true },
+    { id: "calorie", title: "ক্যালরি ক্যালকুলেটর", desc: "দৈনিক ক্যালরি প্রয়োজন", Icon: Flame, color: "text-orange-500" },
     { id: "pregnancy", title: "প্রেগন্যান্সি ডেট", desc: "সম্ভাব্য তারিখ", Icon: Baby, color: "text-pink-600", soon: true },
     { id: "bsa", title: "BSA ক্যালকুলেটর", desc: "শরীরের পৃষ্ঠতল", Icon: Ruler, color: "text-violet-600", soon: true },
     { id: "heart", title: "হার্ট রেট জোন", desc: "ব্যায়ামের জন্য", Icon: Activity, color: "text-amber-600", soon: true },
@@ -74,10 +74,84 @@ function ToolsPage() {
               <ArrowLeft className="h-4 w-4" /> সব ক্যালকুলেটর
             </button>
             {active === "bmi" && <BMICalculator />}
+            {active === "calorie" && <CalorieCalculator />}
           </div>
         )}
       </main>
       <SiteFooter />
+    </div>
+  );
+}
+
+function CalorieCalculator() {
+  const [age, setAge] = useState("");
+  const [weight, setWeight] = useState("");
+  const [activity, setActivity] = useState("1.4");
+  const [result, setResult] = useState<string | null>(null);
+
+  const calc = () => {
+    const w = parseFloat(weight);
+    const a = parseFloat(age);
+    const f = parseFloat(activity);
+    if (!(w > 0 && a > 0)) {
+      setResult("অনুগ্রহ করে বয়স এবং ওজনের সঠিক মান লিখুন।");
+      return;
+    }
+    const bmr = w * 24;
+    const total = Math.round(bmr * f);
+    setResult(`আপনার দৈনিক প্রয়োজন: ${total} ক্যালরি`);
+  };
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <h2 className="mb-4 text-center text-xl font-bold text-primary">দৈনিক ক্যালরি চাহিদা</h2>
+
+      <label className="mb-1 block text-sm font-medium text-foreground">বয়স:</label>
+      <input
+        type="number"
+        inputMode="numeric"
+        placeholder="যেমন: ২৫"
+        value={age}
+        onChange={(e) => setAge(e.target.value)}
+        className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+      />
+
+      <label className="mb-1 mt-4 block text-sm font-medium text-foreground">ওজন (কেজি):</label>
+      <input
+        type="number"
+        inputMode="decimal"
+        placeholder="যেমন: ৬৫"
+        value={weight}
+        onChange={(e) => setWeight(e.target.value)}
+        className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+      />
+
+      <label className="mb-1 mt-4 block text-sm font-medium text-foreground">কাজের ধরন:</label>
+      <select
+        value={activity}
+        onChange={(e) => setActivity(e.target.value)}
+        className="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+      >
+        <option value="1.2">কম পরিশ্রম (বসে কাজ)</option>
+        <option value="1.4">হালকা পরিশ্রম</option>
+        <option value="1.6">মাঝারি পরিশ্রম</option>
+        <option value="1.8">কঠিন পরিশ্রম</option>
+        <option value="2.0">খুব কঠিন পরিশ্রম</option>
+      </select>
+
+      <button
+        type="button"
+        onClick={calc}
+        className="mt-5 w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
+      >
+        হিসাব করুন
+      </button>
+
+      {result && (
+        <div className="mt-5 rounded-md bg-secondary p-4 text-center text-sm font-semibold text-primary">
+          {result}
+        </div>
+      )}
     </div>
   );
 }
