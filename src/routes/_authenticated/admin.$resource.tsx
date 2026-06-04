@@ -35,6 +35,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
+import { Upload, X as XIcon } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/$resource")({
   beforeLoad: ({ params }) => {
@@ -291,6 +292,24 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
       }));
     },
   });
+  const [uploading, setUploading] = useState(false);
+  const handleUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "bin";
+      const path = `${field.key}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+      const { error } = await supabase.storage.from("uploads").upload(path, file, { upsert: false, contentType: file.type });
+      if (error) throw error;
+      const { data, error: sErr } = await supabase.storage.from("uploads").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+      if (sErr) throw sErr;
+      onChange(data.signedUrl);
+      toast.success("আপলোড সম্পন্ন");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  };
   if (field.type === "boolean") {
     return (
       <div className="flex items-center justify-between rounded-md border p-3">
@@ -312,6 +331,46 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
       <div>
         <Label>{field.label}{field.required && " *"}</Label>
         <Textarea value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value)} required={field.required} rows={8} className="font-mono text-xs" />
+      </div>
+    );
+  }
+  if (field.type === "image") {
+    const url = (value as string) ?? "";
+    return (
+      <div>
+        <Label>{field.label}{field.required && " *"}</Label>
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            value={url}
+            onChange={(e) => onChange(e.target.value)}
+            required={field.required}
+            placeholder="https://... অথবা আপলোড করুন"
+          />
+          <label className="inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-md border bg-card px-3 text-sm hover:bg-accent">
+            <Upload className="h-4 w-4" />
+            <span>{uploading ? "..." : "আপলোড"}</span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={uploading}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleUpload(f);
+                e.target.value = "";
+              }}
+            />
+          </label>
+        </div>
+        {url && (
+          <div className="mt-2 flex items-center gap-2">
+            <img src={url} alt="" className="h-20 w-20 rounded border object-cover" />
+            <Button type="button" variant="ghost" size="sm" onClick={() => onChange("")}>
+              <XIcon className="h-4 w-4 mr-1" /> সরান
+            </Button>
+          </div>
+        )}
       </div>
     );
   }
