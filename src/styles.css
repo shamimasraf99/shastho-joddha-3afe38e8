@@ -149,6 +149,10 @@
   }
 }
 
+@utility font-kalpurush {
+  font-family: var(--font-kalpurush);
+}
+
 @utility ticker-track {
   animation: ticker 40s linear infinite;
 }
