@@ -71,7 +71,7 @@ export function SiteHeader() {
         </div>
 
         <nav className="hidden border-t border-border bg-primary text-primary-foreground md:block">
-          <div className="container mx-auto flex items-center gap-1 overflow-x-auto px-2">
+          <div className="container mx-auto flex items-center gap-1 overflow-x-auto px-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {nav.map((n) => (
               <a
                 key={n.to}
