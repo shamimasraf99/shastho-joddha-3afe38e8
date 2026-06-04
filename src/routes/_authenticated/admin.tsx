@@ -51,7 +51,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-const items = [
+const items: { url: string; title: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { url: "/admin", title: "ড্যাশবোর্ড", icon: LayoutDashboard, exact: true },
   { url: "/admin/articles", title: "আর্টিকেল", icon: FileText },
   { url: "/admin/categories", title: "ক্যাটাগরি", icon: FolderTree },
@@ -67,7 +67,7 @@ const items = [
   { url: "/admin/seo", title: "SEO", icon: Search },
   { url: "/admin/settings", title: "সাইট সেটিংস", icon: SettingsIcon },
   { url: "/admin/admins", title: "অ্যাডমিন ম্যানেজ", icon: Users },
-] as const;
+];
 
 function AdminLayout() {
   const router = useRouter();
