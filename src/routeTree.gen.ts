@@ -13,6 +13,7 @@ import { Route as VideosRouteImport } from './routes/videos'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as LabsRouteImport } from './routes/labs'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as EncyclopediaRouteImport } from './routes/encyclopedia'
 import { Route as DonorsRouteImport } from './routes/donors'
@@ -44,6 +45,11 @@ const PodcastsRoute = PodcastsRouteImport.update({
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LabsRoute = LabsRouteImport.update({
+  id: '/labs',
+  path: '/labs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HospitalsRoute = HospitalsRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/donors': typeof DonorsRoute
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
+  '/labs': typeof LabsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/donors': typeof DonorsRoute
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
+  '/labs': typeof LabsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/donors': typeof DonorsRoute
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
+  '/labs': typeof LabsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/donors'
     | '/encyclopedia'
     | '/hospitals'
+    | '/labs'
     | '/news'
     | '/podcasts'
     | '/tools'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/donors'
     | '/encyclopedia'
     | '/hospitals'
+    | '/labs'
     | '/news'
     | '/podcasts'
     | '/tools'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/donors'
     | '/encyclopedia'
     | '/hospitals'
+    | '/labs'
     | '/news'
     | '/podcasts'
     | '/tools'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   DonorsRoute: typeof DonorsRoute
   EncyclopediaRoute: typeof EncyclopediaRoute
   HospitalsRoute: typeof HospitalsRoute
+  LabsRoute: typeof LabsRoute
   NewsRoute: typeof NewsRoute
   PodcastsRoute: typeof PodcastsRoute
   ToolsRoute: typeof ToolsRoute
@@ -257,6 +270,13 @@ declare module '@tanstack/react-router' {
       path: '/news'
       fullPath: '/news'
       preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/labs': {
+      id: '/labs'
+      path: '/labs'
+      fullPath: '/labs'
+      preLoaderRoute: typeof LabsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hospitals': {
@@ -382,6 +402,7 @@ const rootRouteChildren: RootRouteChildren = {
   DonorsRoute: DonorsRoute,
   EncyclopediaRoute: EncyclopediaRoute,
   HospitalsRoute: HospitalsRoute,
+  LabsRoute: LabsRoute,
   NewsRoute: NewsRoute,
   PodcastsRoute: PodcastsRoute,
   ToolsRoute: ToolsRoute,
@@ -390,3 +411,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
