@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { Search, LogIn, Menu, X, Heart } from "lucide-react";
 import { useState } from "react";
 import { TopBar } from "./TopBar";
@@ -27,7 +26,7 @@ export function SiteHeader() {
       <TopBar />
       <div className="bg-card border-b border-border shadow-sm">
         <div className="container mx-auto flex items-center gap-4 px-4 py-3">
-          <Link to="/" className="flex shrink-0 items-center gap-2">
+          <a href="/" className="flex shrink-0 items-center gap-2">
             <span className="grid h-10 w-10 place-items-center rounded-md bg-primary text-primary-foreground">
               <Heart className="h-5 w-5 fill-current" />
             </span>
@@ -35,7 +34,7 @@ export function SiteHeader() {
               <div className="text-lg font-bold text-primary">স্বাস্থ্যপিডিয়া</div>
               <div className="text-[10px] text-muted-foreground">HealthPedia • Bangladesh</div>
             </div>
-          </Link>
+          </a>
 
           <form className="hidden flex-1 md:block" onSubmit={(e) => e.preventDefault()}>
             <div className="relative mx-auto max-w-2xl">
@@ -48,12 +47,12 @@ export function SiteHeader() {
             </div>
           </form>
 
-          <Link
-            to="/auth"
+          <a
+            href="/auth"
             className="hidden shrink-0 items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark md:inline-flex"
           >
             <LogIn className="h-4 w-4" /> লগইন
-          </Link>
+          </a>
 
           <button
             type="button"
@@ -68,14 +67,13 @@ export function SiteHeader() {
         <nav className="hidden border-t border-border bg-primary text-primary-foreground md:block">
           <div className="container mx-auto flex items-center gap-1 overflow-x-auto px-2">
             {nav.map((n) => (
-              <Link
+              <a
                 key={n.to}
-                to={n.to}
-                activeOptions={{ exact: n.to === "/" }}
-                className="whitespace-nowrap px-3 py-2.5 text-sm font-medium text-primary-foreground/90 transition-colors hover:bg-primary-dark hover:text-primary-foreground data-[status=active]:bg-primary-dark data-[status=active]:text-primary-foreground"
+                href={n.to}
+                className="whitespace-nowrap px-3 py-2.5 text-sm font-medium text-primary-foreground/90 transition-colors hover:bg-primary-dark hover:text-primary-foreground"
               >
                 {n.label}
-              </Link>
+              </a>
             ))}
           </div>
         </nav>
@@ -95,22 +93,20 @@ export function SiteHeader() {
               </form>
               <div className="grid grid-cols-2 gap-1">
                 {nav.map((n) => (
-                  <Link
+                  <a
                     key={n.to}
-                    to={n.to}
-                    onClick={() => setOpen(false)}
+                    href={n.to}
                     className="rounded px-3 py-2 text-sm text-foreground hover:bg-secondary"
                   >
                     {n.label}
-                  </Link>
+                  </a>
                 ))}
-                <Link
-                  to="/auth"
-                  onClick={() => setOpen(false)}
+                <a
+                  href="/auth"
                   className="col-span-2 mt-2 inline-flex items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
                 >
                   <LogIn className="h-4 w-4" /> লগইন
-                </Link>
+                </a>
               </div>
             </div>
           </div>
