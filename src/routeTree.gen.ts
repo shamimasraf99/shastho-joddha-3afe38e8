@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VideosRouteImport } from './routes/videos'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as PodcastsRouteImport } from './routes/podcasts'
+import { Route as NewsRouteImport } from './routes/news'
+import { Route as HospitalsRouteImport } from './routes/hospitals'
+import { Route as EncyclopediaRouteImport } from './routes/encyclopedia'
 import { Route as DonorsRouteImport } from './routes/donors'
 import { Route as DoctorsRouteImport } from './routes/doctors'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -20,9 +26,34 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminAdminsRouteImport } from './routes/_authenticated/admin.admins'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 
+const VideosRoute = VideosRouteImport.update({
+  id: '/videos',
+  path: '/videos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PodcastsRoute = PodcastsRouteImport.update({
+  id: '/podcasts',
+  path: '/podcasts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HospitalsRoute = HospitalsRouteImport.update({
+  id: '/hospitals',
+  path: '/hospitals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EncyclopediaRoute = EncyclopediaRouteImport.update({
+  id: '/encyclopedia',
+  path: '/encyclopedia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonorsRoute = DonorsRouteImport.update({
@@ -33,6 +64,11 @@ const DonorsRoute = DonorsRouteImport.update({
 const DoctorsRoute = DoctorsRouteImport.update({
   id: '/doctors',
   path: '/doctors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -75,9 +111,15 @@ const AuthenticatedAdminResourceRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/encyclopedia': typeof EncyclopediaRoute
+  '/hospitals': typeof HospitalsRoute
+  '/news': typeof NewsRoute
+  '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
+  '/videos': typeof VideosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
@@ -86,9 +128,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/encyclopedia': typeof EncyclopediaRoute
+  '/hospitals': typeof HospitalsRoute
+  '/news': typeof NewsRoute
+  '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
+  '/videos': typeof VideosRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -98,9 +146,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRoute
+  '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/encyclopedia': typeof EncyclopediaRoute
+  '/hospitals': typeof HospitalsRoute
+  '/news': typeof NewsRoute
+  '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
+  '/videos': typeof VideosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
@@ -111,9 +165,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/contact'
     | '/doctors'
     | '/donors'
+    | '/encyclopedia'
+    | '/hospitals'
+    | '/news'
+    | '/podcasts'
     | '/tools'
+    | '/videos'
     | '/admin'
     | '/admin/$resource'
     | '/admin/admins'
@@ -122,9 +182,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/contact'
     | '/doctors'
     | '/donors'
+    | '/encyclopedia'
+    | '/hospitals'
+    | '/news'
+    | '/podcasts'
     | '/tools'
+    | '/videos'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin'
@@ -133,9 +199,15 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/contact'
     | '/doctors'
     | '/donors'
+    | '/encyclopedia'
+    | '/hospitals'
+    | '/news'
+    | '/podcasts'
     | '/tools'
+    | '/videos'
     | '/_authenticated/admin'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/admins'
@@ -146,18 +218,59 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ContactRoute: typeof ContactRoute
   DoctorsRoute: typeof DoctorsRoute
   DonorsRoute: typeof DonorsRoute
+  EncyclopediaRoute: typeof EncyclopediaRoute
+  HospitalsRoute: typeof HospitalsRoute
+  NewsRoute: typeof NewsRoute
+  PodcastsRoute: typeof PodcastsRoute
   ToolsRoute: typeof ToolsRoute
+  VideosRoute: typeof VideosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/videos': {
+      id: '/videos'
+      path: '/videos'
+      fullPath: '/videos'
+      preLoaderRoute: typeof VideosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools': {
       id: '/tools'
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/podcasts': {
+      id: '/podcasts'
+      path: '/podcasts'
+      fullPath: '/podcasts'
+      preLoaderRoute: typeof PodcastsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hospitals': {
+      id: '/hospitals'
+      path: '/hospitals'
+      fullPath: '/hospitals'
+      preLoaderRoute: typeof HospitalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/encyclopedia': {
+      id: '/encyclopedia'
+      path: '/encyclopedia'
+      fullPath: '/encyclopedia'
+      preLoaderRoute: typeof EncyclopediaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donors': {
@@ -172,6 +285,13 @@ declare module '@tanstack/react-router' {
       path: '/doctors'
       fullPath: '/doctors'
       preLoaderRoute: typeof DoctorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -257,9 +377,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRoute,
+  ContactRoute: ContactRoute,
   DoctorsRoute: DoctorsRoute,
   DonorsRoute: DonorsRoute,
+  EncyclopediaRoute: EncyclopediaRoute,
+  HospitalsRoute: HospitalsRoute,
+  NewsRoute: NewsRoute,
+  PodcastsRoute: PodcastsRoute,
   ToolsRoute: ToolsRoute,
+  VideosRoute: VideosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
