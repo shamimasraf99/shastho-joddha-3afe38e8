@@ -1,0 +1,1 @@
+CREATE POLICY "Public read available donors" ON public.blood_donors FOR SELECT TO anon USING (is_available = true);
