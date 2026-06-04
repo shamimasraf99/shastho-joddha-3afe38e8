@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
-import { Calculator, Scale, Heart, Activity, Baby, Droplet, Flame, Ruler, ArrowLeft } from "lucide-react";
+import { Calculator, Scale, Heart, Activity, Baby, Droplet, Flame, Ruler, ArrowLeft, Utensils } from "lucide-react";
 
 export const Route = createFileRoute("/tools")({
   head: () => ({
@@ -22,6 +22,7 @@ function ToolsPage() {
     { id: "bp", title: "ব্লাড প্রেসার", desc: "রক্তচাপ বিশ্লেষণ", Icon: Heart, color: "text-rose-600", soon: true },
     { id: "sugar", title: "ব্লাড সুগার", desc: "ডায়াবেটিস চেক", Icon: Droplet, color: "text-sky-600", soon: true },
     { id: "calorie", title: "ক্যালরি ক্যালকুলেটর", desc: "দৈনিক ক্যালরি প্রয়োজন", Icon: Flame, color: "text-orange-500" },
+    { id: "diet", title: "ডায়েট প্ল্যানার", desc: "ক্যালরি ও দেশি মেনু", Icon: Utensils, color: "text-lime-600" },
     { id: "pregnancy", title: "প্রেগন্যান্সি ডেট", desc: "সম্ভাব্য তারিখ", Icon: Baby, color: "text-pink-600", soon: true },
     { id: "bsa", title: "BSA ক্যালকুলেটর", desc: "শরীরের পৃষ্ঠতল", Icon: Ruler, color: "text-violet-600", soon: true },
     { id: "heart", title: "হার্ট রেট জোন", desc: "ব্যায়ামের জন্য", Icon: Activity, color: "text-amber-600", soon: true },
@@ -75,6 +76,7 @@ function ToolsPage() {
             </button>
             {active === "bmi" && <BMICalculator />}
             {active === "calorie" && <CalorieCalculator />}
+            {active === "diet" && <DietPlanner />}
           </div>
         )}
       </main>
@@ -150,6 +152,106 @@ function CalorieCalculator() {
       {result && (
         <div className="mt-5 rounded-md bg-secondary p-4 text-center text-sm font-semibold text-primary">
           {result}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DietPlanner() {
+  const [ft, setFt] = useState("");
+  const [inch, setInch] = useState("");
+  const [wt, setWt] = useState("");
+  const [goal, setGoal] = useState<"lose" | "gain">("lose");
+  const [plan, setPlan] = useState<null | {
+    target: number;
+    protein: number;
+    fat: number;
+    carbs: number;
+    meals: { time: string; food: string }[];
+    error?: string;
+  }>(null);
+
+  const generate = () => {
+    const w = parseFloat(wt);
+    if (!(w > 0)) {
+      setPlan({ target: 0, protein: 0, fat: 0, carbs: 0, meals: [], error: "অনুগ্রহ করে বর্তমান ওজন লিখুন।" });
+      return;
+    }
+    const bmr = 10 * w + 6.25 * 165 - 150;
+    const target = Math.round(goal === "lose" ? bmr - 500 : bmr + 500);
+    const protein = Math.round((target * 0.25) / 4);
+    const fat = Math.round((target * 0.25) / 9);
+    const carbs = Math.round((target * 0.5) / 4);
+    const meals = goal === "lose"
+      ? [
+          { time: "সকাল", food: "লাল আটার রুটি ২টা + সবজি ১ বাটি + ডিম ১টা" },
+          { time: "দুপুর", food: "ভাত ১ কাপ + মাছ/মুরগি ১ টুকরা + শাক ১ বাটি" },
+          { time: "বিকেল", food: "টক দই বা শসা" },
+          { time: "রাত", food: "স্যুপ বা গ্রিলড চিকেন" },
+        ]
+      : [
+          { time: "সকাল", food: "ওটস/চিঁড়া দই-কলা + বাদাম" },
+          { time: "দুপুর", food: "ভাত ১.৫ কাপ + মাছ/মাংস ১ টুকরা + ডাল ১ বাটি" },
+          { time: "বিকেল", food: "মুড়ি-ছোলা ও কলা" },
+          { time: "রাত", food: "ভাত ১ কাপ + সবজি ও মাছ" },
+        ];
+    setPlan({ target, protein, fat, carbs, meals });
+  };
+
+  const inputCls = "w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30";
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+      <h2 className="mb-4 text-center text-xl font-bold text-primary">ক্যালরি ও ডায়েট প্ল্যানার</h2>
+
+      <label className="mb-1 block text-sm font-medium text-foreground">উচ্চতা:</label>
+      <div className="flex gap-3">
+        <input type="number" placeholder="ফুট" value={ft} onChange={(e) => setFt(e.target.value)} className={inputCls} />
+        <input type="number" placeholder="ইঞ্চি" value={inch} onChange={(e) => setInch(e.target.value)} className={inputCls} />
+      </div>
+
+      <label className="mb-1 mt-4 block text-sm font-medium text-foreground">বর্তমান ওজন (কেজি):</label>
+      <input type="number" placeholder="যেমন: ৬৫" value={wt} onChange={(e) => setWt(e.target.value)} className={inputCls} />
+
+      <label className="mb-1 mt-4 block text-sm font-medium text-foreground">লক্ষ্য:</label>
+      <select value={goal} onChange={(e) => setGoal(e.target.value as "lose" | "gain")} className={inputCls}>
+        <option value="lose">ওজন কমানো (−৫০০ kcal)</option>
+        <option value="gain">ওজন বাড়ানো (+৫০০ kcal)</option>
+      </select>
+
+      <button
+        type="button"
+        onClick={generate}
+        className="mt-5 w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
+      >
+        ডায়েট প্ল্যান তৈরি করুন
+      </button>
+
+      {plan && (
+        <div className="mt-5 rounded-md border border-primary/30 bg-secondary/60 p-4">
+          {plan.error ? (
+            <div className="text-center text-sm font-semibold text-destructive">{plan.error}</div>
+          ) : (
+            <>
+              <h3 className="text-center text-base font-bold text-primary">
+                আপনার টার্গেট: {plan.target} kcal
+              </h3>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs font-semibold text-primary">
+                <div className="rounded bg-card p-2">প্রোটিন<br /><span className="text-base">{plan.protein}g</span></div>
+                <div className="rounded bg-card p-2">ফ্যাট<br /><span className="text-base">{plan.fat}g</span></div>
+                <div className="rounded bg-card p-2">কার্ব<br /><span className="text-base">{plan.carbs}g</span></div>
+              </div>
+              <p className="mt-4 text-sm font-bold text-foreground">দেশি ডায়েট মেনু:</p>
+              <ul className="mt-2 space-y-1.5 text-sm text-foreground">
+                {plan.meals.map((m) => (
+                  <li key={m.time}>
+                    <span className="font-semibold text-primary">{m.time}:</span> {m.food}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       )}
     </div>
