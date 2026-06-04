@@ -1,4 +1,4 @@
-import { Search, LogIn, Menu, X } from "lucide-react";
+import { Search, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { TopBar } from "./TopBar";
 import { BreakingTicker } from "./BreakingTicker";
@@ -53,13 +53,6 @@ export function SiteHeader() {
             </div>
           </form>
 
-          <a
-            href="/auth"
-            className="hidden shrink-0 items-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark md:inline-flex"
-          >
-            <LogIn className="h-4 w-4" /> লগইন
-          </a>
-
           <button
             type="button"
             className="ml-auto md:hidden"
@@ -107,12 +100,6 @@ export function SiteHeader() {
                     {n.label}
                   </a>
                 ))}
-                <a
-                  href="/auth"
-                  className="col-span-2 mt-2 inline-flex items-center justify-center gap-1.5 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
-                >
-                  <LogIn className="h-4 w-4" /> লগইন
-                </a>
               </div>
             </div>
           </div>
