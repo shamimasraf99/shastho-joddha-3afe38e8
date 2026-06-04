@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideosRouteImport } from './routes/videos'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as EncyclopediaRouteImport } from './routes/encyclopedia'
@@ -32,6 +33,11 @@ const VideosRoute = VideosRouteImport.update({
 const ToolsRoute = ToolsRouteImport.update({
   id: '/tools',
   path: '/tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PodcastsRoute = PodcastsRouteImport.update({
+  id: '/podcasts',
+  path: '/podcasts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
+  '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -119,6 +126,7 @@ export interface FileRoutesByTo {
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
+  '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
+  '/podcasts': typeof PodcastsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/encyclopedia'
     | '/hospitals'
     | '/news'
+    | '/podcasts'
     | '/tools'
     | '/videos'
     | '/admin'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/encyclopedia'
     | '/hospitals'
     | '/news'
+    | '/podcasts'
     | '/tools'
     | '/videos'
     | '/admin/$resource'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/encyclopedia'
     | '/hospitals'
     | '/news'
+    | '/podcasts'
     | '/tools'
     | '/videos'
     | '/_authenticated/admin'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   EncyclopediaRoute: typeof EncyclopediaRoute
   HospitalsRoute: typeof HospitalsRoute
   NewsRoute: typeof NewsRoute
+  PodcastsRoute: typeof PodcastsRoute
   ToolsRoute: typeof ToolsRoute
   VideosRoute: typeof VideosRoute
 }
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       path: '/tools'
       fullPath: '/tools'
       preLoaderRoute: typeof ToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/podcasts': {
+      id: '/podcasts'
+      path: '/podcasts'
+      fullPath: '/podcasts'
+      preLoaderRoute: typeof PodcastsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -342,6 +362,7 @@ const rootRouteChildren: RootRouteChildren = {
   EncyclopediaRoute: EncyclopediaRoute,
   HospitalsRoute: HospitalsRoute,
   NewsRoute: NewsRoute,
+  PodcastsRoute: PodcastsRoute,
   ToolsRoute: ToolsRoute,
   VideosRoute: VideosRoute,
 }
