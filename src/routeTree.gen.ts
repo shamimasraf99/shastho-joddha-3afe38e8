@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
+import { Route as EncyclopediaRouteImport } from './routes/encyclopedia'
 import { Route as DonorsRouteImport } from './routes/donors'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -35,6 +36,11 @@ const NewsRoute = NewsRouteImport.update({
 const HospitalsRoute = HospitalsRouteImport.update({
   id: '/hospitals',
   path: '/hospitals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EncyclopediaRoute = EncyclopediaRouteImport.update({
+  id: '/encyclopedia',
+  path: '/encyclopedia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonorsRoute = DonorsRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
+  '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/news': typeof NewsRoute
   '/tools': typeof ToolsRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/doctors'
     | '/donors'
+    | '/encyclopedia'
     | '/hospitals'
     | '/news'
     | '/tools'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/doctors'
     | '/donors'
+    | '/encyclopedia'
     | '/hospitals'
     | '/news'
     | '/tools'
@@ -157,6 +168,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/doctors'
     | '/donors'
+    | '/encyclopedia'
     | '/hospitals'
     | '/news'
     | '/tools'
@@ -172,6 +184,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DoctorsRoute: typeof DoctorsRoute
   DonorsRoute: typeof DonorsRoute
+  EncyclopediaRoute: typeof EncyclopediaRoute
   HospitalsRoute: typeof HospitalsRoute
   NewsRoute: typeof NewsRoute
   ToolsRoute: typeof ToolsRoute
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       path: '/hospitals'
       fullPath: '/hospitals'
       preLoaderRoute: typeof HospitalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/encyclopedia': {
+      id: '/encyclopedia'
+      path: '/encyclopedia'
+      fullPath: '/encyclopedia'
+      preLoaderRoute: typeof EncyclopediaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donors': {
@@ -299,6 +319,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DoctorsRoute: DoctorsRoute,
   DonorsRoute: DonorsRoute,
+  EncyclopediaRoute: EncyclopediaRoute,
   HospitalsRoute: HospitalsRoute,
   NewsRoute: NewsRoute,
   ToolsRoute: ToolsRoute,
