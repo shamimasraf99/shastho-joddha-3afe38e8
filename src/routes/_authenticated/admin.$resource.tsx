@@ -276,6 +276,21 @@ function FormDialog({
 }
 
 function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknown; onChange: (v: unknown) => void }) {
+  const { data: remoteOptions } = useQuery({
+    queryKey: ["field-options", field.optionsFrom?.table, field.optionsFrom?.valueColumn, field.optionsFrom?.labelColumn],
+    enabled: !!field.optionsFrom,
+    queryFn: async () => {
+      const src = field.optionsFrom!;
+      let q = supabase.from(src.table as never).select(`${src.valueColumn},${src.labelColumn}`);
+      if (src.orderBy) q = q.order(src.orderBy.column, { ascending: src.orderBy.ascending });
+      const { data, error } = await q.limit(500);
+      if (error) throw error;
+      return (data as Record<string, unknown>[]).map((r) => ({
+        value: String(r[src.valueColumn]),
+        label: String(r[src.labelColumn]),
+      }));
+    },
+  });
   if (field.type === "boolean") {
     return (
       <div className="flex items-center justify-between rounded-md border p-3">
@@ -301,13 +316,14 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
     );
   }
   if (field.type === "select") {
+    const opts = field.optionsFrom ? (remoteOptions ?? []) : (field.options ?? []);
     return (
       <div>
         <Label>{field.label}{field.required && " *"}</Label>
         <Select value={(value as string) ?? ""} onValueChange={onChange}>
           <SelectTrigger><SelectValue placeholder="নির্বাচন করুন" /></SelectTrigger>
           <SelectContent>
-            {field.options?.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            {opts.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>
