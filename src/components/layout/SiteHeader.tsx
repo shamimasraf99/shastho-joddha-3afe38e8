@@ -2,7 +2,7 @@ import { Search, LogIn, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { TopBar } from "./TopBar";
 import { BreakingTicker } from "./BreakingTicker";
-import logoAsset from "@/assets/shasthopedia-logo.png.asset.json";
+import logoAsset from "@/assets/shasthopedia-logo-new.png.asset.json";
 
 const nav = [
   { to: "/", label: "হোম" },
@@ -31,7 +31,7 @@ export function SiteHeader() {
             <img
               src={logoAsset.url}
               alt="স্বাস্থ্যপিডিয়া"
-              className="h-12 w-12 shrink-0 object-contain md:h-14 md:w-14"
+              className="h-16 w-16 shrink-0 object-contain md:h-20 md:w-20"
             />
             <div className="leading-tight">
               <div className="text-2xl font-extrabold md:text-3xl">
