@@ -30,7 +30,7 @@ export function TopBar() {
           <span className="inline-flex items-center gap-1">
             <MapPin className="h-3 w-3" /> ঢাকা
           </span>
-          <span className="hidden sm:inline opacity-90">
+          <span className="text-[11px] opacity-90 sm:text-xs">
             {now ? formatBnDateTime(now) : "—"}
           </span>
         </div>
