@@ -2,7 +2,7 @@ import { Search, LogIn, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { TopBar } from "./TopBar";
 import { BreakingTicker } from "./BreakingTicker";
-import logoAsset from "@/assets/shasthopedia-logo.png.asset.json";
+import logoAsset from "@/assets/shasthopedia-logo-new.png.asset.json";
 
 const nav = [
   { to: "/", label: "হোম" },
