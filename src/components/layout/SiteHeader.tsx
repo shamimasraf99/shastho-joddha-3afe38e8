@@ -31,7 +31,7 @@ export function SiteHeader() {
             <img
               src={logoAsset.url}
               alt="স্বাস্থ্যপিডিয়া"
-              className="h-12 w-12 shrink-0 object-contain md:h-14 md:w-14"
+              className="h-16 w-16 shrink-0 object-contain md:h-20 md:w-20"
             />
             <div className="leading-tight">
               <div className="text-2xl font-extrabold md:text-3xl">
