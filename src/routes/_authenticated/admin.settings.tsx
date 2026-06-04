@@ -55,7 +55,7 @@ function SettingsPage() {
     mutationFn: async (payload: { key: string; value: Record<string, unknown> }) => {
       const { error } = await supabase
         .from("settings")
-        .upsert({ key: payload.key, value: payload.value, updated_at: new Date().toISOString() }, { onConflict: "key" });
+        .upsert({ key: payload.key, value: payload.value as never, updated_at: new Date().toISOString() }, { onConflict: "key" });
       if (error) throw error;
     },
     onSuccess: () => {
