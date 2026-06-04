@@ -1,4 +1,4 @@
-export type FieldType = "text" | "textarea" | "richtext" | "number" | "boolean" | "date" | "select" | "tags" | "json";
+export type FieldType = "text" | "textarea" | "richtext" | "number" | "boolean" | "date" | "select" | "tags" | "json" | "image";
 
 export interface FieldDef {
   key: string;
