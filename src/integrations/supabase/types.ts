@@ -597,36 +597,6 @@ export type Database = {
       }
     }
     Views: {
-      blood_donors_public: {
-        Row: {
-          blood_group: Database["public"]["Enums"]["blood_group"] | null
-          created_at: string | null
-          district: string | null
-          id: string | null
-          is_available: boolean | null
-          last_donation_date: string | null
-          name: string | null
-        }
-        Insert: {
-          blood_group?: Database["public"]["Enums"]["blood_group"] | null
-          created_at?: string | null
-          district?: string | null
-          id?: string | null
-          is_available?: boolean | null
-          last_donation_date?: string | null
-          name?: string | null
-        }
-        Update: {
-          blood_group?: Database["public"]["Enums"]["blood_group"] | null
-          created_at?: string | null
-          district?: string | null
-          id?: string | null
-          is_available?: boolean | null
-          last_donation_date?: string | null
-          name?: string | null
-        }
-        Relationships: []
-      }
       profiles_public: {
         Row: {
           avatar_url: string | null
