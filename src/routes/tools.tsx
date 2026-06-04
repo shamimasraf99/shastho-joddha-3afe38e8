@@ -23,7 +23,7 @@ function ToolsPage() {
     { id: "sugar", title: "ব্লাড সুগার", desc: "ডায়াবেটিস চেক", Icon: Droplet, color: "text-sky-600", soon: true },
     { id: "calorie", title: "ক্যালরি ক্যালকুলেটর", desc: "দৈনিক ক্যালরি প্রয়োজন", Icon: Flame, color: "text-orange-500" },
     { id: "diet", title: "ডায়েট প্ল্যানার", desc: "ক্যালরি ও দেশি মেনু", Icon: Utensils, color: "text-lime-600" },
-    { id: "pregnancy", title: "প্রেগন্যান্সি ডেট", desc: "সম্ভাব্য তারিখ", Icon: Baby, color: "text-pink-600", soon: true },
+    { id: "pregnancy", title: "ডেলিভারি ডেট ও চেকাপ", desc: "গর্ভকালীন ক্যালকুলেটর", Icon: Baby, color: "text-pink-600" },
     { id: "bsa", title: "BSA ক্যালকুলেটর", desc: "শরীরের পৃষ্ঠতল", Icon: Ruler, color: "text-violet-600", soon: true },
     { id: "heart", title: "হার্ট রেট জোন", desc: "ব্যায়ামের জন্য", Icon: Activity, color: "text-amber-600", soon: true },
   ];
@@ -77,6 +77,7 @@ function ToolsPage() {
             {active === "bmi" && <BMICalculator />}
             {active === "calorie" && <CalorieCalculator />}
             {active === "diet" && <DietPlanner />}
+            {active === "pregnancy" && <PregnancyCalculator />}
           </div>
         )}
       </main>
