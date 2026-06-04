@@ -597,7 +597,84 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      blood_donors_public: {
+        Row: {
+          blood_group: Database["public"]["Enums"]["blood_group"] | null
+          created_at: string | null
+          district: string | null
+          id: string | null
+          is_available: boolean | null
+          last_donation_date: string | null
+          name: string | null
+        }
+        Insert: {
+          blood_group?: Database["public"]["Enums"]["blood_group"] | null
+          created_at?: string | null
+          district?: string | null
+          id?: string | null
+          is_available?: boolean | null
+          last_donation_date?: string | null
+          name?: string | null
+        }
+        Update: {
+          blood_group?: Database["public"]["Enums"]["blood_group"] | null
+          created_at?: string | null
+          district?: string | null
+          id?: string | null
+          is_available?: boolean | null
+          last_donation_date?: string | null
+          name?: string | null
+        }
+        Relationships: []
+      }
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Relationships: []
+      }
+      questions_public: {
+        Row: {
+          answer: string | null
+          answered_by: string | null
+          created_at: string | null
+          id: string | null
+          name: string | null
+          question: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          answer?: string | null
+          answered_by?: string | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          question?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          answer?: string | null
+          answered_by?: string | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          question?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
