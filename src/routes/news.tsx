@@ -12,6 +12,13 @@ type Article = {
   cover_image: string | null;
   published_at: string | null;
   created_at: string;
+  category_id: string | null;
+};
+
+type Category = {
+  id: string;
+  title: string;
+  slug: string;
 };
 
 export const Route = createFileRoute("/news")({
@@ -37,25 +44,35 @@ export const Route = createFileRoute("/news")({
 function NewsPage() {
   const [items, setItems] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [activeCat, setActiveCat] = useState<string | "all">("all");
 
   useEffect(() => {
     let active = true;
-    supabase
-      .from("articles")
-      .select("id,title,slug,excerpt,cover_image,published_at,created_at")
-      .eq("article_type", "news")
-      .eq("is_published", true)
-      .order("published_at", { ascending: false, nullsFirst: false })
-      .order("created_at", { ascending: false })
-      .limit(100)
-      .then(({ data }) => {
-        if (active) {
-          setItems((data as Article[]) || []);
-          setLoading(false);
-        }
-      });
+    Promise.all([
+      supabase
+        .from("articles")
+        .select("id,title,slug,excerpt,cover_image,published_at,created_at,category_id")
+        .eq("article_type", "news")
+        .eq("is_published", true)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false })
+        .limit(200),
+      supabase
+        .from("categories")
+        .select("id,title,slug")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true }),
+    ]).then(([a, c]) => {
+      if (!active) return;
+      setItems((a.data as Article[]) || []);
+      setCategories((c.data as Category[]) || []);
+      setLoading(false);
+    });
     return () => { active = false; };
   }, []);
+
+  const filtered = activeCat === "all" ? items : items.filter((i) => i.category_id === activeCat);
 
   return (
     <div className="min-h-screen bg-background">
@@ -65,13 +82,33 @@ function NewsPage() {
           <div className="text-xs font-semibold uppercase tracking-wider text-accent">নিউজ</div>
           <h1 className="text-2xl font-bold text-foreground md:text-3xl">স্বাস্থ্য সংবাদ</h1>
         </div>
+        <div className="mb-6">
+          <div className="mb-2 text-sm font-semibold text-foreground">স্বাস্থ্য বিভাগসমূহ</div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setActiveCat("all")}
+              className={`rounded-full border px-3 py-1 text-sm transition-colors ${activeCat === "all" ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary hover:text-primary"}`}
+            >
+              সব
+            </button>
+            {categories.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setActiveCat(c.id)}
+                className={`rounded-full border px-3 py-1 text-sm transition-colors ${activeCat === c.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary hover:text-primary"}`}
+              >
+                {c.title}
+              </button>
+            ))}
+          </div>
+        </div>
         {loading ? (
           <div className="py-16 text-center text-muted-foreground">লোড হচ্ছে...</div>
-        ) : items.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="rounded-lg border border-dashed border-border p-12 text-center text-muted-foreground">কোনো সংবাদ পাওয়া যায়নি।</div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((a) => (
+            {filtered.map((a) => (
               <Link key={a.id} to="/news" className="group overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
                 {a.cover_image && <img src={a.cover_image} alt={a.title} className="h-44 w-full object-cover" loading="lazy" />}
                 <div className="p-4">
