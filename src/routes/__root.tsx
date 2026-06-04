@@ -80,11 +80,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "স্বাস্থ্যপিডিয়া — বাংলাদেশের ডিজিটাল স্বাস্থ্য তথ্য ভান্ডার" },
       { name: "description", content: "নির্ভরযোগ্য বাংলা স্বাস্থ্য তথ্য, বিশেষজ্ঞ ডাক্তার, হাসপাতাল, ল্যাব ও রক্তদাতা ডিরেক্টরি।" },
       { name: "author", content: "স্বাস্থ্যপিডিয়া" },
-      { property: "og:title", content: "স্বাস্থ্যপিডিয়া — HealthPedia Bangladesh" },
-      { property: "og:description", content: "বাংলাদেশের সবচেয়ে বড় ডিজিটাল স্বাস্থ্য তথ্য ভান্ডার।" },
+      { property: "og:title", content: "স্বাস্থ্যপিডিয়া — বাংলাদেশের ডিজিটাল স্বাস্থ্য তথ্য ভান্ডার" },
+      { property: "og:description", content: "নির্ভরযোগ্য বাংলা স্বাস্থ্য তথ্য, বিশেষজ্ঞ ডাক্তার, হাসপাতাল, ল্যাব ও রক্তদাতা ডিরেক্টরি।" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "স্বাস্থ্যপিডিয়া — বাংলাদেশের ডিজিটাল স্বাস্থ্য তথ্য ভান্ডার" },
+      { name: "twitter:description", content: "নির্ভরযোগ্য বাংলা স্বাস্থ্য তথ্য, বিশেষজ্ঞ ডাক্তার, হাসপাতাল, ল্যাব ও রক্তদাতা ডিরেক্টরি।" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/15d64593-0ecc-4e02-b88d-df38a9c1fad2" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/15d64593-0ecc-4e02-b88d-df38a9c1fad2" },
     ],
     links: [
       {
