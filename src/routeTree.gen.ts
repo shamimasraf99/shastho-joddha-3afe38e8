@@ -16,6 +16,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminAdminsRouteImport } from './routes/_authenticated/admin.admins'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 
 const ToolsRoute = ToolsRouteImport.update({
@@ -52,6 +53,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminAdminsRoute =
+  AuthenticatedAdminAdminsRouteImport.update({
+    id: '/admins',
+    path: '/admins',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminResourceRoute =
   AuthenticatedAdminResourceRouteImport.update({
     id: '/$resource',
@@ -66,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/tools': typeof ToolsRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
+  '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -74,6 +82,7 @@ export interface FileRoutesByTo {
   '/doctors': typeof DoctorsRoute
   '/tools': typeof ToolsRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
+  '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -85,6 +94,7 @@ export interface FileRoutesById {
   '/tools': typeof ToolsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
+  '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -96,9 +106,17 @@ export interface FileRouteTypes {
     | '/tools'
     | '/admin'
     | '/admin/$resource'
+    | '/admin/admins'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/doctors' | '/tools' | '/admin/$resource' | '/admin'
+  to:
+    | '/'
+    | '/auth'
+    | '/doctors'
+    | '/tools'
+    | '/admin/$resource'
+    | '/admin/admins'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -108,6 +126,7 @@ export interface FileRouteTypes {
     | '/tools'
     | '/_authenticated/admin'
     | '/_authenticated/admin/$resource'
+    | '/_authenticated/admin/admins'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -170,6 +189,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/admins': {
+      id: '/_authenticated/admin/admins'
+      path: '/admins'
+      fullPath: '/admin/admins'
+      preLoaderRoute: typeof AuthenticatedAdminAdminsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/$resource': {
       id: '/_authenticated/admin/$resource'
       path: '/$resource'
@@ -182,11 +208,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourceRoute: typeof AuthenticatedAdminResourceRoute
+  AuthenticatedAdminAdminsRoute: typeof AuthenticatedAdminAdminsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourceRoute: AuthenticatedAdminResourceRoute,
+  AuthenticatedAdminAdminsRoute: AuthenticatedAdminAdminsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
