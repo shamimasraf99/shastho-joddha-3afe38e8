@@ -18,6 +18,7 @@ const nav = [
   { to: "/podcasts", label: "পডকাস্ট" },
   { to: "/myths", label: "Myth Busters" },
   { to: "/contact", label: "যোগাযোগ" },
+  { to: "/admin", label: "অ্যাডমিন প্যানেল" },
 ] as const;
 
 export function SiteHeader() {
