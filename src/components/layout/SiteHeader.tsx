@@ -31,8 +31,8 @@ export function SiteHeader() {
               <Heart className="h-5 w-5 fill-current" />
             </span>
             <div className="leading-tight">
-              <div className="text-lg font-bold text-primary">স্বাস্থ্যপিডিয়া</div>
-              <div className="text-[10px] text-muted-foreground">HealthPedia • Bangladesh</div>
+              <div className="text-2xl font-extrabold text-primary md:text-3xl">স্বাস্থ্যপিডিয়া</div>
+              <div className="text-[11px] text-muted-foreground md:text-xs">HealthPedia • Bangladesh</div>
             </div>
           </a>
 
@@ -70,7 +70,7 @@ export function SiteHeader() {
               <a
                 key={n.to}
                 href={n.to}
-                className="whitespace-nowrap px-3 py-2.5 text-sm font-medium text-primary-foreground/90 transition-colors hover:bg-primary-dark hover:text-primary-foreground"
+                className="whitespace-nowrap px-3 py-2.5 text-base font-semibold text-primary-foreground/95 transition-colors hover:bg-primary-dark hover:text-primary-foreground"
               >
                 {n.label}
               </a>
