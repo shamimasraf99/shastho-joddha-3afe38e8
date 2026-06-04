@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideosRouteImport } from './routes/videos'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as QaRouteImport } from './routes/qa'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as MythsRouteImport } from './routes/myths'
 import { Route as LabsRouteImport } from './routes/labs'
 import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as EncyclopediaRouteImport } from './routes/encyclopedia'
@@ -37,6 +39,11 @@ const ToolsRoute = ToolsRouteImport.update({
   path: '/tools',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QaRoute = QaRouteImport.update({
+  id: '/qa',
+  path: '/qa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PodcastsRoute = PodcastsRouteImport.update({
   id: '/podcasts',
   path: '/podcasts',
@@ -45,6 +52,11 @@ const PodcastsRoute = PodcastsRouteImport.update({
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MythsRoute = MythsRouteImport.update({
+  id: '/myths',
+  path: '/myths',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LabsRoute = LabsRouteImport.update({
@@ -123,8 +135,10 @@ export interface FileRoutesByFullPath {
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/labs': typeof LabsRoute
+  '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/qa': typeof QaRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -141,8 +155,10 @@ export interface FileRoutesByTo {
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/labs': typeof LabsRoute
+  '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/qa': typeof QaRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
@@ -160,8 +176,10 @@ export interface FileRoutesById {
   '/encyclopedia': typeof EncyclopediaRoute
   '/hospitals': typeof HospitalsRoute
   '/labs': typeof LabsRoute
+  '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/qa': typeof QaRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -180,8 +198,10 @@ export interface FileRouteTypes {
     | '/encyclopedia'
     | '/hospitals'
     | '/labs'
+    | '/myths'
     | '/news'
     | '/podcasts'
+    | '/qa'
     | '/tools'
     | '/videos'
     | '/admin'
@@ -198,8 +218,10 @@ export interface FileRouteTypes {
     | '/encyclopedia'
     | '/hospitals'
     | '/labs'
+    | '/myths'
     | '/news'
     | '/podcasts'
+    | '/qa'
     | '/tools'
     | '/videos'
     | '/admin/$resource'
@@ -216,8 +238,10 @@ export interface FileRouteTypes {
     | '/encyclopedia'
     | '/hospitals'
     | '/labs'
+    | '/myths'
     | '/news'
     | '/podcasts'
+    | '/qa'
     | '/tools'
     | '/videos'
     | '/_authenticated/admin'
@@ -236,8 +260,10 @@ export interface RootRouteChildren {
   EncyclopediaRoute: typeof EncyclopediaRoute
   HospitalsRoute: typeof HospitalsRoute
   LabsRoute: typeof LabsRoute
+  MythsRoute: typeof MythsRoute
   NewsRoute: typeof NewsRoute
   PodcastsRoute: typeof PodcastsRoute
+  QaRoute: typeof QaRoute
   ToolsRoute: typeof ToolsRoute
   VideosRoute: typeof VideosRoute
 }
@@ -258,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/qa': {
+      id: '/qa'
+      path: '/qa'
+      fullPath: '/qa'
+      preLoaderRoute: typeof QaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/podcasts': {
       id: '/podcasts'
       path: '/podcasts'
@@ -270,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/news'
       fullPath: '/news'
       preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/myths': {
+      id: '/myths'
+      path: '/myths'
+      fullPath: '/myths'
+      preLoaderRoute: typeof MythsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/labs': {
@@ -403,8 +443,10 @@ const rootRouteChildren: RootRouteChildren = {
   EncyclopediaRoute: EncyclopediaRoute,
   HospitalsRoute: HospitalsRoute,
   LabsRoute: LabsRoute,
+  MythsRoute: MythsRoute,
   NewsRoute: NewsRoute,
   PodcastsRoute: PodcastsRoute,
+  QaRoute: QaRoute,
   ToolsRoute: ToolsRoute,
   VideosRoute: VideosRoute,
 }
