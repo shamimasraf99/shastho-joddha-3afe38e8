@@ -13,6 +13,7 @@ export interface ResourceDef {
   table: string;
   title: string;
   singular: string;
+  pk?: string;
   listColumns: { key: string; label: string }[];
   fields: FieldDef[];
   orderBy?: { column: string; ascending: boolean };
