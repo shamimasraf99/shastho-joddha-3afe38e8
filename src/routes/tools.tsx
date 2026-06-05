@@ -483,6 +483,13 @@ function BMICalculator() {
                 <b className="text-foreground">{result.min} - {result.max} কেজি</b>
                 <br />* এশীয় মানদণ্ড অনুযায়ী BMI ≥ ২৩ স্বাস্থ্যঝুঁকির ইঙ্গিত দেয়।
               </div>
+              <div className="mt-3 flex justify-center">
+                <TTSButton
+                  getText={() =>
+                    `আপনার বি এম আই ${result.bmi}। অবস্থা ${result.category}। আপনার উচ্চতা অনুযায়ী আদর্শ ওজনের সীমা ${result.min} থেকে ${result.max} কেজি। এশীয় মানদণ্ড অনুযায়ী বি এম আই ২৩ বা তার বেশি হলে স্বাস্থ্যঝুঁকির ইঙ্গিত দেয়।`
+                  }
+                />
+              </div>
             </>
           )}
         </div>
