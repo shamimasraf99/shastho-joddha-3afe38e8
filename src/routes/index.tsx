@@ -6,7 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Heart, Droplet, Activity, Ribbon, Brain, Baby, Apple,
   Hand, Eye, Smile, Pill, User, Search, Stethoscope, Newspaper, Calendar,
+  Scissors, Flower2, BookOpen, BrainCircuit,
 } from "lucide-react";
+import kidneyIcon from "@/assets/kidney-icon.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,10 +22,18 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const categories = [
+type CategoryItem = {
+  title: string;
+  slug: string;
+  color: string;
+  Icon?: React.ComponentType<{ className?: string }>;
+  image?: string;
+};
+
+const categories: CategoryItem[] = [
   { title: "হার্ট", slug: "heart", Icon: Heart, color: "text-rose-600" },
   { title: "ডায়াবেটিস", slug: "diabetes", Icon: Droplet, color: "text-sky-600" },
-  { title: "কিডনি", slug: "kidney", Icon: Activity, color: "text-amber-600" },
+  { title: "কিডনি", slug: "kidney", image: kidneyIcon.url, color: "text-amber-600" },
   { title: "ক্যান্সার", slug: "cancer", Icon: Ribbon, color: "text-pink-600" },
   { title: "মানসিক স্বাস্থ্য", slug: "mental-health", Icon: Brain, color: "text-violet-600" },
   { title: "নারী স্বাস্থ্য", slug: "womens-health", Icon: User, color: "text-fuchsia-600" },
@@ -33,6 +43,11 @@ const categories = [
   { title: "চোখ", slug: "eye", Icon: Eye, color: "text-cyan-600" },
   { title: "দন্ত", slug: "dental", Icon: Smile, color: "text-blue-600" },
   { title: "ঔষধ", slug: "medicine", Icon: Pill, color: "text-teal-600" },
+  { title: "মেডিসিন", slug: "medicine-dept", Icon: Stethoscope, color: "text-indigo-600" },
+  { title: "সার্জারি", slug: "surgery", Icon: Scissors, color: "text-red-600" },
+  { title: "গাইনি এন্ড অবস", slug: "gynae-obs", Icon: Flower2, color: "text-pink-500" },
+  { title: "ডাইরেক্টরি", slug: "directory", Icon: BookOpen, color: "text-slate-700" },
+  { title: "নিউরো", slug: "neuro", Icon: BrainCircuit, color: "text-purple-600" },
 ];
 
 function Index() {
@@ -101,14 +116,18 @@ function Index() {
             </a>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {categories.map(({ title, slug, Icon, color }) => (
+            {categories.map(({ title, slug, Icon, image, color }) => (
               <a
                 key={slug}
                 href={`/category/${slug}`}
                 className="group flex flex-col items-center gap-2 rounded-lg border border-border bg-card p-4 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
               >
                 <span className={`grid h-12 w-12 place-items-center rounded-full bg-secondary ${color} transition-transform group-hover:scale-110`}>
-                  <Icon className="h-6 w-6" />
+                  {image ? (
+                    <img src={image} alt={title} className="h-8 w-8 object-contain" />
+                  ) : Icon ? (
+                    <Icon className="h-6 w-6" />
+                  ) : null}
                 </span>
                 <span className="text-sm font-semibold text-foreground">{title}</span>
               </a>
