@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideosRouteImport } from './routes/videos'
 import { Route as ToolsRouteImport } from './routes/tools'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as QaRouteImport } from './routes/qa'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as MythsRouteImport } from './routes/myths'
@@ -22,12 +24,14 @@ import { Route as DonorsRouteImport } from './routes/donors'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminPagesRouteImport } from './routes/_authenticated/admin.pages'
 import { Route as AuthenticatedAdminAdminsRouteImport } from './routes/_authenticated/admin.admins'
 import { Route as AuthenticatedAdminResourceRouteImport } from './routes/_authenticated/admin.$resource'
 
@@ -41,9 +45,19 @@ const ToolsRoute = ToolsRouteImport.update({
   path: '/tools',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QaRoute = QaRouteImport.update({
   id: '/qa',
   path: '/qa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PodcastsRoute = PodcastsRouteImport.update({
@@ -96,6 +110,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -126,6 +145,11 @@ const AuthenticatedAdminSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPagesRoute = AuthenticatedAdminPagesRouteImport.update({
+  id: '/pages',
+  path: '/pages',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminAdminsRoute =
   AuthenticatedAdminAdminsRouteImport.update({
     id: '/admins',
@@ -141,6 +165,7 @@ const AuthenticatedAdminResourceRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
@@ -151,18 +176,22 @@ export interface FileRoutesByFullPath {
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
+  '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/category/$slug': typeof CategorySlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
+  '/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
@@ -173,12 +202,15 @@ export interface FileRoutesByTo {
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
+  '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/category/$slug': typeof CategorySlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
+  '/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
@@ -186,6 +218,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
@@ -196,13 +229,16 @@ export interface FileRoutesById {
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
+  '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/category/$slug': typeof CategorySlugRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
+  '/_authenticated/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -210,6 +246,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/auth'
     | '/contact'
     | '/doctors'
@@ -220,18 +257,22 @@ export interface FileRouteTypes {
     | '/myths'
     | '/news'
     | '/podcasts'
+    | '/privacy'
     | '/qa'
+    | '/terms'
     | '/tools'
     | '/videos'
     | '/admin'
     | '/category/$slug'
     | '/admin/$resource'
     | '/admin/admins'
+    | '/admin/pages'
     | '/admin/settings'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/auth'
     | '/contact'
     | '/doctors'
@@ -242,18 +283,22 @@ export interface FileRouteTypes {
     | '/myths'
     | '/news'
     | '/podcasts'
+    | '/privacy'
     | '/qa'
+    | '/terms'
     | '/tools'
     | '/videos'
     | '/category/$slug'
     | '/admin/$resource'
     | '/admin/admins'
+    | '/admin/pages'
     | '/admin/settings'
     | '/admin'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/auth'
     | '/contact'
     | '/doctors'
@@ -264,13 +309,16 @@ export interface FileRouteTypes {
     | '/myths'
     | '/news'
     | '/podcasts'
+    | '/privacy'
     | '/qa'
+    | '/terms'
     | '/tools'
     | '/videos'
     | '/_authenticated/admin'
     | '/category/$slug'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/admins'
+    | '/_authenticated/admin/pages'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -278,6 +326,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   DoctorsRoute: typeof DoctorsRoute
@@ -288,7 +337,9 @@ export interface RootRouteChildren {
   MythsRoute: typeof MythsRoute
   NewsRoute: typeof NewsRoute
   PodcastsRoute: typeof PodcastsRoute
+  PrivacyRoute: typeof PrivacyRoute
   QaRoute: typeof QaRoute
+  TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRoute
   VideosRoute: typeof VideosRoute
   CategorySlugRoute: typeof CategorySlugRoute
@@ -310,11 +361,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/qa': {
       id: '/qa'
       path: '/qa'
       fullPath: '/qa'
       preLoaderRoute: typeof QaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/podcasts': {
@@ -387,6 +452,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -429,6 +501,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/pages': {
+      id: '/_authenticated/admin/pages'
+      path: '/pages'
+      fullPath: '/admin/pages'
+      preLoaderRoute: typeof AuthenticatedAdminPagesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/admins': {
       id: '/_authenticated/admin/admins'
       path: '/admins'
@@ -449,6 +528,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminResourceRoute: typeof AuthenticatedAdminResourceRoute
   AuthenticatedAdminAdminsRoute: typeof AuthenticatedAdminAdminsRoute
+  AuthenticatedAdminPagesRoute: typeof AuthenticatedAdminPagesRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -456,6 +536,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminResourceRoute: AuthenticatedAdminResourceRoute,
   AuthenticatedAdminAdminsRoute: AuthenticatedAdminAdminsRoute,
+  AuthenticatedAdminPagesRoute: AuthenticatedAdminPagesRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -478,6 +559,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   DoctorsRoute: DoctorsRoute,
@@ -488,7 +570,9 @@ const rootRouteChildren: RootRouteChildren = {
   MythsRoute: MythsRoute,
   NewsRoute: NewsRoute,
   PodcastsRoute: PodcastsRoute,
+  PrivacyRoute: PrivacyRoute,
   QaRoute: QaRoute,
+  TermsRoute: TermsRoute,
   ToolsRoute: ToolsRoute,
   VideosRoute: VideosRoute,
   CategorySlugRoute: CategorySlugRoute,

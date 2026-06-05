@@ -66,6 +66,7 @@ const items: { url: string; title: string; icon: typeof LayoutDashboard; exact?:
   { url: "/admin/advertisements", title: "বিজ্ঞাপন", icon: Megaphone },
   { url: "/admin/seo", title: "SEO", icon: Search },
   { url: "/admin/settings", title: "সাইট সেটিংস", icon: SettingsIcon },
+  { url: "/admin/pages", title: "পেজ (About/Privacy/Terms)", icon: FileText },
   { url: "/admin/admins", title: "অ্যাডমিন ম্যানেজ", icon: Users },
 ];
 
