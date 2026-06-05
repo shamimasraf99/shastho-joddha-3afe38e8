@@ -95,6 +95,23 @@ function HospitalsPage() {
           <p className="mt-1 text-sm text-muted-foreground">মোট {filtered.length} টি হাসপাতাল।</p>
         </div>
 
+        <div className="mb-4 flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <button
+              key={c.key}
+              onClick={() => setCat(c.key)}
+              className={
+                "rounded-full px-4 py-1.5 text-sm font-medium transition-colors " +
+                (cat === c.key
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border bg-card text-foreground hover:bg-muted")
+              }
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+
         <div className="mb-6 grid gap-3 rounded-lg border border-border bg-card p-4 md:grid-cols-3">
           <div className="relative md:col-span-2">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
