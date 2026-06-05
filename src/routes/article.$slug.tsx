@@ -14,6 +14,18 @@ function escapeHtml(text: string): string {
     .replace(/'/g, "&#039;");
 }
 
+function decodeBasicHtmlEntities(text: string): string {
+  return text
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#039;|&apos;/gi, "'")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([\da-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)));
+}
+
 function renderPlainArticleContent(raw: string): string {
   if (!raw) return "";
   let html = raw;
@@ -33,8 +45,12 @@ function renderPlainArticleContent(raw: string): string {
   html = html.replace(/\sstyle="[^"]*"/gi, "");
   html = html.replace(/\sstyle='[^']*'/gi, "");
   html = html.replace(/\sclass="[^"]*"/gi, "");
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  const text = doc.body.textContent || html.replace(/<[^>]+>/g, "");
+  const text = decodeBasicHtmlEntities(
+    html
+      .replace(/<\s*br\s*\/?\s*>/gi, "\n")
+      .replace(/<\/(p|div|section|article|h[1-6]|li|tr|table|ul|ol)>/gi, "\n\n")
+      .replace(/<[^>]+>/g, ""),
+  );
   const paragraphs = text
     .replace(/\r\n/g, "\n")
     .split(/\n{2,}/)
