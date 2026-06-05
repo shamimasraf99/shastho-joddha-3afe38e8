@@ -36,7 +36,9 @@ export function ImportFromFile({ onImport }: { onImport: (data: Imported) => voi
         toast.success("HTML থেকে আমদানি সম্পন্ন");
       } else if (name.endsWith(".pdf") || file.type === "application/pdf") {
         const pdfjs = await import("pdfjs-dist");
-        (pdfjs as unknown as { GlobalWorkerOptions: { workerSrc: string } }).GlobalWorkerOptions.workerSrc =
+        (
+          pdfjs as unknown as { GlobalWorkerOptions: { workerSrc: string } }
+        ).GlobalWorkerOptions.workerSrc =
           `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
         const buf = await file.arrayBuffer();
         const pdf = await pdfjs.getDocument({ data: buf }).promise;
@@ -59,7 +61,9 @@ export function ImportFromFile({ onImport }: { onImport: (data: Imported) => voi
           paragraphs.push(lines.join("\n"));
         }
         const fullText = paragraphs.join("\n\n").trim();
-        const firstLine = fullText.split("\n").find((l) => l.trim().length > 0) || file.name.replace(/\.[^.]+$/, "");
+        const firstLine =
+          fullText.split("\n").find((l) => l.trim().length > 0) ||
+          file.name.replace(/\.[^.]+$/, "");
         onImport({ title: firstLine.slice(0, 200), content: fullText });
         toast.success(`PDF থেকে ${pdf.numPages} পৃষ্ঠা আমদানি সম্পন্ন`);
       } else {
