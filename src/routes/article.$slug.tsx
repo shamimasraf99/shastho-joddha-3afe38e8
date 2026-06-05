@@ -5,7 +5,16 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft } from "lucide-react";
 
-function sanitizeContent(raw: string): string {
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function renderPlainArticleContent(raw: string): string {
   if (!raw) return "";
   let html = raw;
   // If it's a full HTML document, extract <body> contents
@@ -18,13 +27,20 @@ function sanitizeContent(raw: string): string {
   html = html.replace(/<meta[^>]*>/gi, "");
   html = html.replace(/<title[\s\S]*?<\/title>/gi, "");
   html = html.replace(/<head[\s\S]*?<\/head>/gi, "");
-  // Remove inline event handlers and style attributes
+  // Remove inline event handlers and style/class attributes, then display as plain news text.
   html = html.replace(/\son\w+="[^"]*"/gi, "");
   html = html.replace(/\son\w+='[^']*'/gi, "");
   html = html.replace(/\sstyle="[^"]*"/gi, "");
   html = html.replace(/\sstyle='[^']*'/gi, "");
   html = html.replace(/\sclass="[^"]*"/gi, "");
-  return html.trim();
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = doc.body.textContent || html.replace(/<[^>]+>/g, "");
+  const paragraphs = text
+    .replace(/\r\n/g, "\n")
+    .split(/\n{2,}/)
+    .map((part) => part.replace(/[ \t]+/g, " ").trim())
+    .filter(Boolean);
+  return paragraphs.map((part) => `<p>${escapeHtml(part).replace(/\n/g, "<br />")}</p>`).join("");
 }
 
 type Article = {
@@ -109,8 +125,8 @@ function ArticlePage() {
               <p className="mt-4 text-base text-muted-foreground">{item.excerpt}</p>
             )}
             <div
-              className="article-content prose prose-sm mt-6 max-w-none text-foreground dark:prose-invert"
-              dangerouslySetInnerHTML={{ __html: sanitizeContent(item.content) }}
+              className="article-content plain-news-content mt-6 max-w-none text-foreground"
+              dangerouslySetInnerHTML={{ __html: renderPlainArticleContent(item.content) }}
             />
             {item.tags && item.tags.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-1">
