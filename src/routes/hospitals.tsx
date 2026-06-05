@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -15,7 +15,15 @@ type Hospital = {
   image: string | null;
   description: string | null;
   google_map: string | null;
+  category: string | null;
 };
+
+const categories: { key: string; label: string }[] = [
+  { key: "", label: "সব" },
+  { key: "cancer", label: "ক্যান্সার" },
+  { key: "maternal", label: "মা / মাতৃত্ব" },
+  { key: "child", label: "শিশু" },
+];
 
 export const Route = createFileRoute("/hospitals")({
   head: () => ({
@@ -42,12 +50,13 @@ function HospitalsPage() {
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState("");
   const [q, setQ] = useState("");
+  const [cat, setCat] = useState("");
 
   useEffect(() => {
     let active = true;
     supabase
       .from("hospitals")
-      .select("id,name,district,address,phone,emergency_number,image,description,google_map")
+      .select("id,name,district,address,phone,emergency_number,image,description,google_map,category")
       .eq("is_active", true)
       .order("name", { ascending: true })
       .limit(500)
@@ -66,10 +75,11 @@ function HospitalsPage() {
   );
 
   const filtered = items.filter((h) => {
+    if (cat && h.category !== cat) return false;
     if (district && h.district !== district) return false;
     if (q) {
       const t = q.toLowerCase();
-      const hay = `${h.name} ${h.address ?? ""} ${h.district ?? ""}`.toLowerCase();
+      const hay = `${h.name} ${h.address ?? ""} ${h.district ?? ""} ${h.description ?? ""}`.toLowerCase();
       if (!hay.includes(t)) return false;
     }
     return true;
@@ -83,6 +93,23 @@ function HospitalsPage() {
           <div className="text-xs font-semibold uppercase tracking-wider text-accent">ডিরেক্টরি</div>
           <h1 className="text-2xl font-bold text-foreground md:text-3xl">হাসপাতাল</h1>
           <p className="mt-1 text-sm text-muted-foreground">মোট {filtered.length} টি হাসপাতাল।</p>
+        </div>
+
+        <div className="mb-4 flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <button
+              key={c.key}
+              onClick={() => setCat(c.key)}
+              className={
+                "rounded-full px-4 py-1.5 text-sm font-medium transition-colors " +
+                (cat === c.key
+                  ? "bg-primary text-primary-foreground"
+                  : "border border-border bg-card text-foreground hover:bg-muted")
+              }
+            >
+              {c.label}
+            </button>
+          ))}
         </div>
 
         <div className="mb-6 grid gap-3 rounded-lg border border-border bg-card p-4 md:grid-cols-3">
@@ -122,7 +149,14 @@ function HospitalsPage() {
                     <Building2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
                     <div className="min-w-0 flex-1">
                       <h2 className="text-base font-bold leading-snug text-foreground group-hover:text-primary">{h.name}</h2>
-                      {h.district && <p className="text-xs text-muted-foreground">{h.district}</p>}
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        {h.district && <span className="text-xs text-muted-foreground">{h.district}</span>}
+                        {h.category && (
+                          <span className={"rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide " + (h.category === 'cancer' ? "bg-rose-100 text-rose-700" : h.category === 'maternal' ? "bg-pink-100 text-pink-700" : "bg-sky-100 text-sky-700")}>
+                            {h.category === 'cancer' ? 'ক্যান্সার' : h.category === 'maternal' ? 'মা / মাতৃত্ব' : 'শিশু'}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="mt-3 space-y-1.5 text-sm">
