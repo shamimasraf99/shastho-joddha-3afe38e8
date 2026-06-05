@@ -149,7 +149,14 @@ function HospitalsPage() {
                     <Building2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
                     <div className="min-w-0 flex-1">
                       <h2 className="text-base font-bold leading-snug text-foreground group-hover:text-primary">{h.name}</h2>
-                      {h.district && <p className="text-xs text-muted-foreground">{h.district}</p>}
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        {h.district && <span className="text-xs text-muted-foreground">{h.district}</span>}
+                        {h.category && (
+                          <span className={"rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide " + (h.category === 'cancer' ? "bg-rose-100 text-rose-700" : h.category === 'maternal' ? "bg-pink-100 text-pink-700" : "bg-sky-100 text-sky-700")}>
+                            {h.category === 'cancer' ? 'ক্যান্সার' : h.category === 'maternal' ? 'মা / মাতৃত্ব' : 'শিশু'}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="mt-3 space-y-1.5 text-sm">
