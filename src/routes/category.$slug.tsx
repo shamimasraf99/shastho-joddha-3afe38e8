@@ -108,7 +108,7 @@ function CategoryPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {articles.map((n) => {
-                const href = n.article_type === "news" ? `/news/${n.slug}` : `/encyclopedia/${n.slug}`;
+                const href = `/article/${n.slug}`;
                 return (
                   <a
                     key={n.id}

@@ -40,7 +40,7 @@ export function BreakingTicker() {
               item.slug ? (
                 <a
                   key={i}
-                  href={`/news/${item.slug}`}
+                  href={`/article/${item.slug}`}
                   className="px-8 text-foreground/90 hover:text-primary"
                 >
                   • {item.title}
