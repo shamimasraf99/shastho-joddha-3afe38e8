@@ -5,6 +5,15 @@ import { toast } from "sonner";
 
 type Imported = { title?: string; content?: string };
 
+function normalizePlainText(text: string): string {
+  return text
+    .replace(/\r\n/g, "\n")
+    .replace(/\t/g, " ")
+    .replace(/[ \f\v]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export function ImportFromFile({ onImport }: { onImport: (data: Imported) => void }) {
   const [busy, setBusy] = useState(false);
 
@@ -15,19 +24,21 @@ export function ImportFromFile({ onImport }: { onImport: (data: Imported) => voi
       if (name.endsWith(".html") || name.endsWith(".htm") || file.type.includes("html")) {
         const text = await file.text();
         const doc = new DOMParser().parseFromString(text, "text/html");
-        // Strip scripts/styles
+        // Strip scripts/styles and keep only readable article text.
         doc.querySelectorAll("script,style,noscript,iframe").forEach((el) => el.remove());
         const title =
           doc.querySelector("h1")?.textContent?.trim() ||
           doc.querySelector("title")?.textContent?.trim() ||
           file.name.replace(/\.[^.]+$/, "");
         const body = doc.body || doc.documentElement;
-        const content = (body.innerHTML || "").trim();
+        const content = normalizePlainText(body.textContent || "");
         onImport({ title, content });
         toast.success("HTML থেকে আমদানি সম্পন্ন");
       } else if (name.endsWith(".pdf") || file.type === "application/pdf") {
         const pdfjs = await import("pdfjs-dist");
-        (pdfjs as unknown as { GlobalWorkerOptions: { workerSrc: string } }).GlobalWorkerOptions.workerSrc =
+        (
+          pdfjs as unknown as { GlobalWorkerOptions: { workerSrc: string } }
+        ).GlobalWorkerOptions.workerSrc =
           `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
         const buf = await file.arrayBuffer();
         const pdf = await pdfjs.getDocument({ data: buf }).promise;
@@ -50,12 +61,10 @@ export function ImportFromFile({ onImport }: { onImport: (data: Imported) => voi
           paragraphs.push(lines.join("\n"));
         }
         const fullText = paragraphs.join("\n\n").trim();
-        const firstLine = fullText.split("\n").find((l) => l.trim().length > 0) || file.name.replace(/\.[^.]+$/, "");
-        // Convert plain text to simple HTML paragraphs preserving line breaks
-        const html = paragraphs
-          .map((para) => `<p>${para.replace(/\n/g, "<br/>")}</p>`)
-          .join("\n");
-        onImport({ title: firstLine.slice(0, 200), content: html });
+        const firstLine =
+          fullText.split("\n").find((l) => l.trim().length > 0) ||
+          file.name.replace(/\.[^.]+$/, "");
+        onImport({ title: firstLine.slice(0, 200), content: fullText });
         toast.success(`PDF থেকে ${pdf.numPages} পৃষ্ঠা আমদানি সম্পন্ন`);
       } else {
         toast.error("শুধু PDF বা HTML ফাইল সাপোর্ট করে");

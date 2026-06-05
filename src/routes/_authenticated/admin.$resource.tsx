@@ -349,7 +349,15 @@ function FieldInput({ field, value, onChange }: { field: FieldDef; value: unknow
       </div>
     );
   }
-  if (field.type === "richtext" || field.type === "json") {
+  if (field.type === "richtext") {
+    return (
+      <div>
+        <Label>{field.label}{field.required && " *"}</Label>
+        <Textarea value={(value as string) ?? ""} onChange={(e) => onChange(e.target.value)} required={field.required} rows={10} />
+      </div>
+    );
+  }
+  if (field.type === "json") {
     return (
       <div>
         <Label>{field.label}{field.required && " *"}</Label>
