@@ -87,19 +87,10 @@ export function ImportFromFile({ onImport }: { onImport: (data: Imported) => voi
           doc.querySelector("h1")?.textContent?.trim() ||
           doc.querySelector("title")?.textContent?.trim() ||
           file.name.replace(/\.[^.]+$/, "");
-        // If the HTML embeds a JS data array (common for SPA-style single-file apps),
-        // extract it as readable text — the static body text alone is usually empty UI chrome.
-        const embedded = extractEmbeddedData(text);
-        let content: string;
-        if (embedded) {
-          content = embedded;
-        } else {
-          doc.querySelectorAll("script,style,noscript,iframe").forEach((el) => el.remove());
-          const body = doc.body || doc.documentElement;
-          content = normalizePlainText(body.textContent || "");
-        }
-        onImport({ title, content });
-        toast.success("HTML থেকে আমদানি সম্পন্ন");
+        // Preserve the raw HTML file as-is so it renders exactly like the original
+        // (styles, scripts, embedded data all intact) inside a sandboxed iframe.
+        onImport({ title, content: text });
+        toast.success("HTML ফাইল আমদানি সম্পন্ন (মূল ফরম্যাটে)");
       } else if (name.endsWith(".pdf") || file.type === "application/pdf") {
         const pdfjs = await import("pdfjs-dist");
         (
