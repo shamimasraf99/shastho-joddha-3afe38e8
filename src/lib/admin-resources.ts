@@ -76,7 +76,7 @@ export const resources: Record<string, ResourceDef> = {
     singular: "পোস্ট",
     orderBy: { column: "created_at", ascending: false },
     searchColumn: "title",
-    defaults: { article_type: "news" },
+    defaults: { article_type: "news", is_published: true },
     listColumns: [
       { key: "title", label: "শিরোনাম" },
       { key: "article_type", label: "বিভাগ" },
