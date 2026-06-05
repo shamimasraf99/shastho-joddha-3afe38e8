@@ -50,12 +50,13 @@ function HospitalsPage() {
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState("");
   const [q, setQ] = useState("");
+  const [cat, setCat] = useState("");
 
   useEffect(() => {
     let active = true;
     supabase
       .from("hospitals")
-      .select("id,name,district,address,phone,emergency_number,image,description,google_map")
+      .select("id,name,district,address,phone,emergency_number,image,description,google_map,category")
       .eq("is_active", true)
       .order("name", { ascending: true })
       .limit(500)
@@ -74,10 +75,11 @@ function HospitalsPage() {
   );
 
   const filtered = items.filter((h) => {
+    if (cat && h.category !== cat) return false;
     if (district && h.district !== district) return false;
     if (q) {
       const t = q.toLowerCase();
-      const hay = `${h.name} ${h.address ?? ""} ${h.district ?? ""}`.toLowerCase();
+      const hay = `${h.name} ${h.address ?? ""} ${h.district ?? ""} ${h.description ?? ""}`.toLowerCase();
       if (!hay.includes(t)) return false;
     }
     return true;
