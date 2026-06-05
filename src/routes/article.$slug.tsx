@@ -87,7 +87,7 @@ function ArticlePage() {
               <p className="mt-4 text-base text-muted-foreground">{item.excerpt}</p>
             )}
             <div
-              className="prose prose-sm mt-6 max-w-none text-foreground dark:prose-invert"
+              className="prose prose-sm mt-6 max-w-none whitespace-pre-wrap text-foreground dark:prose-invert"
               dangerouslySetInnerHTML={{ __html: item.content }}
             />
             {item.tags && item.tags.length > 0 && (

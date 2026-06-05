@@ -248,6 +248,17 @@ function FormDialog({
         out[f.key] = s === "" ? null : s;
       }
     }
+    // Auto-generate slug from title if slug field exists but is empty
+    if ("slug" in out && (!out.slug || String(out.slug).trim() === "") && out.title) {
+      const base = String(out.title)
+        .trim()
+        .toLowerCase()
+        .replace(/[^\p{L}\p{N}\s-]/gu, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .slice(0, 80);
+      out.slug = base ? `${base}-${Date.now().toString(36)}` : `post-${Date.now().toString(36)}`;
+    }
     onSubmit(out);
   };
 
