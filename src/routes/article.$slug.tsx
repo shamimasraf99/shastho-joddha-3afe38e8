@@ -56,7 +56,9 @@ function renderPlainArticleContent(raw: string): string {
     .split(/\n{2,}/)
     .map((part) => part.replace(/[ \t]+/g, " ").trim())
     .filter(Boolean);
-  return paragraphs.map((part) => `<p>${escapeHtml(part).replace(/\n/g, "<br />")}</p>`).join("");
+  return paragraphs
+    .map((part) => `<p>${escapeHtml(part).replace(/\n/g, "<br />")}</p>`)
+    .join("");
 }
 
 type Article = {
@@ -77,17 +79,28 @@ type Article = {
 
 export const Route = createFileRoute("/article/$slug")({
   component: ArticlePage,
-  errorComponent: ({ error, reset }) => {
-    const router = useRouter();
-    return (
-      <div className="container mx-auto p-8 text-center">
-        <p className="text-destructive">ত্রুটি: {error.message}</p>
-        <button onClick={() => { reset(); router.invalidate(); }} className="mt-3 rounded bg-primary px-4 py-2 text-primary-foreground">আবার চেষ্টা করুন</button>
-      </div>
-    );
-  },
+  errorComponent: ArticleError,
   notFoundComponent: () => <div className="p-8 text-center">পাওয়া যায়নি</div>,
 });
+
+function ArticleError({ error, reset }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+
+  return (
+    <div className="container mx-auto p-8 text-center">
+      <p className="text-destructive">ত্রুটি: {error.message}</p>
+      <button
+        onClick={() => {
+          reset();
+          router.invalidate();
+        }}
+        className="mt-3 rounded bg-primary px-4 py-2 text-primary-foreground"
+      >
+        আবার চেষ্টা করুন
+      </button>
+    </div>
+  );
+}
 
 function ArticlePage() {
   const { slug } = Route.useParams();
