@@ -11,6 +11,8 @@ export type SiteSettings = {
     facebook?: string;
     youtube?: string;
     map_url?: string;
+    whatsapp?: string;
+    telegram?: string;
   };
 };
 
