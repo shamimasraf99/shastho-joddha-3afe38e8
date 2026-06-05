@@ -24,6 +24,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -104,6 +105,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategorySlugRoute = CategorySlugRouteImport.update({
+  id: '/category/$slug',
+  path: '/category/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/category/$slug': typeof CategorySlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/qa': typeof QaRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
+  '/category/$slug': typeof CategorySlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/category/$slug': typeof CategorySlugRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/tools'
     | '/videos'
     | '/admin'
+    | '/category/$slug'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin/settings'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/qa'
     | '/tools'
     | '/videos'
+    | '/category/$slug'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin/settings'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/tools'
     | '/videos'
     | '/_authenticated/admin'
+    | '/category/$slug'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/admins'
     | '/_authenticated/admin/settings'
@@ -279,6 +291,7 @@ export interface RootRouteChildren {
   QaRoute: typeof QaRoute
   ToolsRoute: typeof ToolsRoute
   VideosRoute: typeof VideosRoute
+  CategorySlugRoute: typeof CategorySlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -388,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/category/$slug': {
+      id: '/category/$slug'
+      path: '/category/$slug'
+      fullPath: '/category/$slug'
+      preLoaderRoute: typeof CategorySlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -471,6 +491,7 @@ const rootRouteChildren: RootRouteChildren = {
   QaRoute: QaRoute,
   ToolsRoute: ToolsRoute,
   VideosRoute: VideosRoute,
+  CategorySlugRoute: CategorySlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
