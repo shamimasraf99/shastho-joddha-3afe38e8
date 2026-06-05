@@ -3,16 +3,13 @@ import { MapPin, Search } from "lucide-react";
 
 export function LocationMap() {
   const [query, setQuery] = useState("");
-  const [src, setSrc] = useState(
-    "https://maps.google.com/maps?q=Dhaka,Bangladesh&t=&z=12&ie=UTF8&iwloc=&output=embed"
-  );
 
   const handleSearch = useCallback(() => {
     const q = query.trim();
-    if (!q) return;
-    setSrc(
-      `https://maps.google.com/maps?q=${encodeURIComponent(q)}&t=&z=14&ie=UTF8&iwloc=&output=embed`
-    );
+    const url = q
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`
+      : `https://www.google.com/maps/search/?api=1&query=Dhaka,Bangladesh`;
+    window.open(url, "_blank", "noopener,noreferrer");
   }, [query]);
 
   const handleKeyDown = useCallback(
@@ -52,21 +49,8 @@ export function LocationMap() {
             className="inline-flex items-center gap-1.5 rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-dark"
           >
             <Search className="h-4 w-4" />
-            খুঁজুন
+            ম্যাপ দেখুন
           </button>
-        </div>
-
-        <div className="mt-4 overflow-hidden rounded-xl border border-border shadow-sm">
-          <iframe
-            title="স্থান অনুসন্ধান ম্যাপ"
-            src={src}
-            width="100%"
-            height="420"
-            style={{ border: 0, display: "block" }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
         </div>
       </div>
     </section>
