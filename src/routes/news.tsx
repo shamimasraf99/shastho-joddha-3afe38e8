@@ -109,7 +109,7 @@ function NewsPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((a) => (
-              <Link key={a.id} to="/news" className="group overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+              <Link key={a.id} to="/article/$slug" params={{ slug: a.slug }} className="group overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
                 {a.cover_image && <img src={a.cover_image} alt={a.title} className="h-44 w-full object-cover" loading="lazy" />}
                 <div className="p-4">
                   <h2 className="line-clamp-2 text-base font-bold leading-snug text-foreground group-hover:text-primary">{a.title}</h2>
