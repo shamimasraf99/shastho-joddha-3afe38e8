@@ -3,6 +3,7 @@ import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Calculator, Scale, Baby, Flame, Utensils, ArrowLeft } from "lucide-react";
+import { TTSButton } from "@/components/TTSButton";
 
 export const Route = createFileRoute("/tools")({
   head: () => ({
@@ -36,6 +37,14 @@ function ToolsPage() {
           <p className="mt-2 text-sm text-muted-foreground">
             আপনার স্বাস্থ্য বিশ্লেষণে সহায়ক বিভিন্ন ক্যালকুলেটর।
           </p>
+          <div className="mt-3 flex justify-center">
+            <TTSButton
+              getText={() =>
+                "স্বাস্থ্য টুলস। ক্যালকুলেটর। আপনার স্বাস্থ্য বিশ্লেষণে সহায়ক বিভিন্ন ক্যালকুলেটর। " +
+                tools.map((t) => `${t.title}। ${t.desc}।`).join(" ")
+              }
+            />
+          </div>
         </div>
 
         {!active ? (
