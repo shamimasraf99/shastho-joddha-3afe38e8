@@ -27,9 +27,8 @@ export function ImportFromFile({ onImport }: { onImport: (data: Imported) => voi
         toast.success("HTML থেকে আমদানি সম্পন্ন");
       } else if (name.endsWith(".pdf") || file.type === "application/pdf") {
         const pdfjs = await import("pdfjs-dist");
-        // Use a worker via CDN matching the installed version
-        // @ts-expect-error - GlobalWorkerOptions exists at runtime
-        pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+        (pdfjs as unknown as { GlobalWorkerOptions: { workerSrc: string } }).GlobalWorkerOptions.workerSrc =
+          `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
         const buf = await file.arrayBuffer();
         const pdf = await pdfjs.getDocument({ data: buf }).promise;
         const paragraphs: string[] = [];
