@@ -56,9 +56,7 @@ function renderPlainArticleContent(raw: string): string {
     .split(/\n{2,}/)
     .map((part) => part.replace(/[ \t]+/g, " ").trim())
     .filter(Boolean);
-  return paragraphs
-    .map((part) => `<p>${escapeHtml(part).replace(/\n/g, "<br />")}</p>`)
-    .join("");
+  return paragraphs.map((part) => `<p>${escapeHtml(part).replace(/\n/g, "<br />")}</p>`).join("");
 }
 
 type Article = {
