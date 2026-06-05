@@ -374,6 +374,14 @@ function DietPlanner() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-3 flex justify-center">
+                <TTSButton
+                  getText={() =>
+                    `আপনার দৈনিক টার্গেট ${plan.target} ক্যালরি। প্রোটিন ${plan.protein} গ্রাম, ফ্যাট ${plan.fat} গ্রাম, কার্বোহাইড্রেট ${plan.carbs} গ্রাম। দেশি ডায়েট মেনু: ` +
+                    plan.meals.map((m) => `${m.time}, ${m.food}।`).join(" ")
+                  }
+                />
+              </div>
             </>
           )}
         </div>
