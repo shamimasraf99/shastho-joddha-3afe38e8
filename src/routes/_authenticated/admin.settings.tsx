@@ -23,6 +23,8 @@ type ContactV = {
   facebook?: string;
   youtube?: string;
   map_url?: string;
+  whatsapp?: string;
+  telegram?: string;
 };
 
 const KEYS = ["site", "meta", "contact"] as const;
@@ -134,6 +136,12 @@ function SettingsPage() {
           </Field>
           <Field label="Google Map URL (embed)">
             <Input value={contact.map_url ?? ""} onChange={(e) => setContact({ ...contact, map_url: e.target.value })} />
+          </Field>
+          <Field label="WhatsApp নম্বর (E.164, যেমন +8801XXXXXXXXX)">
+            <Input value={contact.whatsapp ?? ""} onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })} placeholder="+8801XXXXXXXXX" />
+          </Field>
+          <Field label="Telegram ইউজারনেম বা লিংক (যেমন @username বা https://t.me/username)">
+            <Input value={contact.telegram ?? ""} onChange={(e) => setContact({ ...contact, telegram: e.target.value })} placeholder="@username" />
           </Field>
           <Button onClick={() => save.mutate({ key: "contact", value: contact as Record<string, unknown> })} disabled={save.isPending}>
             সংরক্ষণ
