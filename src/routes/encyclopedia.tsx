@@ -92,7 +92,7 @@ function EncyclopediaPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((e) => (
-              <Link key={e.id} to="/encyclopedia" className="group rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+              <Link key={e.id} to="/article/$slug" params={{ slug: e.slug }} className="group rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
                 <div className="flex items-start gap-3">
                   <BookOpen className="mt-1 h-5 w-5 shrink-0 text-primary" />
                   <div className="min-w-0 flex-1">
