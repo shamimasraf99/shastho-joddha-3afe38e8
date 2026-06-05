@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { LocationMap } from "@/components/LocationMap";
 import { Calculator, Scale, Baby, Flame, Utensils, ArrowLeft } from "lucide-react";
 import { TTSButton } from "@/components/TTSButton";
 
@@ -80,6 +81,7 @@ function ToolsPage() {
           </div>
         )}
       </main>
+      <LocationMap />
       <SiteFooter />
     </div>
   );
