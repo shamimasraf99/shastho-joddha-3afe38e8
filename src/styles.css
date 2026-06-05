@@ -167,6 +167,24 @@
 @utility ticker-track {
   animation: ticker 40s linear infinite;
 }
+
+@layer components {
+  .plain-news-content {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.9;
+    white-space: normal;
+  }
+
+  .plain-news-content p {
+    margin: 0 0 1rem;
+  }
+
+  .plain-news-content p:last-child {
+    margin-bottom: 0;
+  }
+}
+
 @keyframes ticker {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
