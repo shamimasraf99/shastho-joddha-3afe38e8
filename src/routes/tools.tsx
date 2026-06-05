@@ -153,7 +153,10 @@ function CalorieCalculator() {
 
       {result && (
         <div className="mt-5 rounded-md bg-secondary p-4 text-center text-sm font-semibold text-primary">
-          {result}
+          <div>{result}</div>
+          <div className="mt-3 flex justify-center">
+            <TTSButton getText={() => result} />
+          </div>
         </div>
       )}
     </div>
@@ -240,6 +243,16 @@ function PregnancyCalculator() {
                     বর্তমান গর্ভকাল: <b className="text-foreground">{result.currentWeek} সপ্তাহ</b>
                   </div>
                 )}
+              </div>
+              <div className="mt-3 flex justify-center">
+                <TTSButton
+                  getText={() =>
+                    `সম্ভাব্য ডেলিভারি তারিখ ${result.edd}। ` +
+                    (result.currentWeek > 0 ? `বর্তমান গর্ভকাল ${result.currentWeek} সপ্তাহ। ` : "") +
+                    "চেক-আপ সূচি: " +
+                    result.schedule.map((s) => `${s.week} সপ্তাহে ${s.date}, ${s.goal}।`).join(" ")
+                  }
+                />
               </div>
               <div className="mt-4 overflow-hidden rounded-md border border-border">
                 <table className="w-full text-left text-sm">
