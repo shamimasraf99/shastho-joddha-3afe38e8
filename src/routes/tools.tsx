@@ -153,7 +153,10 @@ function CalorieCalculator() {
 
       {result && (
         <div className="mt-5 rounded-md bg-secondary p-4 text-center text-sm font-semibold text-primary">
-          {result}
+          <div>{result}</div>
+          <div className="mt-3 flex justify-center">
+            <TTSButton getText={() => result} />
+          </div>
         </div>
       )}
     </div>
@@ -240,6 +243,16 @@ function PregnancyCalculator() {
                     বর্তমান গর্ভকাল: <b className="text-foreground">{result.currentWeek} সপ্তাহ</b>
                   </div>
                 )}
+              </div>
+              <div className="mt-3 flex justify-center">
+                <TTSButton
+                  getText={() =>
+                    `সম্ভাব্য ডেলিভারি তারিখ ${result.edd}। ` +
+                    (result.currentWeek > 0 ? `বর্তমান গর্ভকাল ${result.currentWeek} সপ্তাহ। ` : "") +
+                    "চেক-আপ সূচি: " +
+                    result.schedule.map((s) => `${s.week} সপ্তাহে ${s.date}, ${s.goal}।`).join(" ")
+                  }
+                />
               </div>
               <div className="mt-4 overflow-hidden rounded-md border border-border">
                 <table className="w-full text-left text-sm">
@@ -361,6 +374,14 @@ function DietPlanner() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-3 flex justify-center">
+                <TTSButton
+                  getText={() =>
+                    `আপনার দৈনিক টার্গেট ${plan.target} ক্যালরি। প্রোটিন ${plan.protein} গ্রাম, ফ্যাট ${plan.fat} গ্রাম, কার্বোহাইড্রেট ${plan.carbs} গ্রাম। দেশি ডায়েট মেনু: ` +
+                    plan.meals.map((m) => `${m.time}, ${m.food}।`).join(" ")
+                  }
+                />
+              </div>
             </>
           )}
         </div>
@@ -461,6 +482,13 @@ function BMICalculator() {
                 <br />
                 <b className="text-foreground">{result.min} - {result.max} কেজি</b>
                 <br />* এশীয় মানদণ্ড অনুযায়ী BMI ≥ ২৩ স্বাস্থ্যঝুঁকির ইঙ্গিত দেয়।
+              </div>
+              <div className="mt-3 flex justify-center">
+                <TTSButton
+                  getText={() =>
+                    `আপনার বি এম আই ${result.bmi}। অবস্থা ${result.category}। আপনার উচ্চতা অনুযায়ী আদর্শ ওজনের সীমা ${result.min} থেকে ${result.max} কেজি। এশীয় মানদণ্ড অনুযায়ী বি এম আই ২৩ বা তার বেশি হলে স্বাস্থ্যঝুঁকির ইঙ্গিত দেয়।`
+                  }
+                />
               </div>
             </>
           )}
