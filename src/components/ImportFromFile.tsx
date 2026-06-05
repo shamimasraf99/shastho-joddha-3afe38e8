@@ -5,74 +5,6 @@ import { toast } from "sonner";
 
 type Imported = { title?: string; content?: string };
 
-function normalizePlainText(text: string): string {
-  return text
-    .replace(/\r\n/g, "\n")
-    .replace(/\t/g, " ")
-    .replace(/[ \f\v]+/g, " ")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
-}
-
-// Try to detect embedded JSON data arrays inside <script> tags
-// (common in single-file HTML "apps" where the visible UI is empty until JS runs).
-// If found, format the largest array of plain objects as readable plain text.
-function extractEmbeddedData(rawHtml: string): string | null {
-  try {
-    const matches = rawHtml.match(/\[\s*\{[\s\S]*?\}\s*\]/g) || [];
-    let best: Array<Record<string, unknown>> | null = null;
-    for (const m of matches) {
-      try {
-        const arr = JSON.parse(m);
-        if (
-          Array.isArray(arr) &&
-          arr.length > 0 &&
-          typeof arr[0] === "object" &&
-          arr[0] !== null
-        ) {
-          if (!best || arr.length > best.length) best = arr as Array<Record<string, unknown>>;
-        }
-      } catch {
-        // skip non-JSON match
-      }
-    }
-    if (!best || best.length < 3) return null;
-    const keys = Object.keys(best[0]);
-    const lines: string[] = [];
-    lines.push(`মোট রেকর্ড: ${best.length}`);
-    lines.push("");
-    // Group by first key if it looks categorical (e.g. district)
-    const groupKey = keys[0];
-    const groups: Record<string, Array<Record<string, unknown>>> = {};
-    for (const row of best) {
-      const g = String(row[groupKey] ?? "—");
-      (groups[g] ||= []).push(row);
-    }
-    const groupNames = Object.keys(groups).sort();
-    const useGrouping = groupNames.length > 1 && groupNames.length < best.length / 2;
-    if (useGrouping) {
-      for (const g of groupNames) {
-        lines.push(`${groupKey}: ${g}`);
-        for (const row of groups[g]) {
-          const parts = keys
-            .slice(1)
-            .map((k) => `${k}: ${String(row[k] ?? "")}`)
-            .join(" | ");
-          lines.push(`• ${parts}`);
-        }
-        lines.push("");
-      }
-    } else {
-      for (const row of best) {
-        lines.push(keys.map((k) => `${k}: ${String(row[k] ?? "")}`).join(" | "));
-      }
-    }
-    return lines.join("\n");
-  } catch {
-    return null;
-  }
-}
-
 export function ImportFromFile({ onImport }: { onImport: (data: Imported) => void }) {
   const [busy, setBusy] = useState(false);
 
@@ -87,19 +19,10 @@ export function ImportFromFile({ onImport }: { onImport: (data: Imported) => voi
           doc.querySelector("h1")?.textContent?.trim() ||
           doc.querySelector("title")?.textContent?.trim() ||
           file.name.replace(/\.[^.]+$/, "");
-        // If the HTML embeds a JS data array (common for SPA-style single-file apps),
-        // extract it as readable text — the static body text alone is usually empty UI chrome.
-        const embedded = extractEmbeddedData(text);
-        let content: string;
-        if (embedded) {
-          content = embedded;
-        } else {
-          doc.querySelectorAll("script,style,noscript,iframe").forEach((el) => el.remove());
-          const body = doc.body || doc.documentElement;
-          content = normalizePlainText(body.textContent || "");
-        }
-        onImport({ title, content });
-        toast.success("HTML থেকে আমদানি সম্পন্ন");
+        // Preserve the raw HTML file as-is so it renders exactly like the original
+        // (styles, scripts, embedded data all intact) inside a sandboxed iframe.
+        onImport({ title, content: text });
+        toast.success("HTML ফাইল আমদানি সম্পন্ন (মূল ফরম্যাটে)");
       } else if (name.endsWith(".pdf") || file.type === "application/pdf") {
         const pdfjs = await import("pdfjs-dist");
         (

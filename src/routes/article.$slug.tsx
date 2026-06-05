@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
@@ -57,6 +57,55 @@ function renderPlainArticleContent(raw: string): string {
     .map((part) => part.replace(/[ \t]+/g, " ").trim())
     .filter(Boolean);
   return paragraphs.map((part) => `<p>${escapeHtml(part).replace(/\n/g, "<br />")}</p>`).join("");
+}
+
+// Detect if the stored content is a full standalone HTML document.
+function isFullHtmlDocument(raw: string): boolean {
+  if (!raw) return false;
+  const head = raw.slice(0, 2000).toLowerCase();
+  return (
+    head.includes("<!doctype html") ||
+    head.includes("<html") ||
+    (head.includes("<head") && head.includes("<body"))
+  );
+}
+
+function HtmlDocumentFrame({ html, title }: { html: string; title: string }) {
+  const ref = useRef<HTMLIFrameElement>(null);
+  const [height, setHeight] = useState(800);
+  useEffect(() => {
+    const iframe = ref.current;
+    if (!iframe) return;
+    const resize = () => {
+      try {
+        const doc = iframe.contentDocument;
+        if (!doc) return;
+        const h = Math.max(
+          doc.body?.scrollHeight ?? 0,
+          doc.documentElement?.scrollHeight ?? 0,
+        );
+        if (h > 0) setHeight(h + 24);
+      } catch {
+        // cross-origin guard — sandbox may block; ignore
+      }
+    };
+    iframe.addEventListener("load", resize);
+    const id = window.setInterval(resize, 800);
+    return () => {
+      iframe.removeEventListener("load", resize);
+      window.clearInterval(id);
+    };
+  }, [html]);
+  return (
+    <iframe
+      ref={ref}
+      title={title}
+      srcDoc={html}
+      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+      className="mt-6 w-full rounded-lg border border-border bg-white"
+      style={{ height }}
+    />
+  );
 }
 
 type Article = {
@@ -162,10 +211,14 @@ function ArticlePage() {
             )}
             {item.audio_url && <audio controls src={item.audio_url} className="mt-4 w-full" />}
             {item.excerpt && <p className="mt-4 text-base text-muted-foreground">{item.excerpt}</p>}
-            <div
-              className="article-content plain-news-content mt-6 max-w-none text-foreground"
-              dangerouslySetInnerHTML={{ __html: renderPlainArticleContent(item.content) }}
-            />
+            {isFullHtmlDocument(item.content) ? (
+              <HtmlDocumentFrame html={item.content} title={item.title} />
+            ) : (
+              <div
+                className="article-content plain-news-content mt-6 max-w-none text-foreground"
+                dangerouslySetInnerHTML={{ __html: renderPlainArticleContent(item.content) }}
+              />
+            )}
             {item.tags && item.tags.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-1">
                 {item.tags.map((t) => (
