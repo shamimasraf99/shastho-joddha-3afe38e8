@@ -148,20 +148,22 @@ function ArticlePage() {
             >
               <ArrowLeft className="h-4 w-4" /> {backLabel}
             </Link>
-            <div className="text-xs font-semibold uppercase tracking-wider text-accent">{backLabel}</div>
+            <div className="text-xs font-semibold uppercase tracking-wider text-accent">
+              {backLabel}
+            </div>
             <h1 className="mt-1 text-2xl font-bold text-foreground md:text-3xl">{item.title}</h1>
             <p className="font-kalpurush mt-2 text-xs text-muted-foreground">
               {new Date(item.published_at || item.created_at).toLocaleDateString("bn-BD")}
             </p>
             {item.cover_image && (
-              <img src={item.cover_image} alt={item.title} className="mt-4 w-full rounded-lg border border-border object-cover" />
+              <img
+                src={item.cover_image}
+                alt={item.title}
+                className="mt-4 w-full rounded-lg border border-border object-cover"
+              />
             )}
-            {item.audio_url && (
-              <audio controls src={item.audio_url} className="mt-4 w-full" />
-            )}
-            {item.excerpt && (
-              <p className="mt-4 text-base text-muted-foreground">{item.excerpt}</p>
-            )}
+            {item.audio_url && <audio controls src={item.audio_url} className="mt-4 w-full" />}
+            {item.excerpt && <p className="mt-4 text-base text-muted-foreground">{item.excerpt}</p>}
             <div
               className="article-content plain-news-content mt-6 max-w-none text-foreground"
               dangerouslySetInnerHTML={{ __html: renderPlainArticleContent(item.content) }}
@@ -169,7 +171,12 @@ function ArticlePage() {
             {item.tags && item.tags.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-1">
                 {item.tags.map((t) => (
-                  <span key={t} className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground">{t}</span>
+                  <span
+                    key={t}
+                    className="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
+                  >
+                    {t}
+                  </span>
                 ))}
               </div>
             )}
