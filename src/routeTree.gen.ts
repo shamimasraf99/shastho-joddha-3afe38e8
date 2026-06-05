@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideosRouteImport } from './routes/videos'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as QaRouteImport } from './routes/qa'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as MythsRouteImport } from './routes/myths'
@@ -46,6 +47,11 @@ const ToolsRoute = ToolsRouteImport.update({
 const QaRoute = QaRouteImport.update({
   id: '/qa',
   path: '/qa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PodcastsRoute = PodcastsRouteImport.update({
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
   '/podcasts': typeof PodcastsRoute
+  '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/myths'
     | '/news'
     | '/podcasts'
+    | '/privacy'
     | '/qa'
     | '/tools'
     | '/videos'
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/myths'
     | '/news'
     | '/podcasts'
+    | '/privacy'
     | '/qa'
     | '/tools'
     | '/videos'
@@ -287,6 +298,7 @@ export interface FileRouteTypes {
     | '/myths'
     | '/news'
     | '/podcasts'
+    | '/privacy'
     | '/qa'
     | '/tools'
     | '/videos'
@@ -313,6 +325,7 @@ export interface RootRouteChildren {
   MythsRoute: typeof MythsRoute
   NewsRoute: typeof NewsRoute
   PodcastsRoute: typeof PodcastsRoute
+  PrivacyRoute: typeof PrivacyRoute
   QaRoute: typeof QaRoute
   ToolsRoute: typeof ToolsRoute
   VideosRoute: typeof VideosRoute
@@ -340,6 +353,13 @@ declare module '@tanstack/react-router' {
       path: '/qa'
       fullPath: '/qa'
       preLoaderRoute: typeof QaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/podcasts': {
@@ -530,6 +550,7 @@ const rootRouteChildren: RootRouteChildren = {
   MythsRoute: MythsRoute,
   NewsRoute: NewsRoute,
   PodcastsRoute: PodcastsRoute,
+  PrivacyRoute: PrivacyRoute,
   QaRoute: QaRoute,
   ToolsRoute: ToolsRoute,
   VideosRoute: VideosRoute,
