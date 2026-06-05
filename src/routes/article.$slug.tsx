@@ -5,6 +5,28 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft } from "lucide-react";
 
+function sanitizeContent(raw: string): string {
+  if (!raw) return "";
+  let html = raw;
+  // If it's a full HTML document, extract <body> contents
+  const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  if (bodyMatch) html = bodyMatch[1];
+  // Strip <script>, <style>, <link>, <meta>, <title>, <head>
+  html = html.replace(/<script[\s\S]*?<\/script>/gi, "");
+  html = html.replace(/<style[\s\S]*?<\/style>/gi, "");
+  html = html.replace(/<link[^>]*>/gi, "");
+  html = html.replace(/<meta[^>]*>/gi, "");
+  html = html.replace(/<title[\s\S]*?<\/title>/gi, "");
+  html = html.replace(/<head[\s\S]*?<\/head>/gi, "");
+  // Remove inline event handlers and style attributes
+  html = html.replace(/\son\w+="[^"]*"/gi, "");
+  html = html.replace(/\son\w+='[^']*'/gi, "");
+  html = html.replace(/\sstyle="[^"]*"/gi, "");
+  html = html.replace(/\sstyle='[^']*'/gi, "");
+  html = html.replace(/\sclass="[^"]*"/gi, "");
+  return html.trim();
+}
+
 type Article = {
   id: string;
   title: string;
@@ -87,8 +109,8 @@ function ArticlePage() {
               <p className="mt-4 text-base text-muted-foreground">{item.excerpt}</p>
             )}
             <div
-              className="prose prose-sm mt-6 max-w-none whitespace-pre-wrap text-foreground dark:prose-invert"
-              dangerouslySetInnerHTML={{ __html: item.content }}
+              className="article-content prose prose-sm mt-6 max-w-none text-foreground dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: sanitizeContent(item.content) }}
             />
             {item.tags && item.tags.length > 0 && (
               <div className="mt-6 flex flex-wrap gap-1">
