@@ -15,7 +15,15 @@ type Hospital = {
   image: string | null;
   description: string | null;
   google_map: string | null;
+  category: string | null;
 };
+
+const categories: { key: string; label: string }[] = [
+  { key: "", label: "সব" },
+  { key: "cancer", label: "ক্যান্সার" },
+  { key: "maternal", label: "মা / মাতৃত্ব" },
+  { key: "child", label: "শিশু" },
+];
 
 export const Route = createFileRoute("/hospitals")({
   head: () => ({
