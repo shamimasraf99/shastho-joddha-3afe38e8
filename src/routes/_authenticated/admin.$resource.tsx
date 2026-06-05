@@ -36,6 +36,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Upload, X as XIcon } from "lucide-react";
+import { ImportFromFile } from "@/components/ImportFromFile";
 
 export const Route = createFileRoute("/_authenticated/admin/$resource")({
   beforeLoad: ({ params }) => {
@@ -269,6 +270,17 @@ function FormDialog({
           <DialogTitle>{isEdit ? `${def.singular} সম্পাদনা` : `নতুন ${def.singular}`}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {def.table === "articles" && (
+            <ImportFromFile
+              onImport={(d) =>
+                setValues((prev) => ({
+                  ...prev,
+                  ...(d.title ? { title: d.title } : {}),
+                  ...(d.content ? { content: d.content } : {}),
+                }))
+              }
+            />
+          )}
           {def.fields.map((f) => (
             <FieldInput
               key={f.key}
