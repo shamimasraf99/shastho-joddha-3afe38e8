@@ -111,7 +111,9 @@ function ArticlePage() {
     let active = true;
     supabase
       .from("articles")
-      .select("id,title,slug,excerpt,content,cover_image,audio_url,published_at,created_at,article_type,tags,meta_title,meta_description")
+      .select(
+        "id,title,slug,excerpt,content,cover_image,audio_url,published_at,created_at,article_type,tags,meta_title,meta_description",
+      )
       .eq("slug", slug)
       .eq("is_published", true)
       .maybeSingle()
@@ -120,7 +122,9 @@ function ArticlePage() {
         setItem((data as Article) || null);
         setLoading(false);
       });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [slug]);
 
   const backTo = item?.article_type === "encyclopedia" ? "/encyclopedia" : "/news";
@@ -133,10 +137,15 @@ function ArticlePage() {
         {loading ? (
           <div className="py-16 text-center text-muted-foreground">লোড হচ্ছে...</div>
         ) : !item ? (
-          <div className="rounded-lg border border-dashed border-border p-12 text-center text-muted-foreground">পোস্ট পাওয়া যায়নি।</div>
+          <div className="rounded-lg border border-dashed border-border p-12 text-center text-muted-foreground">
+            পোস্ট পাওয়া যায়নি।
+          </div>
         ) : (
           <article className="mx-auto max-w-3xl">
-            <Link to={backTo} className="mb-4 inline-flex items-center gap-1 text-sm text-primary hover:underline">
+            <Link
+              to={backTo}
+              className="mb-4 inline-flex items-center gap-1 text-sm text-primary hover:underline"
+            >
               <ArrowLeft className="h-4 w-4" /> {backLabel}
             </Link>
             <div className="text-xs font-semibold uppercase tracking-wider text-accent">{backLabel}</div>
