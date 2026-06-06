@@ -1,19 +1,73 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon } from "lucide-react";
+import { Search as SearchIcon, FileText, User, Building2, FlaskConical, Droplet, Video, Podcast, ShieldAlert, Layers } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 
 export const Route = createFileRoute("/search")({
   validateSearch: (search: Record<string, unknown>) => ({
     q: typeof search.q === "string" ? search.q : "",
   }),
   component: SearchPage,
-  errorComponent: ({ error }) => <div className="container mx-auto p-6">{error.message}</div>,
-  notFoundComponent: () => <div className="container mx-auto p-6">পাওয়া যায়নি</div>,
+  head: () => ({
+    meta: [
+      { title: "অনুসন্ধান — স্বাস্থ্যপিডিয়া" },
+      { name: "description", content: "স্বাস্থ্যপিডিয়ায় রোগ, ডাক্তার, হাসপাতাল ও আরও অনেক কিছু খুঁজুন।" },
+    ],
+  }),
+  errorComponent: ({ error }) => (
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
+      <main className="container mx-auto px-4 py-8">
+        <div className="rounded-lg border border-border bg-card p-6 text-center">
+          <p className="text-muted-foreground">{error.message}</p>
+        </div>
+      </main>
+      <SiteFooter />
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
+      <main className="container mx-auto px-4 py-8">
+        <div className="rounded-lg border border-border bg-card p-6 text-center">
+          <p className="text-muted-foreground">পাওয়া যায়নি</p>
+        </div>
+      </main>
+      <SiteFooter />
+    </div>
+  ),
 });
 
 type Item = { type: string; title: string; subtitle?: string; href: string };
+
+const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  "সংবাদ": FileText,
+  "স্বাস্থ্যকোষ": FileText,
+  "ক্যাটাগরি": Layers,
+  "ডাক্তার": User,
+  "হাসপাতাল": Building2,
+  "ল্যাব": FlaskConical,
+  "রক্তদাতা": Droplet,
+  "ভিডিও": Video,
+  "পডকাস্ট": Podcast,
+  "Myth": ShieldAlert,
+};
+
+const typeColors: Record<string, string> = {
+  "সংবাদ": "bg-sky-50 text-sky-700 border-sky-200",
+  "স্বাস্থ্যকোষ": "bg-emerald-50 text-emerald-700 border-emerald-200",
+  "ক্যাটাগরি": "bg-violet-50 text-violet-700 border-violet-200",
+  "ডাক্তার": "bg-rose-50 text-rose-700 border-rose-200",
+  "হাসপাতাল": "bg-blue-50 text-blue-700 border-blue-200",
+  "ল্যাব": "bg-amber-50 text-amber-700 border-amber-200",
+  "রক্তদাতা": "bg-red-50 text-red-700 border-red-200",
+  "ভিডিও": "bg-pink-50 text-pink-700 border-pink-200",
+  "পডকাস্ট": "bg-orange-50 text-orange-700 border-orange-200",
+  "Myth": "bg-purple-50 text-purple-700 border-purple-200",
+};
 
 async function runSearch(q: string): Promise<Item[]> {
   const term = q.trim();
@@ -68,48 +122,121 @@ function SearchPage() {
     return acc;
   }, {});
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-4 text-2xl font-bold">অনুসন্ধান</h1>
-      <form onSubmit={submit} className="mb-6 max-w-2xl">
-        <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="search"
-            value={term}
-            onChange={(e) => setTerm(e.target.value)}
-            placeholder="রোগ, লক্ষণ, ঔষধ, ডাক্তার বা হাসপাতাল খুঁজুন..."
-            className="w-full rounded-md border border-border bg-background py-2.5 pl-9 pr-24 text-sm outline-none ring-primary/30 focus:ring-2"
-            autoFocus
-          />
-          <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground">খুঁজুন</button>
-        </div>
-      </form>
+  const typeOrder = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth"];
+  const sortedTypes = Object.keys(grouped).sort((a, b) => {
+    const ai = typeOrder.indexOf(a);
+    const bi = typeOrder.indexOf(b);
+    if (ai === -1 && bi === -1) return a.localeCompare(b);
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
 
-      {!q.trim() ? (
-        <p className="text-muted-foreground">কীওয়ার্ড লিখে অনুসন্ধান করুন।</p>
-      ) : isLoading ? (
-        <p className="text-muted-foreground">লোড হচ্ছে...</p>
-      ) : (data?.length ?? 0) === 0 ? (
-        <p className="text-muted-foreground">"{q}" এর জন্য কোনো ফলাফল পাওয়া যায়নি।</p>
-      ) : (
-        <div className="space-y-6">
-          <p className="text-sm text-muted-foreground">"{q}" এর জন্য {data!.length} টি ফলাফল</p>
-          {Object.entries(grouped).map(([type, items]) => (
-            <section key={type}>
-              <h2 className="mb-2 text-lg font-bold">{type} <span className="text-sm font-normal text-muted-foreground">({items.length})</span></h2>
-              <div className="grid gap-2">
-                {items.map((it, i) => (
-                  <Link key={i} to={it.href} className="block rounded-lg border bg-card p-3 hover:bg-secondary/50">
-                    <div className="font-semibold">{it.title}</div>
-                    {it.subtitle && <div className="line-clamp-2 text-sm text-muted-foreground">{it.subtitle}</div>}
-                  </Link>
-                ))}
+  return (
+    <div className="min-h-screen bg-background">
+      <SiteHeader />
+      <main>
+        {/* Hero search bar */}
+        <section className="border-b border-border bg-gradient-to-br from-primary via-primary to-primary-dark text-primary-foreground">
+          <div className="container mx-auto px-4 py-10 text-center md:py-14">
+            <h1 className="text-2xl font-bold md:text-3xl">অনুসন্ধান</h1>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-primary-foreground/85">
+              রোগ, লক্ষণ, ঔষধ, ডাক্তার বা হাসপাতাল খুঁজুন...
+            </p>
+            <form onSubmit={submit} className="mx-auto mt-5 max-w-2xl">
+              <div className="relative">
+                <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="search"
+                  value={term}
+                  onChange={(e) => setTerm(e.target.value)}
+                  placeholder="যেমন: হার্ট অ্যাটাক, ডায়াবেটিস, প্যারাসিটামল..."
+                  className="w-full rounded-lg border border-white/20 bg-card py-4 pl-12 pr-32 text-base text-foreground shadow-lg outline-none placeholder:text-muted-foreground"
+                  autoFocus
+                />
+                <button
+                  type="submit"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground hover:opacity-90"
+                >
+                  খুঁজুন
+                </button>
               </div>
-            </section>
-          ))}
-        </div>
-      )}
+            </form>
+          </div>
+        </section>
+
+        {/* Results */}
+        <section className="container mx-auto px-4 py-8 md:py-10">
+          {!q.trim() ? (
+            <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
+              <SearchIcon className="mx-auto h-10 w-10 text-muted-foreground/60" />
+              <p className="mt-3 text-muted-foreground">কীওয়ার্ড লিখে অনুসন্ধান করুন।</p>
+            </div>
+          ) : isLoading ? (
+            <div className="space-y-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="space-y-3">
+                  <div className="h-6 w-32 animate-pulse rounded bg-secondary" />
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {Array.from({ length: 3 }).map((_, j) => (
+                      <div key={j} className="h-24 animate-pulse rounded-lg border border-border bg-secondary/40" />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (data?.length ?? 0) === 0 ? (
+            <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
+              <SearchIcon className="mx-auto h-10 w-10 text-muted-foreground/60" />
+              <p className="mt-3 text-muted-foreground">
+                "<span className="font-semibold text-foreground">{q}</span>" এর জন্য কোনো ফলাফল পাওয়া যায়নি।
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-8">
+              <p className="text-sm text-muted-foreground">
+                "<span className="font-semibold text-foreground">{q}</span>" এর জন্য{" "}
+                <span className="font-semibold text-foreground">{data!.length}</span> টি ফলাফল
+              </p>
+              {sortedTypes.map((type) => {
+                const items = grouped[type];
+                const Icon = typeIcons[type] || FileText;
+                const badgeClass = typeColors[type] || "bg-secondary text-foreground border-border";
+                return (
+                  <section key={type}>
+                    <div className="mb-3 flex items-center gap-2">
+                      <Icon className="h-5 w-5 text-primary" />
+                      <h2 className="text-lg font-bold text-foreground">{type}</h2>
+                      <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${badgeClass}`}>
+                        {items.length}
+                      </span>
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      {items.map((it, i) => (
+                        <Link
+                          key={i}
+                          to={it.href}
+                          className="group flex flex-col rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
+                        >
+                          <div className="font-semibold text-foreground group-hover:text-primary">
+                            {it.title}
+                          </div>
+                          {it.subtitle && (
+                            <div className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                              {it.subtitle}
+                            </div>
+                          )}
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </main>
+      <SiteFooter />
     </div>
   );
 }
