@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideosRouteImport } from './routes/videos'
 import { Route as ToolsRouteImport } from './routes/tools'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SearchRouteImport } from './routes/search'
 import { Route as QaRouteImport } from './routes/qa'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PodcastsRouteImport } from './routes/podcasts'
@@ -49,6 +50,11 @@ const ToolsRoute = ToolsRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QaRoute = QaRouteImport.update({
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
+  '/search': typeof SearchRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
+  '/search': typeof SearchRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
+  '/search': typeof SearchRoute
   '/terms': typeof TermsRoute
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
@@ -268,6 +277,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/privacy'
     | '/qa'
+    | '/search'
     | '/terms'
     | '/tools'
     | '/videos'
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/privacy'
     | '/qa'
+    | '/search'
     | '/terms'
     | '/tools'
     | '/videos'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/podcasts'
     | '/privacy'
     | '/qa'
+    | '/search'
     | '/terms'
     | '/tools'
     | '/videos'
@@ -351,6 +363,7 @@ export interface RootRouteChildren {
   PodcastsRoute: typeof PodcastsRoute
   PrivacyRoute: typeof PrivacyRoute
   QaRoute: typeof QaRoute
+  SearchRoute: typeof SearchRoute
   TermsRoute: typeof TermsRoute
   ToolsRoute: typeof ToolsRoute
   VideosRoute: typeof VideosRoute
@@ -379,6 +392,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/qa': {
@@ -592,6 +612,7 @@ const rootRouteChildren: RootRouteChildren = {
   PodcastsRoute: PodcastsRoute,
   PrivacyRoute: PrivacyRoute,
   QaRoute: QaRoute,
+  SearchRoute: SearchRoute,
   TermsRoute: TermsRoute,
   ToolsRoute: ToolsRoute,
   VideosRoute: VideosRoute,
