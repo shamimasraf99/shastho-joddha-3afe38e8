@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
 
 /**
  * Discourages copying, right-click, text selection, and basic screenshot shortcuts.
