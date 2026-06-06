@@ -37,6 +37,7 @@ import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Upload, X as XIcon } from "lucide-react";
 import { ImportFromFile } from "@/components/ImportFromFile";
+import { ImportFromCSV } from "@/components/ImportFromCSV";
 
 export const Route = createFileRoute("/_authenticated/admin/$resource")({
   beforeLoad: ({ params }) => {
@@ -56,6 +57,7 @@ function ResourcePage() {
   const [deletingId, setDeletingId] = useState<unknown>(null);
 
   const queryKey = ["admin-list", def.table, def.filter?.value ?? null, search];
+  const csvDisabled = ["articles", "news", "encyclopedia"].includes(resource);
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey,
@@ -122,6 +124,13 @@ function ResourcePage() {
           </Button>
         </div>
       </div>
+
+      {!csvDisabled && (
+        <ImportFromCSV
+          def={def}
+          onDone={() => qc.invalidateQueries({ queryKey: ["admin-list", def.table] })}
+        />
+      )}
 
       <div className="border rounded-xl bg-card overflow-x-auto">
         <Table>
