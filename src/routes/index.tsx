@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+import { LocationMap } from "@/components/LocationMap";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -164,17 +165,8 @@ function Index() {
         {/* Health News */}
         <NewsSection />
 
-        {/* Placeholder for upcoming sections */}
-        <section className="container mx-auto px-4 pb-16">
-          <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
-            <h3 className="text-lg font-bold text-primary">আরও আসছে…</h3>
-            <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
-              পরবর্তী ধাপে যুক্ত হবে: ডাক্তার ও হাসপাতাল ডিরেক্টরি (সার্চ ও ফিল্টার সহ),
-              স্বাস্থ্য সংবাদ, AI সার্চ, হেলথ ক্যালকুলেটর, পডকাস্ট, ভিডিও, Myth Busters,
-              প্রশ্নোত্তর এবং সম্পূর্ণ অ্যাডমিন CMS।
-            </p>
-          </div>
-        </section>
+        {/* Location Map */}
+        <LocationMap />
       </main>
       <SiteFooter />
     </div>
