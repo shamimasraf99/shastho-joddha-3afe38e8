@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Heart, Droplet, Activity, Ribbon, Brain, Baby, Apple,
@@ -51,6 +52,8 @@ const categories: CategoryItem[] = [
 ];
 
 function Index() {
+  const navigate = useNavigate();
+  const [q, setQ] = useState("");
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -67,13 +70,15 @@ function Index() {
               নির্ভরযোগ্য তথ্য বাংলায়, এক ঠিকানায়।
             </p>
             <form
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={(e) => { e.preventDefault(); const t = q.trim(); if (t) navigate({ to: "/search", search: { q: t } }); }}
               className="mx-auto mt-6 max-w-2xl"
             >
               <div className="relative">
                 <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="search"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
                   placeholder="যেমন: হার্ট অ্যাটাক, ডায়াবেটিস, প্যারাসিটামল..."
                   className="w-full rounded-lg border border-white/20 bg-card py-4 pl-12 pr-32 text-base text-foreground shadow-lg outline-none placeholder:text-muted-foreground"
                 />

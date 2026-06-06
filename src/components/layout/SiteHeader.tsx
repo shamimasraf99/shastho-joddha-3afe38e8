@@ -1,5 +1,6 @@
 import { Search, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { TopBar } from "./TopBar";
 import { BreakingTicker } from "./BreakingTicker";
 import logoAsset from "@/assets/shasthopedia-logo-user.png.asset.json";
@@ -23,6 +24,15 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const [q, setQ] = useState("");
+  const [mq, setMq] = useState("");
+  const go = (val: string) => {
+    const t = val.trim();
+    if (!t) return;
+    navigate({ to: "/search", search: { q: t } });
+    setOpen(false);
+  };
   const { data: settings } = useSiteSettings();
   const logoUrl = settings?.site.logo_url || logoAsset.url;
   const siteName = settings?.site.name || "স্বাস্থ্যপিডিয়া";
@@ -53,11 +63,13 @@ export function SiteHeader() {
             </div>
           </a>
 
-          <form className="hidden flex-1 md:block" onSubmit={(e) => e.preventDefault()}>
+          <form className="hidden flex-1 md:block" onSubmit={(e) => { e.preventDefault(); go(q); }}>
             <div className="relative mx-auto max-w-2xl">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="search"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
                 placeholder="রোগ, লক্ষণ, ঔষধ, ডাক্তার বা হাসপাতাল খুঁজুন..."
                 className="w-full rounded-md border border-border bg-background py-2.5 pl-9 pr-4 text-sm outline-none ring-primary/30 placeholder:text-muted-foreground focus:ring-2"
               />
@@ -91,11 +103,13 @@ export function SiteHeader() {
         {open && (
           <div className="border-t border-border bg-card md:hidden">
             <div className="container mx-auto px-4 py-3">
-              <form onSubmit={(e) => e.preventDefault()} className="mb-3">
+              <form onSubmit={(e) => { e.preventDefault(); go(mq); }} className="mb-3">
                 <div className="relative">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="search"
+                    value={mq}
+                    onChange={(e) => setMq(e.target.value)}
                     placeholder="খুঁজুন..."
                     className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none"
                   />
