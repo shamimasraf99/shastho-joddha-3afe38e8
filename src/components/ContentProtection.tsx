@@ -48,10 +48,35 @@ export function ContentProtection() {
     document.addEventListener("selectstart", prevent);
     document.addEventListener("keydown", onKeyDown);
 
+    // Catch selection that slips past selectstart (e.g. inside tables / rich content)
+    const onSelectionChange = () => {
+      const sel = document.getSelection();
+      if (!sel || sel.isCollapsed) return;
+      const anchor = sel.anchorNode as Node | null;
+      if (anchor) {
+        const el =
+          anchor.nodeType === 1
+            ? (anchor as HTMLElement)
+            : (anchor.parentElement as HTMLElement | null);
+        // allow selection inside form inputs
+        if (
+          el &&
+          el.closest(
+            'input, textarea, [contenteditable="true"], #__protect_popup',
+          )
+        ) {
+          return;
+        }
+      }
+      sel.removeAllRanges();
+      trigger();
+    };
+    document.addEventListener("selectionchange", onSelectionChange);
+
     const style = document.createElement("style");
     style.setAttribute("data-content-protection", "true");
     style.innerHTML = `
-      html, body {
+      html, body, html *:not(input):not(textarea):not([contenteditable="true"]) {
         -webkit-user-select: none !important;
         -moz-user-select: none !important;
         -ms-user-select: none !important;
@@ -95,6 +120,7 @@ export function ContentProtection() {
       document.removeEventListener("dragstart", prevent);
       document.removeEventListener("selectstart", prevent);
       document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("selectionchange", onSelectionChange);
       style.remove();
     };
   }, []);
