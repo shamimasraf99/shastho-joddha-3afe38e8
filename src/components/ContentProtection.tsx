@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 /**
  * Discourages copying, right-click, text selection, and basic screenshot shortcuts.
@@ -6,8 +7,16 @@ import { useEffect } from "react";
  */
 export function ContentProtection() {
   useEffect(() => {
+    const warn = () => {
+      toast.warning("সতর্কতা!", {
+        description: "এই ওয়েবসাইটের কনটেন্ট কপি বা স্ক্রিনশট নেওয়া নিষিদ্ধ।",
+        duration: 3000,
+      });
+    };
+
     const prevent = (e: Event) => {
       e.preventDefault();
+      warn();
       return false;
     };
 
@@ -19,6 +28,7 @@ export function ContentProtection() {
           navigator.clipboard?.writeText("");
         } catch {}
         e.preventDefault();
+        warn();
         return;
       }
       // Block common shortcuts: copy/cut/save/print/view-source/devtools/select-all
@@ -27,6 +37,7 @@ export function ContentProtection() {
         ["c", "x", "s", "p", "u", "a"].includes(k)
       ) {
         e.preventDefault();
+        warn();
         return;
       }
       // DevTools
@@ -35,6 +46,7 @@ export function ContentProtection() {
         ((e.ctrlKey || e.metaKey) && e.shiftKey && ["i", "j", "c"].includes(k))
       ) {
         e.preventDefault();
+        warn();
         return;
       }
     };
@@ -82,16 +94,6 @@ export function ContentProtection() {
     `;
     document.head.appendChild(style);
 
-    // Blur screen when window loses focus (helps against some screenshot tools)
-    const onBlur = () => {
-      document.body.style.filter = "blur(8px)";
-    };
-    const onFocus = () => {
-      document.body.style.filter = "";
-    };
-    window.addEventListener("blur", onBlur);
-    window.addEventListener("focus", onFocus);
-
     return () => {
       document.removeEventListener("contextmenu", prevent);
       document.removeEventListener("copy", prevent);
@@ -99,10 +101,7 @@ export function ContentProtection() {
       document.removeEventListener("dragstart", prevent);
       document.removeEventListener("selectstart", prevent);
       document.removeEventListener("keydown", onKeyDown);
-      window.removeEventListener("blur", onBlur);
-      window.removeEventListener("focus", onFocus);
       style.remove();
-      document.body.style.filter = "";
     };
   }, []);
 
