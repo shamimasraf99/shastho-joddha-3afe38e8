@@ -3,13 +3,11 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search as SearchIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { z } from "zod";
-
-const schema = z.object({ q: fallback(z.string(), "").default("") });
 
 export const Route = createFileRoute("/search")({
-  validateSearch: zodValidator(schema),
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search.q === "string" ? search.q : "",
+  }),
   component: SearchPage,
   errorComponent: ({ error }) => <div className="container mx-auto p-6">{error.message}</div>,
   notFoundComponent: () => <div className="container mx-auto p-6">পাওয়া যায়নি</div>,
