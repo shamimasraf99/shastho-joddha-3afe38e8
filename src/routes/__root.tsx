@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { FloatingChatButtons } from "../components/layout/FloatingChatButtons";
+import { ContentProtection } from "../components/ContentProtection";
 
 function NotFoundComponent() {
   return (
@@ -129,6 +130,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ContentProtection />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <FloatingChatButtons />
