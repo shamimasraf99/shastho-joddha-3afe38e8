@@ -57,7 +57,7 @@ function ResourcePage() {
   const [deletingId, setDeletingId] = useState<unknown>(null);
 
   const queryKey = ["admin-list", def.table, def.filter?.value ?? null, search];
-  const csvDisabled = ["articles", "news", "encyclopedia"].includes(resource);
+  const csvDisabled = ["articles", "news", "encyclopedia", "categories", "advertisements"].includes(resource);
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey,
