@@ -47,6 +47,7 @@ export const Route = createFileRoute("/search")({
 });
 
 type Item = { type: string; title: string; subtitle?: string; href: string };
+type ScoredItem = Item & { _hay: string };
 
 const searchableLimit = 50;
 
@@ -94,6 +95,25 @@ function buildDonorSearch(terms: string[]) {
     .map((term) => `blood_group.eq.${term}`);
 
   return [...textConditions, ...bloodConditions].join(",");
+}
+
+// Bangla + Latin word-character class. A "whole word" match means the term
+// is not embedded inside a larger word (e.g. "ল্যাব" must not match "ল্যাবএইড").
+const WORD_CHAR = "[A-Za-z0-9\\u0980-\\u09FF]";
+function escapeRegex(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+function hasWholeWord(haystack: string, needle: string) {
+  if (!haystack || !needle) return false;
+  const re = new RegExp(`(?<!${WORD_CHAR})${escapeRegex(needle)}(?!${WORD_CHAR})`, "i");
+  return re.test(haystack);
+}
+function matchesAnyTerm(haystack: string, terms: string[]) {
+  const h = haystack.normalize("NFC");
+  return terms.some((t) => hasWholeWord(h, t.normalize("NFC")));
+}
+function joinFields(...parts: Array<string | null | undefined>) {
+  return parts.filter(Boolean).join(" \u241F ");
 }
 
 const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -153,24 +173,29 @@ async function runSearch(q: string): Promise<Item[]> {
     supabase.from("body_parts").select("name,slug,description").eq("is_active", true).or(bodyPartSearch).limit(searchableLimit),
   ]);
 
-  const out: Item[] = [];
-  for (const a of articles.data ?? []) {
+  const out: ScoredItem[] = [];
+  for (const a of (articles.data as any[]) ?? []) {
     const type = a.article_type === "news" ? "সংবাদ" : "স্বাস্থ্যকোষ";
-    out.push({ type, title: a.title, subtitle: a.excerpt ?? undefined, href: `/article/${a.slug}` });
+    out.push({ type, title: a.title, subtitle: a.excerpt ?? undefined, href: `/article/${a.slug}`, _hay: joinFields(a.title, a.excerpt, a.content) });
   }
-  for (const c of cats.data ?? []) out.push({ type: "ক্যাটাগরি", title: c.title, subtitle: c.description ?? undefined, href: `/category/${c.slug}` });
-  for (const d of doctors.data ?? []) out.push({ type: "ডাক্তার", title: d.name, subtitle: [d.speciality, d.district].filter(Boolean).join(" • "), href: `/doctors?id=${d.id}` });
-  for (const h of hospitals.data ?? []) {
+  for (const c of (cats.data as any[]) ?? []) out.push({ type: "ক্যাটাগরি", title: c.title, subtitle: c.description ?? undefined, href: `/category/${c.slug}`, _hay: joinFields(c.title, c.description) });
+  for (const d of (doctors.data as any[]) ?? []) out.push({ type: "ডাক্তার", title: d.name, subtitle: [d.speciality, d.district].filter(Boolean).join(" • "), href: `/doctors?id=${d.id}`, _hay: joinFields(d.name, d.speciality, d.designation, d.hospital, d.chamber, d.district, d.bio) });
+  for (const h of (hospitals.data as any[]) ?? []) {
     const href = h.slug ? `/hospital/${h.slug}` : `/hospitals?id=${h.id}`;
-    out.push({ type: "হাসপাতাল", title: h.name, subtitle: [h.district, h.address].filter(Boolean).join(" • "), href });
+    out.push({ type: "হাসপাতাল", title: h.name, subtitle: [h.district, h.address].filter(Boolean).join(" • "), href, _hay: joinFields(h.name, h.district, h.address, h.description, h.category) });
   }
-  for (const l of labs.data ?? []) out.push({ type: "ল্যাব", title: l.name, subtitle: [l.test_type, l.district].filter(Boolean).join(" • "), href: `/labs?id=${l.id}` });
-  for (const b of donors.data ?? []) out.push({ type: "রক্তদাতা", title: b.name, subtitle: [b.blood_group, b.district].filter(Boolean).join(" • "), href: `/donors?id=${b.id}` });
-  for (const v of videos.data ?? []) out.push({ type: "ভিডিও", title: v.title, subtitle: v.category ?? undefined, href: `/videos?id=${v.id}` });
-  for (const p of podcasts.data ?? []) out.push({ type: "পডকাস্ট", title: p.title, subtitle: p.description ?? undefined, href: `/podcasts?id=${p.id}` });
-  for (const m of myths.data ?? []) out.push({ type: "Myth", title: m.title, subtitle: m.claim ?? undefined, href: `/myths?id=${m.id}` });
-  for (const bp of bodyParts.data ?? []) out.push({ type: "বডি", title: bp.name, subtitle: bp.description ?? undefined, href: `/body/${bp.slug}` });
-  return out;
+  for (const l of (labs.data as any[]) ?? []) out.push({ type: "ল্যাব", title: l.name, subtitle: [l.test_type, l.district].filter(Boolean).join(" • "), href: `/labs?id=${l.id}`, _hay: joinFields(l.name, l.test_type, l.district, l.address) });
+  for (const b of (donors.data as any[]) ?? []) out.push({ type: "রক্তদাতা", title: b.name, subtitle: [b.blood_group, b.district].filter(Boolean).join(" • "), href: `/donors?id=${b.id}`, _hay: joinFields(b.name, b.blood_group, b.district) });
+  for (const v of (videos.data as any[]) ?? []) out.push({ type: "ভিডিও", title: v.title, subtitle: v.category ?? undefined, href: `/videos?id=${v.id}`, _hay: joinFields(v.title, v.description, v.category) });
+  for (const p of (podcasts.data as any[]) ?? []) out.push({ type: "পডকাস্ট", title: p.title, subtitle: p.description ?? undefined, href: `/podcasts?id=${p.id}`, _hay: joinFields(p.title, p.description) });
+  for (const m of (myths.data as any[]) ?? []) out.push({ type: "Myth", title: m.title, subtitle: m.claim ?? undefined, href: `/myths?id=${m.id}`, _hay: joinFields(m.title, m.claim, m.fact, m.doctor_name) });
+  for (const bp of (bodyParts.data as any[]) ?? []) out.push({ type: "বডি", title: bp.name, subtitle: bp.description ?? undefined, href: `/body/${bp.slug}`, _hay: joinFields(bp.name, bp.description) });
+
+  // Strict whole-word filter — only keep items where one of the search terms
+  // appears as a standalone word (not embedded inside a larger word).
+  return out
+    .filter((it) => matchesAnyTerm(it._hay, terms))
+    .map(({ _hay, ...rest }) => rest);
 }
 
 const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth", "বডি"];
