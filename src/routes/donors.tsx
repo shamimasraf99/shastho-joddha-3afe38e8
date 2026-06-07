@@ -17,6 +17,7 @@ type Donor = {
 export const Route = createFileRoute("/donors")({
   validateSearch: (s: Record<string, unknown>) => ({
     q: typeof s.q === "string" ? s.q : "",
+    id: typeof s.id === "string" ? s.id : "",
   }),
   head: () => ({
     meta: [
@@ -41,7 +42,7 @@ export const Route = createFileRoute("/donors")({
 });
 
 function DonorsPage() {
-  const { q: initialQ } = Route.useSearch();
+  const { q: initialQ, id: focusId } = Route.useSearch();
   const [donors, setDonors] = useState<Donor[]>([]);
   const [loading, setLoading] = useState(true);
   const [bloodGroup, setBloodGroup] = useState<string>("");
@@ -76,6 +77,7 @@ function DonorsPage() {
   );
 
   const filtered = donors.filter((d) => {
+    if (focusId) return d.id === focusId;
     if (bloodGroup && d.blood_group !== bloodGroup) return false;
     if (district && d.district !== district) return false;
     if (q) {

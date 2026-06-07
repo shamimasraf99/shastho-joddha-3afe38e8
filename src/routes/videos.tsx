@@ -15,6 +15,9 @@ type Video = {
 };
 
 export const Route = createFileRoute("/videos")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    id: typeof s.id === "string" ? s.id : "",
+  }),
   head: () => ({
     meta: [
       { title: "ভিডিও — স্বাস্থ্যপিডিয়া" },
@@ -35,6 +38,7 @@ export const Route = createFileRoute("/videos")({
 });
 
 function VideosPage() {
+  const { id: focusId } = Route.useSearch();
   const [items, setItems] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState<Video | null>(null);
@@ -55,6 +59,13 @@ function VideosPage() {
       });
     return () => { alive = false; };
   }, []);
+
+  useEffect(() => {
+    if (focusId && items.length) {
+      const v = items.find((x) => x.id === focusId);
+      if (v) setActive(v);
+    }
+  }, [focusId, items]);
 
   return (
     <div className="min-h-screen bg-background">

@@ -78,8 +78,8 @@ async function runSearch(q: string): Promise<Item[]> {
   const like = `%${term}%`;
   const [articles, doctors, hospitals, labs, donors, videos, podcasts, myths, cats, bodyParts] = await Promise.all([
     supabase.from("articles").select("title,slug,excerpt,article_type").eq("is_published", true).or(`title.ilike.${like},excerpt.ilike.${like},content.ilike.${like}`).limit(20),
-    supabase.from("doctors").select("name,slug,speciality,district").eq("is_active", true).or(`name.ilike.${like},speciality.ilike.${like},hospital.ilike.${like}`).limit(20),
-    supabase.from("hospitals").select("name,slug,district,address").eq("is_active", true).or(`name.ilike.${like},district.ilike.${like},address.ilike.${like}`).limit(20),
+    supabase.from("doctors").select("id,name,slug,speciality,district").eq("is_active", true).or(`name.ilike.${like},speciality.ilike.${like},hospital.ilike.${like}`).limit(20),
+    supabase.from("hospitals").select("id,name,slug,district,address").eq("is_active", true).or(`name.ilike.${like},district.ilike.${like},address.ilike.${like}`).limit(20),
     supabase.from("labs").select("id,name,test_type,district").eq("is_active", true).or(`name.ilike.${like},test_type.ilike.${like},district.ilike.${like}`).limit(20),
     supabase.from("blood_donors").select("id,name,blood_group,district").eq("is_available", true).or(`name.ilike.${like},district.ilike.${like},blood_group.ilike.${like}`).limit(20),
     supabase.from("videos").select("id,title,category").eq("is_published", true).or(`title.ilike.${like},category.ilike.${like}`).limit(20),
@@ -95,13 +95,13 @@ async function runSearch(q: string): Promise<Item[]> {
     out.push({ type, title: a.title, subtitle: a.excerpt ?? undefined, href: `/article/${a.slug}` });
   }
   for (const c of cats.data ?? []) out.push({ type: "ক্যাটাগরি", title: c.title, subtitle: c.description ?? undefined, href: `/category/${c.slug}` });
-  for (const d of doctors.data ?? []) out.push({ type: "ডাক্তার", title: d.name, subtitle: [d.speciality, d.district].filter(Boolean).join(" • "), href: `/doctors?q=${encodeURIComponent(d.name)}` });
-  for (const h of hospitals.data ?? []) out.push({ type: "হাসপাতাল", title: h.name, subtitle: [h.district, h.address].filter(Boolean).join(" • "), href: `/hospitals?q=${encodeURIComponent(h.name)}` });
-  for (const l of labs.data ?? []) out.push({ type: "ল্যাব", title: l.name, subtitle: [l.test_type, l.district].filter(Boolean).join(" • "), href: `/labs` });
-  for (const b of donors.data ?? []) out.push({ type: "রক্তদাতা", title: b.name, subtitle: [b.blood_group, b.district].filter(Boolean).join(" • "), href: `/donors` });
-  for (const v of videos.data ?? []) out.push({ type: "ভিডিও", title: v.title, subtitle: v.category ?? undefined, href: `/videos` });
-  for (const p of podcasts.data ?? []) out.push({ type: "পডকাস্ট", title: p.title, subtitle: p.description ?? undefined, href: `/podcasts` });
-  for (const m of myths.data ?? []) out.push({ type: "Myth", title: m.title, subtitle: m.claim ?? undefined, href: `/myths` });
+  for (const d of doctors.data ?? []) out.push({ type: "ডাক্তার", title: d.name, subtitle: [d.speciality, d.district].filter(Boolean).join(" • "), href: `/doctors?id=${d.id}` });
+  for (const h of hospitals.data ?? []) out.push({ type: "হাসপাতাল", title: h.name, subtitle: [h.district, h.address].filter(Boolean).join(" • "), href: `/hospitals?id=${h.id}` });
+  for (const l of labs.data ?? []) out.push({ type: "ল্যাব", title: l.name, subtitle: [l.test_type, l.district].filter(Boolean).join(" • "), href: `/labs?id=${l.id}` });
+  for (const b of donors.data ?? []) out.push({ type: "রক্তদাতা", title: b.name, subtitle: [b.blood_group, b.district].filter(Boolean).join(" • "), href: `/donors?id=${b.id}` });
+  for (const v of videos.data ?? []) out.push({ type: "ভিডিও", title: v.title, subtitle: v.category ?? undefined, href: `/videos?id=${v.id}` });
+  for (const p of podcasts.data ?? []) out.push({ type: "পডকাস্ট", title: p.title, subtitle: p.description ?? undefined, href: `/podcasts?id=${p.id}` });
+  for (const m of myths.data ?? []) out.push({ type: "Myth", title: m.title, subtitle: m.claim ?? undefined, href: `/myths?id=${m.id}` });
   for (const bp of bodyParts.data ?? []) out.push({ type: "বডি", title: bp.name, subtitle: bp.description ?? undefined, href: `/body/${bp.slug}` });
   return out;
 }

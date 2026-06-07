@@ -15,6 +15,9 @@ type Podcast = {
 };
 
 export const Route = createFileRoute("/podcasts")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    id: typeof s.id === "string" ? s.id : "",
+  }),
   head: () => ({
     meta: [
       { title: "পডকাস্ট — স্বাস্থ্যপিডিয়া" },
@@ -35,6 +38,7 @@ export const Route = createFileRoute("/podcasts")({
 });
 
 function PodcastsPage() {
+  const { id: focusId } = Route.useSearch();
   const [items, setItems] = useState<Podcast[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -69,7 +73,7 @@ function PodcastsPage() {
           <div className="rounded-lg border border-dashed border-border p-12 text-center text-muted-foreground">কোনো পডকাস্ট পাওয়া যায়নি।</div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((p) => (
+            {(focusId ? items.filter((p) => p.id === focusId) : items).map((p) => (
               <article key={p.id} className="group overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
                 {p.thumbnail ? (
                   <img src={p.thumbnail} alt={p.title} className="h-44 w-full object-cover" loading="lazy" />

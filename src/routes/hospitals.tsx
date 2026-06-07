@@ -28,6 +28,7 @@ const categories: { key: string; label: string }[] = [
 export const Route = createFileRoute("/hospitals")({
   validateSearch: (s: Record<string, unknown>) => ({
     q: typeof s.q === "string" ? s.q : "",
+    id: typeof s.id === "string" ? s.id : "",
   }),
   head: () => ({
     meta: [
@@ -49,7 +50,7 @@ export const Route = createFileRoute("/hospitals")({
 });
 
 function HospitalsPage() {
-  const { q: initialQ } = Route.useSearch();
+  const { q: initialQ, id: focusId } = Route.useSearch();
   const [items, setItems] = useState<Hospital[]>([]);
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState("");
@@ -79,6 +80,7 @@ function HospitalsPage() {
   );
 
   const filtered = items.filter((h) => {
+    if (focusId) return h.id === focusId;
     if (cat && h.category !== cat) return false;
     if (district && h.district !== district) return false;
     if (q) {

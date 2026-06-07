@@ -20,6 +20,7 @@ type Doctor = {
 export const Route = createFileRoute("/doctors")({
   validateSearch: (s: Record<string, unknown>) => ({
     q: typeof s.q === "string" ? s.q : "",
+    id: typeof s.id === "string" ? s.id : "",
   }),
   head: () => ({
     meta: [
@@ -44,10 +45,10 @@ export const Route = createFileRoute("/doctors")({
 });
 
 function DoctorsPage() {
-  const { q: initialQ } = Route.useSearch();
+  const { q: initialQ, id: focusId } = Route.useSearch();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
-  const [speciality, setSpeciality] = useState<string>(initialQ ? "" : "কার্ডিয়াক সার্জন");
+  const [speciality, setSpeciality] = useState<string>(initialQ || focusId ? "" : "কার্ডিয়াক সার্জন");
   const [district, setDistrict] = useState<string>("");
   const [q, setQ] = useState(initialQ);
 
@@ -79,6 +80,7 @@ function DoctorsPage() {
   );
 
   const filtered = doctors.filter((d) => {
+    if (focusId) return d.id === focusId;
     if (speciality && d.speciality !== speciality) return false;
     if (district && d.district !== district) return false;
     if (q) {
