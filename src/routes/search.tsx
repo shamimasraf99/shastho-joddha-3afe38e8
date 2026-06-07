@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search as SearchIcon, FileText, User, Building2, FlaskConical, Droplet, Video, Podcast, ShieldAlert, Layers, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,10 +56,15 @@ function addBanglaVariants(value: string, target: Set<string>) {
   target.add(value.replace(/য়/g, "য়"));
 }
 
-function getLeadingSearchChunk(value: string) {
-  const chars = Array.from(value);
-  if (chars.length < 7) return "";
-  return chars.slice(0, Math.max(4, chars.length - 4)).join("");
+function addNgrams(token: string, target: Set<string>, size: number) {
+  const chars = Array.from(token);
+  if (chars.length <= size) {
+    addBanglaVariants(token, target);
+    return;
+  }
+  for (let i = 0; i <= chars.length - size; i++) {
+    addBanglaVariants(chars.slice(i, i + size).join(""), target);
+  }
 }
 
 function createSearchTerms(q: string) {
@@ -74,14 +79,15 @@ function createSearchTerms(q: string) {
 
   for (const token of cleaned.split(/[\s।|/\\-]+/).filter(Boolean)) {
     addBanglaVariants(token, terms);
-    const chunk = getLeadingSearchChunk(token);
-    if (chunk) addBanglaVariants(chunk, terms);
+    const chars = Array.from(token);
+    if (chars.length >= 6) addNgrams(token, terms, 4);
+    if (chars.length >= 4) addNgrams(token, terms, 3);
   }
 
   return Array.from(terms)
     .map((term) => term.trim())
-    .filter((term) => term.length >= 2)
-    .slice(0, 12);
+    .filter((term) => Array.from(term).length >= 3)
+    .slice(0, 24);
 }
 
 function buildTextSearch(fields: string[], terms: string[]) {
@@ -188,6 +194,17 @@ function SearchPage() {
   const selectedTypes = new Set(type);
   const navigate = useNavigate({ from: "/search" });
   const [term, setTerm] = useState(q);
+
+  // Real-time search: debounce input and push to URL as user types.
+  useEffect(() => {
+    const trimmed = term.trim();
+    if (trimmed === q) return;
+    const t = setTimeout(() => {
+      navigate({ search: { q: trimmed, type: Array.from(selectedTypes) }, replace: true });
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [term]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["search", q],
