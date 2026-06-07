@@ -56,17 +56,6 @@ function addBanglaVariants(value: string, target: Set<string>) {
   target.add(value.replace(/য়/g, "য়"));
 }
 
-function addNgrams(token: string, target: Set<string>, size: number) {
-  const chars = Array.from(token);
-  if (chars.length <= size) {
-    addBanglaVariants(token, target);
-    return;
-  }
-  for (let i = 0; i <= chars.length - size; i++) {
-    addBanglaVariants(chars.slice(i, i + size).join(""), target);
-  }
-}
-
 function createSearchTerms(q: string) {
   const cleaned = q
     .trim()
@@ -79,17 +68,12 @@ function createSearchTerms(q: string) {
 
   for (const token of cleaned.split(/[\s।|/\\-]+/).filter(Boolean)) {
     addBanglaVariants(token, terms);
-    const chars = Array.from(token);
-    // Only fragment longer tokens — short tokens like "ল্যাব" would otherwise
-    // produce 3-char n-grams that match unrelated content across every table.
-    if (chars.length >= 8) addNgrams(token, terms, 5);
-    if (chars.length >= 10) addNgrams(token, terms, 4);
   }
 
   return Array.from(terms)
     .map((term) => term.trim())
-    .filter((term) => Array.from(term).length >= 3)
-    .slice(0, 24);
+    .filter((term) => Array.from(term).length >= 2)
+    .slice(0, 12);
 }
 
 function buildTextSearch(fields: string[], terms: string[]) {
