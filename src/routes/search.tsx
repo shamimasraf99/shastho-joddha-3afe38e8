@@ -196,9 +196,9 @@ function SearchPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">বিভাগ:</span>
               <button
                 type="button"
-                onClick={() => setFilter("")}
+                onClick={() => clearFilters()}
                 className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                  !type
+                  selectedTypes.size === 0
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
                 }`}
@@ -207,12 +207,12 @@ function SearchPage() {
               </button>
               {allTypes.map((t) => {
                 const Icon = typeIcons[t];
-                const active = type === t;
+                const active = selectedTypes.has(t);
                 return (
                   <button
                     key={t}
                     type="button"
-                    onClick={() => setFilter(t)}
+                    onClick={() => toggleFilter(t)}
                     className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                       active
                         ? "border-primary bg-primary text-primary-foreground"
