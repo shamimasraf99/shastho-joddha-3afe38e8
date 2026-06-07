@@ -117,11 +117,11 @@ function SearchPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ search: (prev) => ({ ...prev, q: term.trim() }) });
+    navigate({ search: { q: term.trim(), type } });
   };
 
   const setFilter = (t: string) => {
-    navigate({ search: (prev) => ({ ...prev, type: prev.type === t ? "" : t }) });
+    navigate({ search: { q, type: type === t ? "" : t } });
   };
 
   const filteredData = (data ?? []).filter((it) => {
