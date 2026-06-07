@@ -136,6 +136,7 @@ async function runSearch(q: string): Promise<Item[]> {
   const term = q.trim();
   if (!term) return [];
   const terms = createSearchTerms(term);
+  if (terms.length === 0) return [];
   const articleSearch = buildTextSearch(["title", "excerpt", "content"], terms);
   const doctorSearch = buildTextSearch(["name", "speciality", "designation", "hospital", "chamber", "district", "bio"], terms);
   const hospitalSearch = buildTextSearch(["name", "district", "address", "description", "category"], terms);
