@@ -27,10 +27,12 @@ export function SiteHeader() {
   const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [mq, setMq] = useState("");
-  const go = (val: string) => {
+  const [cat, setCat] = useState("");
+  const [mcat, setMcat] = useState("");
+  const go = (val: string, category: string) => {
     const t = val.trim();
     if (!t) return;
-    navigate({ to: "/search", search: { q: t } });
+    navigate({ to: "/search", search: { q: t, type: category ? [category] : [] } });
     setOpen(false);
   };
   const { data: settings } = useSiteSettings();
@@ -63,16 +65,34 @@ export function SiteHeader() {
             </div>
           </a>
 
-          <form className="hidden flex-1 md:block" onSubmit={(e) => { e.preventDefault(); go(q); }}>
-            <div className="relative mx-auto max-w-2xl">
+          <form className="hidden flex-1 md:block" onSubmit={(e) => { e.preventDefault(); go(q, cat); }}>
+            <div className="relative mx-auto flex max-w-2xl items-stretch overflow-hidden rounded-md border border-border bg-background ring-primary/30 focus-within:ring-2">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="search"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="রোগ, লক্ষণ, ঔষধ, ডাক্তার বা হাসপাতাল খুঁজুন..."
-                className="w-full rounded-md border border-border bg-background py-2.5 pl-9 pr-4 text-sm outline-none ring-primary/30 placeholder:text-muted-foreground focus:ring-2"
+                className="min-w-0 flex-1 bg-transparent py-2.5 pl-9 pr-3 text-sm outline-none placeholder:text-muted-foreground"
               />
+              <select
+                value={cat}
+                onChange={(e) => setCat(e.target.value)}
+                aria-label="বিভাগ"
+                className="shrink-0 border-l border-border bg-secondary/60 px-3 text-sm text-foreground outline-none hover:bg-secondary"
+              >
+                <option value="">সব বিভাগ</option>
+                <option value="সংবাদ">সংবাদ</option>
+                <option value="স্বাস্থ্যকোষ">স্বাস্থ্যকোষ</option>
+                <option value="ক্যাটাগরি">ক্যাটাগরি</option>
+                <option value="ডাক্তার">ডাক্তার</option>
+                <option value="হাসপাতাল">হাসপাতাল</option>
+                <option value="ল্যাব">ল্যাব</option>
+                <option value="রক্তদাতা">রক্তদাতা</option>
+                <option value="ভিডিও">ভিডিও</option>
+                <option value="পডকাস্ট">পডকাস্ট</option>
+                <option value="Myth">Myth</option>
+              </select>
             </div>
           </form>
 
@@ -103,7 +123,7 @@ export function SiteHeader() {
         {open && (
           <div className="border-t border-border bg-card md:hidden">
             <div className="container mx-auto px-4 py-3">
-              <form onSubmit={(e) => { e.preventDefault(); go(mq); }} className="mb-3">
+              <form onSubmit={(e) => { e.preventDefault(); go(mq, mcat); }} className="mb-3 space-y-2">
                 <div className="relative">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <input
@@ -114,6 +134,24 @@ export function SiteHeader() {
                     className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none"
                   />
                 </div>
+                <select
+                  value={mcat}
+                  onChange={(e) => setMcat(e.target.value)}
+                  aria-label="বিভাগ"
+                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm outline-none"
+                >
+                  <option value="">সব বিভাগ</option>
+                  <option value="সংবাদ">সংবাদ</option>
+                  <option value="স্বাস্থ্যকোষ">স্বাস্থ্যকোষ</option>
+                  <option value="ক্যাটাগরি">ক্যাটাগরি</option>
+                  <option value="ডাক্তার">ডাক্তার</option>
+                  <option value="হাসপাতাল">হাসপাতাল</option>
+                  <option value="ল্যাব">ল্যাব</option>
+                  <option value="রক্তদাতা">রক্তদাতা</option>
+                  <option value="ভিডিও">ভিডিও</option>
+                  <option value="পডকাস্ট">পডকাস্ট</option>
+                  <option value="Myth">Myth</option>
+                </select>
               </form>
               <div className="grid grid-cols-2 gap-1">
                 {nav.map((n) => (
