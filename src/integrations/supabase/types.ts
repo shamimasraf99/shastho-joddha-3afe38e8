@@ -690,6 +690,36 @@ export type Database = {
         }
         Relationships: []
       }
+      questions_editor_view: {
+        Row: {
+          answer: string | null
+          answered_by: string | null
+          created_at: string | null
+          id: string | null
+          is_published: boolean | null
+          question: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          answer?: string | null
+          answered_by?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_published?: boolean | null
+          question?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          answer?: string | null
+          answered_by?: string | null
+          created_at?: string | null
+          id?: string | null
+          is_published?: boolean | null
+          question?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       questions_public: {
         Row: {
           answer: string | null
@@ -722,6 +752,15 @@ export type Database = {
       }
     }
     Functions: {
+      answer_question: {
+        Args: {
+          _answer: string
+          _answered_by: string
+          _id: string
+          _publish: boolean
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
