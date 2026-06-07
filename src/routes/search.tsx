@@ -195,6 +195,17 @@ function SearchPage() {
   const navigate = useNavigate({ from: "/search" });
   const [term, setTerm] = useState(q);
 
+  // Real-time search: debounce input and push to URL as user types.
+  useEffect(() => {
+    const trimmed = term.trim();
+    if (trimmed === q) return;
+    const t = setTimeout(() => {
+      navigate({ search: { q: trimmed, type: Array.from(selectedTypes) }, replace: true });
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [term]);
+
   const { data, isLoading } = useQuery({
     queryKey: ["search", q],
     queryFn: () => runSearch(q),
