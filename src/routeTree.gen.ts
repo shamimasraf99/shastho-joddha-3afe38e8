@@ -24,11 +24,13 @@ import { Route as EncyclopediaRouteImport } from './routes/encyclopedia'
 import { Route as DonorsRouteImport } from './routes/donors'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BodyRouteImport } from './routes/body'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
+import { Route as BodySlugRouteImport } from './routes/body.$slug'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -112,6 +114,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BodyRoute = BodyRouteImport.update({
+  id: '/body',
+  path: '/body',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -135,6 +142,11 @@ const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BodySlugRoute = BodySlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BodyRoute,
 } as any)
 const ArticleSlugRoute = ArticleSlugRouteImport.update({
   id: '/article/$slug',
@@ -179,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/body': typeof BodyRouteWithChildren
   '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
@@ -196,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/videos': typeof VideosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/article/$slug': typeof ArticleSlugRoute
+  '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
@@ -207,6 +221,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/body': typeof BodyRouteWithChildren
   '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
@@ -223,6 +238,7 @@ export interface FileRoutesByTo {
   '/tools': typeof ToolsRoute
   '/videos': typeof VideosRoute
   '/article/$slug': typeof ArticleSlugRoute
+  '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
@@ -236,6 +252,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/body': typeof BodyRouteWithChildren
   '/contact': typeof ContactRoute
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
@@ -253,6 +270,7 @@ export interface FileRoutesById {
   '/videos': typeof VideosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/article/$slug': typeof ArticleSlugRoute
+  '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
@@ -266,6 +284,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/body'
     | '/contact'
     | '/doctors'
     | '/donors'
@@ -283,6 +302,7 @@ export interface FileRouteTypes {
     | '/videos'
     | '/admin'
     | '/article/$slug'
+    | '/body/$slug'
     | '/category/$slug'
     | '/admin/$resource'
     | '/admin/admins'
@@ -294,6 +314,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/body'
     | '/contact'
     | '/doctors'
     | '/donors'
@@ -310,6 +331,7 @@ export interface FileRouteTypes {
     | '/tools'
     | '/videos'
     | '/article/$slug'
+    | '/body/$slug'
     | '/category/$slug'
     | '/admin/$resource'
     | '/admin/admins'
@@ -322,6 +344,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/body'
     | '/contact'
     | '/doctors'
     | '/donors'
@@ -339,6 +362,7 @@ export interface FileRouteTypes {
     | '/videos'
     | '/_authenticated/admin'
     | '/article/$slug'
+    | '/body/$slug'
     | '/category/$slug'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/admins'
@@ -352,6 +376,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  BodyRoute: typeof BodyRouteWithChildren
   ContactRoute: typeof ContactRoute
   DoctorsRoute: typeof DoctorsRoute
   DonorsRoute: typeof DonorsRoute
@@ -478,6 +503,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/body': {
+      id: '/body'
+      path: '/body'
+      fullPath: '/body'
+      preLoaderRoute: typeof BodyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -512,6 +544,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/category/$slug'
       preLoaderRoute: typeof CategorySlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/body/$slug': {
+      id: '/body/$slug'
+      path: '/$slug'
+      fullPath: '/body/$slug'
+      preLoaderRoute: typeof BodySlugRouteImport
+      parentRoute: typeof BodyRoute
     }
     '/article/$slug': {
       id: '/article/$slug'
@@ -596,11 +635,22 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface BodyRouteChildren {
+  BodySlugRoute: typeof BodySlugRoute
+}
+
+const BodyRouteChildren: BodyRouteChildren = {
+  BodySlugRoute: BodySlugRoute,
+}
+
+const BodyRouteWithChildren = BodyRoute._addFileChildren(BodyRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  BodyRoute: BodyRouteWithChildren,
   ContactRoute: ContactRoute,
   DoctorsRoute: DoctorsRoute,
   DonorsRoute: DonorsRoute,
@@ -622,3 +672,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
