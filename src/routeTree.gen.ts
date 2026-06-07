@@ -29,6 +29,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HospitalsSlugRouteImport } from './routes/hospitals.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BodySlugRouteImport } from './routes/body.$slug'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
@@ -138,6 +139,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HospitalsSlugRoute = HospitalsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => HospitalsRoute,
+} as any)
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -196,7 +202,7 @@ export interface FileRoutesByFullPath {
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
   '/encyclopedia': typeof EncyclopediaRoute
-  '/hospitals': typeof HospitalsRoute
+  '/hospitals': typeof HospitalsRouteWithChildren
   '/labs': typeof LabsRoute
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
@@ -211,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/article/$slug': typeof ArticleSlugRoute
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/hospitals/$slug': typeof HospitalsSlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -226,7 +233,7 @@ export interface FileRoutesByTo {
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
   '/encyclopedia': typeof EncyclopediaRoute
-  '/hospitals': typeof HospitalsRoute
+  '/hospitals': typeof HospitalsRouteWithChildren
   '/labs': typeof LabsRoute
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/article/$slug': typeof ArticleSlugRoute
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/hospitals/$slug': typeof HospitalsSlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -257,7 +265,7 @@ export interface FileRoutesById {
   '/doctors': typeof DoctorsRoute
   '/donors': typeof DonorsRoute
   '/encyclopedia': typeof EncyclopediaRoute
-  '/hospitals': typeof HospitalsRoute
+  '/hospitals': typeof HospitalsRouteWithChildren
   '/labs': typeof LabsRoute
   '/myths': typeof MythsRoute
   '/news': typeof NewsRoute
@@ -272,6 +280,7 @@ export interface FileRoutesById {
   '/article/$slug': typeof ArticleSlugRoute
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/hospitals/$slug': typeof HospitalsSlugRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/_authenticated/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/article/$slug'
     | '/body/$slug'
     | '/category/$slug'
+    | '/hospitals/$slug'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin/pages'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/article/$slug'
     | '/body/$slug'
     | '/category/$slug'
+    | '/hospitals/$slug'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin/pages'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/article/$slug'
     | '/body/$slug'
     | '/category/$slug'
+    | '/hospitals/$slug'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/admins'
     | '/_authenticated/admin/pages'
@@ -381,7 +393,7 @@ export interface RootRouteChildren {
   DoctorsRoute: typeof DoctorsRoute
   DonorsRoute: typeof DonorsRoute
   EncyclopediaRoute: typeof EncyclopediaRoute
-  HospitalsRoute: typeof HospitalsRoute
+  HospitalsRoute: typeof HospitalsRouteWithChildren
   LabsRoute: typeof LabsRoute
   MythsRoute: typeof MythsRoute
   NewsRoute: typeof NewsRoute
@@ -538,6 +550,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hospitals/$slug': {
+      id: '/hospitals/$slug'
+      path: '/$slug'
+      fullPath: '/hospitals/$slug'
+      preLoaderRoute: typeof HospitalsSlugRouteImport
+      parentRoute: typeof HospitalsRoute
+    }
     '/category/$slug': {
       id: '/category/$slug'
       path: '/category/$slug'
@@ -645,6 +664,18 @@ const BodyRouteChildren: BodyRouteChildren = {
 
 const BodyRouteWithChildren = BodyRoute._addFileChildren(BodyRouteChildren)
 
+interface HospitalsRouteChildren {
+  HospitalsSlugRoute: typeof HospitalsSlugRoute
+}
+
+const HospitalsRouteChildren: HospitalsRouteChildren = {
+  HospitalsSlugRoute: HospitalsSlugRoute,
+}
+
+const HospitalsRouteWithChildren = HospitalsRoute._addFileChildren(
+  HospitalsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
@@ -655,7 +686,7 @@ const rootRouteChildren: RootRouteChildren = {
   DoctorsRoute: DoctorsRoute,
   DonorsRoute: DonorsRoute,
   EncyclopediaRoute: EncyclopediaRoute,
-  HospitalsRoute: HospitalsRoute,
+  HospitalsRoute: HospitalsRouteWithChildren,
   LabsRoute: LabsRoute,
   MythsRoute: MythsRoute,
   NewsRoute: NewsRoute,
