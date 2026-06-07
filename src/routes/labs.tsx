@@ -16,6 +16,9 @@ type Lab = {
 };
 
 export const Route = createFileRoute("/labs")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    q: typeof s.q === "string" ? s.q : "",
+  }),
   head: () => ({
     meta: [
       { title: "ল্যাব — স্বাস্থ্যপিডিয়া" },
@@ -36,10 +39,11 @@ export const Route = createFileRoute("/labs")({
 });
 
 function LabsPage() {
+  const { q: initialQ } = Route.useSearch();
   const [items, setItems] = useState<Lab[]>([]);
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState("");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialQ);
 
   useEffect(() => {
     let active = true;
