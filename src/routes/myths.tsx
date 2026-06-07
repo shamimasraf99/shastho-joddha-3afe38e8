@@ -17,6 +17,7 @@ type Myth = {
 export const Route = createFileRoute("/myths")({
   validateSearch: (s: Record<string, unknown>) => ({
     q: typeof s.q === "string" ? s.q : "",
+    id: typeof s.id === "string" ? s.id : "",
   }),
   head: () => ({
     meta: [
@@ -38,7 +39,7 @@ export const Route = createFileRoute("/myths")({
 });
 
 function MythsPage() {
-  const { q: initialQ } = Route.useSearch();
+  const { q: initialQ, id: focusId } = Route.useSearch();
   const [items, setItems] = useState<Myth[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState(initialQ);
@@ -61,6 +62,7 @@ function MythsPage() {
   }, []);
 
   const filtered = items.filter((m) => {
+    if (focusId) return m.id === focusId;
     if (!q) return true;
     const t = q.toLowerCase();
     const hay = `${m.title} ${m.claim} ${m.fact}`.toLowerCase();
