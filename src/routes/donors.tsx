@@ -15,6 +15,9 @@ type Donor = {
 };
 
 export const Route = createFileRoute("/donors")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    q: typeof s.q === "string" ? s.q : "",
+  }),
   head: () => ({
     meta: [
       { title: "রক্তদাতা — স্বাস্থ্যপিডিয়া" },
@@ -38,11 +41,12 @@ export const Route = createFileRoute("/donors")({
 });
 
 function DonorsPage() {
+  const { q: initialQ } = Route.useSearch();
   const [donors, setDonors] = useState<Donor[]>([]);
   const [loading, setLoading] = useState(true);
   const [bloodGroup, setBloodGroup] = useState<string>("");
   const [district, setDistrict] = useState<string>("");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialQ);
 
   useEffect(() => {
     let active = true;

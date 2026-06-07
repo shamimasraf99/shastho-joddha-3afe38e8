@@ -15,6 +15,9 @@ type Myth = {
 };
 
 export const Route = createFileRoute("/myths")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    q: typeof s.q === "string" ? s.q : "",
+  }),
   head: () => ({
     meta: [
       { title: "মিথবাস্টার — স্বাস্থ্যপিডিয়া" },
@@ -35,9 +38,10 @@ export const Route = createFileRoute("/myths")({
 });
 
 function MythsPage() {
+  const { q: initialQ } = Route.useSearch();
   const [items, setItems] = useState<Myth[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialQ);
 
   useEffect(() => {
     let active = true;
