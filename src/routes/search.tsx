@@ -9,7 +9,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 export const Route = createFileRoute("/search")({
   validateSearch: (search: Record<string, unknown>) => ({
     q: typeof search.q === "string" ? search.q : "",
-    type: typeof search.type === "string" ? search.type : "",
+    type: typeof search.type === "string" && search.type ? search.type.split(",") : [],
   }),
   component: SearchPage,
   head: () => ({
@@ -106,6 +106,7 @@ const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "�
 
 function SearchPage() {
   const { q, type } = Route.useSearch();
+  const selectedTypes = new Set(type);
   const navigate = useNavigate({ from: "/search" });
   const [term, setTerm] = useState(q);
 
@@ -117,16 +118,26 @@ function SearchPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ search: { q: term.trim(), type } });
+    navigate({ search: { q: term.trim(), type: Array.from(selectedTypes) } });
   };
 
-  const setFilter = (t: string) => {
-    navigate({ search: { q, type: type === t ? "" : t } });
+  const toggleFilter = (t: string) => {
+    const next = new Set(selectedTypes);
+    if (next.has(t)) {
+      next.delete(t);
+    } else {
+      next.add(t);
+    }
+    navigate({ search: { q, type: Array.from(next) } });
+  };
+
+  const clearFilters = () => {
+    navigate({ search: { q, type: [] } });
   };
 
   const filteredData = (data ?? []).filter((it) => {
-    if (!type) return true;
-    return it.type === type;
+    if (selectedTypes.size === 0) return true;
+    return selectedTypes.has(it.type);
   });
 
   const grouped = filteredData.reduce<Record<string, Item[]>>((acc, it) => {
@@ -185,9 +196,9 @@ function SearchPage() {
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">বিভাগ:</span>
               <button
                 type="button"
-                onClick={() => setFilter("")}
+                onClick={() => clearFilters()}
                 className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                  !type
+                  selectedTypes.size === 0
                     ? "border-primary bg-primary text-primary-foreground"
                     : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
                 }`}
@@ -196,12 +207,12 @@ function SearchPage() {
               </button>
               {allTypes.map((t) => {
                 const Icon = typeIcons[t];
-                const active = type === t;
+                const active = selectedTypes.has(t);
                 return (
                   <button
                     key={t}
                     type="button"
-                    onClick={() => setFilter(t)}
+                    onClick={() => toggleFilter(t)}
                     className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
                       active
                         ? "border-primary bg-primary text-primary-foreground"
