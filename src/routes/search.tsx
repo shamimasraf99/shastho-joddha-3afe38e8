@@ -55,6 +55,7 @@ const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   "ভিডিও": Video,
   "পডকাস্ট": Podcast,
   "Myth": ShieldAlert,
+  "বডি": Heart,
 };
 
 const typeColors: Record<string, string> = {
@@ -68,6 +69,7 @@ const typeColors: Record<string, string> = {
   "ভিডিও": "bg-pink-50 text-pink-700 border-pink-200",
   "পডকাস্ট": "bg-orange-50 text-orange-700 border-orange-200",
   "Myth": "bg-purple-50 text-purple-700 border-purple-200",
+  "বডি": "bg-teal-50 text-teal-700 border-teal-200",
 };
 
 async function runSearch(q: string): Promise<Item[]> {
