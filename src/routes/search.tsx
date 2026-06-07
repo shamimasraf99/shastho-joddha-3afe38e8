@@ -96,7 +96,10 @@ async function runSearch(q: string): Promise<Item[]> {
   }
   for (const c of cats.data ?? []) out.push({ type: "ক্যাটাগরি", title: c.title, subtitle: c.description ?? undefined, href: `/category/${c.slug}` });
   for (const d of doctors.data ?? []) out.push({ type: "ডাক্তার", title: d.name, subtitle: [d.speciality, d.district].filter(Boolean).join(" • "), href: `/doctors?id=${d.id}` });
-  for (const h of hospitals.data ?? []) out.push({ type: "হাসপাতাল", title: h.name, subtitle: [h.district, h.address].filter(Boolean).join(" • "), href: `/hospitals?id=${h.id}` });
+  for (const h of hospitals.data ?? []) {
+    const href = h.slug ? `/hospitals/${h.slug}` : `/hospitals?id=${h.id}`;
+    out.push({ type: "হাসপাতাল", title: h.name, subtitle: [h.district, h.address].filter(Boolean).join(" • "), href });
+  }
   for (const l of labs.data ?? []) out.push({ type: "ল্যাব", title: l.name, subtitle: [l.test_type, l.district].filter(Boolean).join(" • "), href: `/labs?id=${l.id}` });
   for (const b of donors.data ?? []) out.push({ type: "রক্তদাতা", title: b.name, subtitle: [b.blood_group, b.district].filter(Boolean).join(" • "), href: `/donors?id=${b.id}` });
   for (const v of videos.data ?? []) out.push({ type: "ভিডিও", title: v.title, subtitle: v.category ?? undefined, href: `/videos?id=${v.id}` });
