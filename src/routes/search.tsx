@@ -9,7 +9,11 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 export const Route = createFileRoute("/search")({
   validateSearch: (search: Record<string, unknown>) => ({
     q: typeof search.q === "string" ? search.q : "",
-    type: typeof search.type === "string" && search.type ? search.type.split(",") : [],
+    type: Array.isArray(search.type)
+      ? search.type.filter((t): t is string => typeof t === "string")
+      : typeof search.type === "string" && search.type
+        ? search.type.split(",")
+        : [],
   }),
   component: SearchPage,
   head: () => ({
