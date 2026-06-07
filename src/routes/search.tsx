@@ -106,6 +106,7 @@ const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "�
 
 function SearchPage() {
   const { q, type } = Route.useSearch();
+  const selectedTypes = new Set(type);
   const navigate = useNavigate({ from: "/search" });
   const [term, setTerm] = useState(q);
 
@@ -117,16 +118,26 @@ function SearchPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ search: { q: term.trim(), type } });
+    navigate({ search: { q: term.trim(), type: Array.from(selectedTypes) } });
   };
 
-  const setFilter = (t: string) => {
-    navigate({ search: { q, type: type === t ? "" : t } });
+  const toggleFilter = (t: string) => {
+    const next = new Set(selectedTypes);
+    if (next.has(t)) {
+      next.delete(t);
+    } else {
+      next.add(t);
+    }
+    navigate({ search: { q, type: Array.from(next) } });
+  };
+
+  const clearFilters = () => {
+    navigate({ search: { q, type: [] } });
   };
 
   const filteredData = (data ?? []).filter((it) => {
-    if (!type) return true;
-    return it.type === type;
+    if (selectedTypes.size === 0) return true;
+    return selectedTypes.has(it.type);
   });
 
   const grouped = filteredData.reduce<Record<string, Item[]>>((acc, it) => {
