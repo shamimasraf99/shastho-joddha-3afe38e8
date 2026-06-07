@@ -48,6 +48,62 @@ export const Route = createFileRoute("/search")({
 
 type Item = { type: string; title: string; subtitle?: string; href: string };
 
+const searchableLimit = 50;
+
+function addBanglaVariants(value: string, target: Set<string>) {
+  target.add(value);
+  target.add(value.replace(/য়/g, "য়"));
+  target.add(value.replace(/য়/g, "য়"));
+}
+
+function getLeadingSearchChunk(value: string) {
+  const chars = Array.from(value);
+  if (chars.length < 7) return "";
+  return chars.slice(0, Math.max(4, chars.length - 4)).join("");
+}
+
+function createSearchTerms(q: string) {
+  const cleaned = q
+    .trim()
+    .normalize("NFC")
+    .replace(/[(),]/g, " ")
+    .replace(/\s+/g, " ");
+
+  const terms = new Set<string>();
+  addBanglaVariants(cleaned, terms);
+
+  for (const token of cleaned.split(/[\s।|/\\-]+/).filter(Boolean)) {
+    addBanglaVariants(token, terms);
+    const chunk = getLeadingSearchChunk(token);
+    if (chunk) addBanglaVariants(chunk, terms);
+  }
+
+  return Array.from(terms)
+    .map((term) => term.trim())
+    .filter((term) => term.length >= 2)
+    .slice(0, 12);
+}
+
+function buildTextSearch(fields: string[], terms: string[]) {
+  return terms
+    .flatMap((term) => fields.map((field) => `${field}.ilike.%${term.replace(/[%*]/g, "")}%`))
+    .join(",");
+}
+
+function buildDonorSearch(terms: string[]) {
+  const bloodGroups = new Set(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]);
+  const textConditions = terms.flatMap((term) => [
+    `name.ilike.%${term.replace(/[%*]/g, "")}%`,
+    `district.ilike.%${term.replace(/[%*]/g, "")}%`,
+  ]);
+  const bloodConditions = terms
+    .map((term) => term.toUpperCase())
+    .filter((term) => bloodGroups.has(term))
+    .map((term) => `blood_group.eq.${term}`);
+
+  return [...textConditions, ...bloodConditions].join(",");
+}
+
 const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   "সংবাদ": FileText,
   "স্বাস্থ্যকোষ": FileText,
@@ -79,18 +135,29 @@ const typeColors: Record<string, string> = {
 async function runSearch(q: string): Promise<Item[]> {
   const term = q.trim();
   if (!term) return [];
-  const like = `%${term}%`;
+  const terms = createSearchTerms(term);
+  const articleSearch = buildTextSearch(["title", "excerpt", "content"], terms);
+  const doctorSearch = buildTextSearch(["name", "speciality", "designation", "hospital", "chamber", "district", "bio"], terms);
+  const hospitalSearch = buildTextSearch(["name", "district", "address", "description", "category"], terms);
+  const labSearch = buildTextSearch(["name", "test_type", "district", "address"], terms);
+  const donorSearch = buildDonorSearch(terms);
+  const videoSearch = buildTextSearch(["title", "description", "category"], terms);
+  const podcastSearch = buildTextSearch(["title", "description"], terms);
+  const mythSearch = buildTextSearch(["title", "claim", "fact", "doctor_name"], terms);
+  const categorySearch = buildTextSearch(["title", "description", "content"], terms);
+  const bodyPartSearch = buildTextSearch(["name", "description"], terms);
+
   const [articles, doctors, hospitals, labs, donors, videos, podcasts, myths, cats, bodyParts] = await Promise.all([
-    supabase.from("articles").select("title,slug,excerpt,article_type").eq("is_published", true).or(`title.ilike.${like},excerpt.ilike.${like},content.ilike.${like}`).limit(20),
-    supabase.from("doctors").select("id,name,slug,speciality,district").eq("is_active", true).or(`name.ilike.${like},speciality.ilike.${like},hospital.ilike.${like}`).limit(20),
-    supabase.from("hospitals").select("id,name,slug,district,address").eq("is_active", true).or(`name.ilike.${like},district.ilike.${like},address.ilike.${like}`).limit(20),
-    supabase.from("labs").select("id,name,test_type,district").eq("is_active", true).or(`name.ilike.${like},test_type.ilike.${like},district.ilike.${like}`).limit(20),
-    supabase.from("blood_donors").select("id,name,blood_group,district").eq("is_available", true).or(`name.ilike.${like},district.ilike.${like},blood_group.ilike.${like}`).limit(20),
-    supabase.from("videos").select("id,title,category").eq("is_published", true).or(`title.ilike.${like},category.ilike.${like}`).limit(20),
-    supabase.from("podcasts").select("id,title,description").eq("is_published", true).or(`title.ilike.${like},description.ilike.${like}`).limit(20),
-    supabase.from("mythbusters").select("id,title,claim,fact").eq("is_published", true).or(`title.ilike.${like},claim.ilike.${like},fact.ilike.${like}`).limit(20),
-    supabase.from("categories").select("title,slug,description").eq("is_active", true).or(`title.ilike.${like},description.ilike.${like}`).limit(20),
-    supabase.from("body_parts").select("name,slug,description").eq("is_active", true).or(`name.ilike.${like},description.ilike.${like}`).limit(20),
+    supabase.from("articles").select("title,slug,excerpt,article_type").eq("is_published", true).or(articleSearch).limit(searchableLimit),
+    supabase.from("doctors").select("id,name,slug,speciality,district").eq("is_active", true).or(doctorSearch).limit(searchableLimit),
+    supabase.from("hospitals").select("id,name,slug,district,address").eq("is_active", true).or(hospitalSearch).limit(searchableLimit),
+    supabase.from("labs").select("id,name,test_type,district").eq("is_active", true).or(labSearch).limit(searchableLimit),
+    supabase.from("blood_donors").select("id,name,blood_group,district").eq("is_available", true).or(donorSearch).limit(searchableLimit),
+    supabase.from("videos").select("id,title,category").eq("is_published", true).or(videoSearch).limit(searchableLimit),
+    supabase.from("podcasts").select("id,title,description").eq("is_published", true).or(podcastSearch).limit(searchableLimit),
+    supabase.from("mythbusters").select("id,title,claim,fact").eq("is_published", true).or(mythSearch).limit(searchableLimit),
+    supabase.from("categories").select("title,slug,description").eq("is_active", true).or(categorySearch).limit(searchableLimit),
+    supabase.from("body_parts").select("name,slug,description").eq("is_active", true).or(bodyPartSearch).limit(searchableLimit),
   ]);
 
   const out: Item[] = [];
