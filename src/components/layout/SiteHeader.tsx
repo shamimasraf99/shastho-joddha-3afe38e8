@@ -93,6 +93,7 @@ export function SiteHeader() {
                 <option value="ভিডিও">ভিডিও</option>
                 <option value="পডকাস্ট">পডকাস্ট</option>
                 <option value="Myth">Myth</option>
+                <option value="বডি">বডি</option>
               </select>
             </div>
           </form>
