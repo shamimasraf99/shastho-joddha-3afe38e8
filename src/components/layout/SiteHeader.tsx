@@ -15,6 +15,7 @@ const nav = [
   { to: "/donors", label: "রক্তদাতা" },
   { to: "/news", label: "স্বাস্থ্য সংবাদ" },
   { to: "/tools", label: "ক্যালকুলেটর" },
+  { to: "/body", label: "শরীরের অঙ্গ" },
   { to: "/qa", label: "প্রশ্নোত্তর" },
   { to: "/videos", label: "ভিডিও" },
   { to: "/podcasts", label: "পডকাস্ট" },
