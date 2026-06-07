@@ -161,15 +161,15 @@ async function runSearch(q: string): Promise<Item[]> {
   const bodyPartSearch = buildTextSearch(["name", "description"], terms);
 
   const [articles, doctors, hospitals, labs, donors, videos, podcasts, myths, cats, bodyParts] = await Promise.all([
-    supabase.from("articles").select("title,slug,excerpt,article_type").eq("is_published", true).or(articleSearch).limit(searchableLimit),
-    supabase.from("doctors").select("id,name,slug,speciality,district").eq("is_active", true).or(doctorSearch).limit(searchableLimit),
-    supabase.from("hospitals").select("id,name,slug,district,address").eq("is_active", true).or(hospitalSearch).limit(searchableLimit),
-    supabase.from("labs").select("id,name,test_type,district").eq("is_active", true).or(labSearch).limit(searchableLimit),
+    supabase.from("articles").select("title,slug,excerpt,content,article_type").eq("is_published", true).or(articleSearch).limit(searchableLimit),
+    supabase.from("doctors").select("id,name,slug,speciality,designation,hospital,chamber,district,bio").eq("is_active", true).or(doctorSearch).limit(searchableLimit),
+    supabase.from("hospitals").select("id,name,slug,district,address,description,category").eq("is_active", true).or(hospitalSearch).limit(searchableLimit),
+    supabase.from("labs").select("id,name,test_type,district,address").eq("is_active", true).or(labSearch).limit(searchableLimit),
     supabase.from("blood_donors").select("id,name,blood_group,district").eq("is_available", true).or(donorSearch).limit(searchableLimit),
-    supabase.from("videos").select("id,title,category").eq("is_published", true).or(videoSearch).limit(searchableLimit),
+    supabase.from("videos").select("id,title,description,category").eq("is_published", true).or(videoSearch).limit(searchableLimit),
     supabase.from("podcasts").select("id,title,description").eq("is_published", true).or(podcastSearch).limit(searchableLimit),
-    supabase.from("mythbusters").select("id,title,claim,fact").eq("is_published", true).or(mythSearch).limit(searchableLimit),
-    supabase.from("categories").select("title,slug,description").eq("is_active", true).or(categorySearch).limit(searchableLimit),
+    supabase.from("mythbusters").select("id,title,claim,fact,doctor_name").eq("is_published", true).or(mythSearch).limit(searchableLimit),
+    supabase.from("categories").select("title,slug,description,content").eq("is_active", true).or(categorySearch).limit(searchableLimit),
     supabase.from("body_parts").select("name,slug,description").eq("is_active", true).or(bodyPartSearch).limit(searchableLimit),
   ]);
 
