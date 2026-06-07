@@ -56,6 +56,42 @@ export type Database = {
         }
         Relationships: []
       }
+      article_body_parts: {
+        Row: {
+          article_id: string
+          body_part_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          article_id: string
+          body_part_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          article_id?: string
+          body_part_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_body_parts_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "article_body_parts_body_part_id_fkey"
+            columns: ["body_part_id"]
+            isOneToOne: false
+            referencedRelation: "body_parts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       articles: {
         Row: {
           article_type: Database["public"]["Enums"]["article_type"]
@@ -163,6 +199,42 @@ export type Database = {
           phone?: string
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      body_parts: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          slug: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          slug: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+          sort_order?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
