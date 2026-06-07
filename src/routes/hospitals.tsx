@@ -26,6 +26,9 @@ const categories: { key: string; label: string }[] = [
 ];
 
 export const Route = createFileRoute("/hospitals")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    q: typeof s.q === "string" ? s.q : "",
+  }),
   head: () => ({
     meta: [
       { title: "হাসপাতাল — স্বাস্থ্যপিডিয়া" },
@@ -46,10 +49,11 @@ export const Route = createFileRoute("/hospitals")({
 });
 
 function HospitalsPage() {
+  const { q: initialQ } = Route.useSearch();
   const [items, setItems] = useState<Hospital[]>([]);
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState("");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialQ);
   const [cat, setCat] = useState("");
 
   useEffect(() => {
