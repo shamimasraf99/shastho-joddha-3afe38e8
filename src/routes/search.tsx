@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon, FileText, User, Building2, FlaskConical, Droplet, Video, Podcast, ShieldAlert, Layers } from "lucide-react";
+import { Search as SearchIcon, FileText, User, Building2, FlaskConical, Droplet, Video, Podcast, ShieldAlert, Layers, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
@@ -55,6 +55,7 @@ const typeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   "ভিডিও": Video,
   "পডকাস্ট": Podcast,
   "Myth": ShieldAlert,
+  "বডি": Heart,
 };
 
 const typeColors: Record<string, string> = {
@@ -68,13 +69,14 @@ const typeColors: Record<string, string> = {
   "ভিডিও": "bg-pink-50 text-pink-700 border-pink-200",
   "পডকাস্ট": "bg-orange-50 text-orange-700 border-orange-200",
   "Myth": "bg-purple-50 text-purple-700 border-purple-200",
+  "বডি": "bg-teal-50 text-teal-700 border-teal-200",
 };
 
 async function runSearch(q: string): Promise<Item[]> {
   const term = q.trim();
   if (!term) return [];
   const like = `%${term}%`;
-  const [articles, doctors, hospitals, labs, donors, videos, podcasts, myths, cats] = await Promise.all([
+  const [articles, doctors, hospitals, labs, donors, videos, podcasts, myths, cats, bodyParts] = await Promise.all([
     supabase.from("articles").select("title,slug,excerpt,article_type").eq("is_published", true).or(`title.ilike.${like},excerpt.ilike.${like},content.ilike.${like}`).limit(20),
     supabase.from("doctors").select("name,slug,speciality,district").eq("is_active", true).or(`name.ilike.${like},speciality.ilike.${like},hospital.ilike.${like}`).limit(20),
     supabase.from("hospitals").select("name,slug,district,address").eq("is_active", true).or(`name.ilike.${like},district.ilike.${like},address.ilike.${like}`).limit(20),
@@ -84,6 +86,7 @@ async function runSearch(q: string): Promise<Item[]> {
     supabase.from("podcasts").select("id,title,description").eq("is_published", true).or(`title.ilike.${like},description.ilike.${like}`).limit(20),
     supabase.from("mythbusters").select("id,title,claim,fact").eq("is_published", true).or(`title.ilike.${like},claim.ilike.${like},fact.ilike.${like}`).limit(20),
     supabase.from("categories").select("title,slug,description").eq("is_active", true).or(`title.ilike.${like},description.ilike.${like}`).limit(20),
+    supabase.from("body_parts").select("name,slug,description").eq("is_active", true).or(`name.ilike.${like},description.ilike.${like}`).limit(20),
   ]);
 
   const out: Item[] = [];
@@ -99,10 +102,11 @@ async function runSearch(q: string): Promise<Item[]> {
   for (const v of videos.data ?? []) out.push({ type: "ভিডিও", title: v.title, subtitle: v.category ?? undefined, href: `/videos` });
   for (const p of podcasts.data ?? []) out.push({ type: "পডকাস্ট", title: p.title, subtitle: p.description ?? undefined, href: `/podcasts` });
   for (const m of myths.data ?? []) out.push({ type: "Myth", title: m.title, subtitle: m.claim ?? undefined, href: `/myths` });
+  for (const bp of bodyParts.data ?? []) out.push({ type: "বডি", title: bp.name, subtitle: bp.description ?? undefined, href: `/body/${bp.slug}` });
   return out;
 }
 
-const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth"];
+const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth", "বডি"];
 
 function SearchPage() {
   const { q, type } = Route.useSearch();
@@ -145,7 +149,7 @@ function SearchPage() {
     return acc;
   }, {});
 
-  const typeOrder = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth"];
+  const typeOrder = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth", "বডি"];
   const sortedTypes = Object.keys(grouped).sort((a, b) => {
     const ai = typeOrder.indexOf(a);
     const bi = typeOrder.indexOf(b);
