@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 export const Route = createFileRoute("/search")({
   validateSearch: (search: Record<string, unknown>) => ({
     q: typeof search.q === "string" ? search.q : "",
+    type: typeof search.type === "string" ? search.type : "",
   }),
   component: SearchPage,
   head: () => ({
@@ -101,8 +102,10 @@ async function runSearch(q: string): Promise<Item[]> {
   return out;
 }
 
+const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth"];
+
 function SearchPage() {
-  const { q } = Route.useSearch();
+  const { q, type } = Route.useSearch();
   const navigate = useNavigate({ from: "/search" });
   const [term, setTerm] = useState(q);
 
@@ -114,10 +117,19 @@ function SearchPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ search: { q: term.trim() } });
+    navigate({ search: { q: term.trim(), type } });
   };
 
-  const grouped = (data ?? []).reduce<Record<string, Item[]>>((acc, it) => {
+  const setFilter = (t: string) => {
+    navigate({ search: { q, type: type === t ? "" : t } });
+  };
+
+  const filteredData = (data ?? []).filter((it) => {
+    if (!type) return true;
+    return it.type === type;
+  });
+
+  const grouped = filteredData.reduce<Record<string, Item[]>>((acc, it) => {
     (acc[it.type] ??= []).push(it);
     return acc;
   }, {});
@@ -167,6 +179,43 @@ function SearchPage() {
 
         {/* Results */}
         <section className="container mx-auto px-4 py-8 md:py-10">
+          {/* Category filter chips */}
+          {q.trim().length > 0 && (
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">বিভাগ:</span>
+              <button
+                type="button"
+                onClick={() => setFilter("")}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                  !type
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
+                }`}
+              >
+                সব
+              </button>
+              {allTypes.map((t) => {
+                const Icon = typeIcons[t];
+                const active = type === t;
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setFilter(t)}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                      active
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
+                    }`}
+                  >
+                    {Icon && <Icon className="h-3 w-3" />}
+                    {t}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {!q.trim() ? (
             <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
               <SearchIcon className="mx-auto h-10 w-10 text-muted-foreground/60" />
@@ -185,7 +234,7 @@ function SearchPage() {
                 </div>
               ))}
             </div>
-          ) : (data?.length ?? 0) === 0 ? (
+          ) : (filteredData.length ?? 0) === 0 ? (
             <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
               <SearchIcon className="mx-auto h-10 w-10 text-muted-foreground/60" />
               <p className="mt-3 text-muted-foreground">
@@ -196,7 +245,7 @@ function SearchPage() {
             <div className="space-y-8">
               <p className="text-sm text-muted-foreground">
                 "<span className="font-semibold text-foreground">{q}</span>" এর জন্য{" "}
-                <span className="font-semibold text-foreground">{data!.length}</span> টি ফলাফল
+                <span className="font-semibold text-foreground">{filteredData.length}</span> টি ফলাফল
               </p>
               {sortedTypes.map((type) => {
                 const items = grouped[type];
