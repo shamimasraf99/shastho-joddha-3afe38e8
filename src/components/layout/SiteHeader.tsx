@@ -153,6 +153,7 @@ export function SiteHeader() {
                   <option value="ভিডিও">ভিডিও</option>
                   <option value="পডকাস্ট">পডকাস্ট</option>
                   <option value="Myth">Myth</option>
+                  <option value="বডি">বডি</option>
                 </select>
               </form>
               <div className="grid grid-cols-2 gap-1">
