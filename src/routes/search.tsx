@@ -76,7 +76,7 @@ async function runSearch(q: string): Promise<Item[]> {
   const term = q.trim();
   if (!term) return [];
   const like = `%${term}%`;
-  const [articles, doctors, hospitals, labs, donors, videos, podcasts, myths, cats] = await Promise.all([
+  const [articles, doctors, hospitals, labs, donors, videos, podcasts, myths, cats, bodyParts] = await Promise.all([
     supabase.from("articles").select("title,slug,excerpt,article_type").eq("is_published", true).or(`title.ilike.${like},excerpt.ilike.${like},content.ilike.${like}`).limit(20),
     supabase.from("doctors").select("name,slug,speciality,district").eq("is_active", true).or(`name.ilike.${like},speciality.ilike.${like},hospital.ilike.${like}`).limit(20),
     supabase.from("hospitals").select("name,slug,district,address").eq("is_active", true).or(`name.ilike.${like},district.ilike.${like},address.ilike.${like}`).limit(20),
@@ -86,6 +86,7 @@ async function runSearch(q: string): Promise<Item[]> {
     supabase.from("podcasts").select("id,title,description").eq("is_published", true).or(`title.ilike.${like},description.ilike.${like}`).limit(20),
     supabase.from("mythbusters").select("id,title,claim,fact").eq("is_published", true).or(`title.ilike.${like},claim.ilike.${like},fact.ilike.${like}`).limit(20),
     supabase.from("categories").select("title,slug,description").eq("is_active", true).or(`title.ilike.${like},description.ilike.${like}`).limit(20),
+    supabase.from("body_parts").select("name,slug,description").eq("is_active", true).or(`name.ilike.${like},description.ilike.${like}`).limit(20),
   ]);
 
   const out: Item[] = [];
@@ -101,6 +102,7 @@ async function runSearch(q: string): Promise<Item[]> {
   for (const v of videos.data ?? []) out.push({ type: "ভিডিও", title: v.title, subtitle: v.category ?? undefined, href: `/videos` });
   for (const p of podcasts.data ?? []) out.push({ type: "পডকাস্ট", title: p.title, subtitle: p.description ?? undefined, href: `/podcasts` });
   for (const m of myths.data ?? []) out.push({ type: "Myth", title: m.title, subtitle: m.claim ?? undefined, href: `/myths` });
+  for (const bp of bodyParts.data ?? []) out.push({ type: "বডি", title: bp.name, subtitle: bp.description ?? undefined, href: `/body/${bp.slug}` });
   return out;
 }
 
