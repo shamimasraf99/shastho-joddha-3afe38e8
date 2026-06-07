@@ -18,6 +18,9 @@ type Doctor = {
 };
 
 export const Route = createFileRoute("/doctors")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    q: typeof s.q === "string" ? s.q : "",
+  }),
   head: () => ({
     meta: [
       { title: "বিশেষজ্ঞ ডাক্তার — স্বাস্থ্যপিডিয়া" },
@@ -41,11 +44,12 @@ export const Route = createFileRoute("/doctors")({
 });
 
 function DoctorsPage() {
+  const { q: initialQ } = Route.useSearch();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [loading, setLoading] = useState(true);
-  const [speciality, setSpeciality] = useState<string>("কার্ডিয়াক সার্জন");
+  const [speciality, setSpeciality] = useState<string>(initialQ ? "" : "কার্ডিয়াক সার্জন");
   const [district, setDistrict] = useState<string>("");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialQ);
 
   useEffect(() => {
     let active = true;
