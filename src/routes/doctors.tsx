@@ -80,6 +80,7 @@ function DoctorsPage() {
   );
 
   const filtered = doctors.filter((d) => {
+    if (focusId) return d.id === focusId;
     if (speciality && d.speciality !== speciality) return false;
     if (district && d.district !== district) return false;
     if (q) {
