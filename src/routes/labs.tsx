@@ -18,6 +18,7 @@ type Lab = {
 export const Route = createFileRoute("/labs")({
   validateSearch: (s: Record<string, unknown>) => ({
     q: typeof s.q === "string" ? s.q : "",
+    id: typeof s.id === "string" ? s.id : "",
   }),
   head: () => ({
     meta: [
@@ -39,7 +40,7 @@ export const Route = createFileRoute("/labs")({
 });
 
 function LabsPage() {
-  const { q: initialQ } = Route.useSearch();
+  const { q: initialQ, id: focusId } = Route.useSearch();
   const [items, setItems] = useState<Lab[]>([]);
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState("");
@@ -68,6 +69,7 @@ function LabsPage() {
   );
 
   const filtered = items.filter((l) => {
+    if (focusId) return l.id === focusId;
     if (district && l.district !== district) return false;
     if (q) {
       const t = q.toLowerCase();
