@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Upload, X as XIcon } from "lucide-react";
+import { Upload, X as XIcon, Plus, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   component: SettingsPage,
@@ -26,8 +26,11 @@ type ContactV = {
   whatsapp?: string;
   telegram?: string;
 };
+type FooterV = { title?: string; description?: string };
+type EmergencyItem = { label: string; number: string };
+type EmergencyV = { items?: EmergencyItem[] };
 
-const KEYS = ["site", "meta", "contact"] as const;
+const KEYS = ["site", "meta", "contact", "footer", "emergency"] as const;
 
 function SettingsPage() {
   const qc = useQueryClient();
@@ -45,12 +48,17 @@ function SettingsPage() {
   const [site, setSite] = useState<SiteV>({});
   const [meta, setMeta] = useState<MetaV>({});
   const [contact, setContact] = useState<ContactV>({});
+  const [footer, setFooter] = useState<FooterV>({});
+  const [emergency, setEmergency] = useState<EmergencyV>({ items: [] });
 
   useEffect(() => {
     if (!data) return;
     setSite((data.site as SiteV) ?? {});
     setMeta((data.meta as MetaV) ?? {});
     setContact((data.contact as ContactV) ?? {});
+    setFooter((data.footer as FooterV) ?? {});
+    const em = (data.emergency as EmergencyV) ?? {};
+    setEmergency({ items: em.items ?? [] });
   }, [data]);
 
   const save = useMutation({
@@ -144,6 +152,86 @@ function SettingsPage() {
             <Input value={contact.telegram ?? ""} onChange={(e) => setContact({ ...contact, telegram: e.target.value })} placeholder="@username" />
           </Field>
           <Button onClick={() => save.mutate({ key: "contact", value: contact as Record<string, unknown> })} disabled={save.isPending}>
+            সংরক্ষণ
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>ফুটার</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <Field label="ফুটার টাইটেল">
+            <Input value={footer.title ?? ""} onChange={(e) => setFooter({ ...footer, title: e.target.value })} placeholder="স্বাস্থ্যপিডিয়া" />
+          </Field>
+          <Field label="ফুটার ডিসক্রিপশন">
+            <Textarea rows={3} value={footer.description ?? ""} onChange={(e) => setFooter({ ...footer, description: e.target.value })} />
+          </Field>
+          <Button onClick={() => save.mutate({ key: "footer", value: footer as Record<string, unknown> })} disabled={save.isPending}>
+            সংরক্ষণ
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>জরুরি নম্বর</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            {(emergency.items ?? []).map((it, idx) => (
+              <div key={idx} className="flex gap-2 items-start">
+                <Input
+                  placeholder="লেবেল (যেমন জাতীয় জরুরি সেবা)"
+                  value={it.label}
+                  onChange={(e) => {
+                    const items = [...(emergency.items ?? [])];
+                    items[idx] = { ...items[idx], label: e.target.value };
+                    setEmergency({ items });
+                  }}
+                />
+                <Input
+                  placeholder="নম্বর (যেমন 999)"
+                  value={it.number}
+                  onChange={(e) => {
+                    const items = [...(emergency.items ?? [])];
+                    items[idx] = { ...items[idx], number: e.target.value };
+                    setEmergency({ items });
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    const items = [...(emergency.items ?? [])];
+                    items.splice(idx, 1);
+                    setEmergency({ items });
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setEmergency({ items: [...(emergency.items ?? []), { label: "", number: "" }] })
+              }
+            >
+              <Plus className="h-4 w-4 mr-1" /> নতুন নম্বর যোগ করুন
+            </Button>
+          </div>
+          <Button
+            onClick={() =>
+              save.mutate({
+                key: "emergency",
+                value: {
+                  items: (emergency.items ?? []).filter((i) => i.label.trim() && i.number.trim()),
+                } as Record<string, unknown>,
+              })
+            }
+            disabled={save.isPending}
+          >
             সংরক্ষণ
           </Button>
         </CardContent>
