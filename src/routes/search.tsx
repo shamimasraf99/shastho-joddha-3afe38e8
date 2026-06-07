@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search as SearchIcon, FileText, User, Building2, FlaskConical, Droplet, Video, Podcast, ShieldAlert, Layers, Heart } from "lucide-react";
@@ -277,9 +277,9 @@ function SearchPage() {
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                       {items.map((it, i) => (
-                        <Link
+                        <a
                           key={i}
-                          to={it.href}
+                          href={it.href}
                           className="group flex flex-col rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
                         >
                           <div className="font-semibold text-foreground group-hover:text-primary">
@@ -290,7 +290,7 @@ function SearchPage() {
                               {it.subtitle}
                             </div>
                           )}
-                        </Link>
+                        </a>
                       ))}
                     </div>
                   </section>
