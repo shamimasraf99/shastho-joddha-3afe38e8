@@ -106,7 +106,7 @@ async function runSearch(q: string): Promise<Item[]> {
   return out;
 }
 
-const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth"];
+const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth", "বডি"];
 
 function SearchPage() {
   const { q, type } = Route.useSearch();
@@ -149,7 +149,7 @@ function SearchPage() {
     return acc;
   }, {});
 
-  const typeOrder = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth"];
+  const typeOrder = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth", "বডি"];
   const sortedTypes = Object.keys(grouped).sort((a, b) => {
     const ai = typeOrder.indexOf(a);
     const bi = typeOrder.indexOf(b);
