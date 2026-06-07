@@ -80,8 +80,10 @@ function createSearchTerms(q: string) {
   for (const token of cleaned.split(/[\s।|/\\-]+/).filter(Boolean)) {
     addBanglaVariants(token, terms);
     const chars = Array.from(token);
-    if (chars.length >= 6) addNgrams(token, terms, 4);
-    if (chars.length >= 4) addNgrams(token, terms, 3);
+    // Only fragment longer tokens — short tokens like "ল্যাব" would otherwise
+    // produce 3-char n-grams that match unrelated content across every table.
+    if (chars.length >= 8) addNgrams(token, terms, 5);
+    if (chars.length >= 10) addNgrams(token, terms, 4);
   }
 
   return Array.from(terms)
