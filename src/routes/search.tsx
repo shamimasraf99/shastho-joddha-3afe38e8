@@ -234,7 +234,7 @@ function SearchPage() {
                 </div>
               ))}
             </div>
-          ) : (data?.length ?? 0) === 0 ? (
+          ) : (filteredData.length ?? 0) === 0 ? (
             <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
               <SearchIcon className="mx-auto h-10 w-10 text-muted-foreground/60" />
               <p className="mt-3 text-muted-foreground">
@@ -245,7 +245,7 @@ function SearchPage() {
             <div className="space-y-8">
               <p className="text-sm text-muted-foreground">
                 "<span className="font-semibold text-foreground">{q}</span>" এর জন্য{" "}
-                <span className="font-semibold text-foreground">{data!.length}</span> টি ফলাফল
+                <span className="font-semibold text-foreground">{filteredData.length}</span> টি ফলাফল
               </p>
               {sortedTypes.map((type) => {
                 const items = grouped[type];
