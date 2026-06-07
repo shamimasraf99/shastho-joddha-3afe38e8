@@ -102,8 +102,10 @@ async function runSearch(q: string): Promise<Item[]> {
   return out;
 }
 
+const allTypes = ["সংবাদ", "স্বাস্থ্যকোষ", "ক্যাটাগরি", "ডাক্তার", "হাসপাতাল", "ল্যাব", "রক্তদাতা", "ভিডিও", "পডকাস্ট", "Myth"];
+
 function SearchPage() {
-  const { q } = Route.useSearch();
+  const { q, type } = Route.useSearch();
   const navigate = useNavigate({ from: "/search" });
   const [term, setTerm] = useState(q);
 
@@ -115,10 +117,19 @@ function SearchPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ search: { q: term.trim() } });
+    navigate({ search: (prev) => ({ ...prev, q: term.trim() }) });
   };
 
-  const grouped = (data ?? []).reduce<Record<string, Item[]>>((acc, it) => {
+  const setFilter = (t: string) => {
+    navigate({ search: (prev) => ({ ...prev, type: prev.type === t ? "" : t }) });
+  };
+
+  const filteredData = (data ?? []).filter((it) => {
+    if (!type) return true;
+    return it.type === type;
+  });
+
+  const grouped = filteredData.reduce<Record<string, Item[]>>((acc, it) => {
     (acc[it.type] ??= []).push(it);
     return acc;
   }, {});
