@@ -101,7 +101,7 @@ async function runSearch(q: string): Promise<Item[]> {
   for (const c of cats.data ?? []) out.push({ type: "ক্যাটাগরি", title: c.title, subtitle: c.description ?? undefined, href: `/category/${c.slug}` });
   for (const d of doctors.data ?? []) out.push({ type: "ডাক্তার", title: d.name, subtitle: [d.speciality, d.district].filter(Boolean).join(" • "), href: `/doctors?id=${d.id}` });
   for (const h of hospitals.data ?? []) {
-    const href = h.slug ? `/hospitals/${h.slug}` : `/hospitals?id=${h.id}`;
+    const href = h.slug ? `/hospital/${h.slug}` : `/hospitals?id=${h.id}`;
     out.push({ type: "হাসপাতাল", title: h.name, subtitle: [h.district, h.address].filter(Boolean).join(" • "), href });
   }
   for (const l of labs.data ?? []) out.push({ type: "ল্যাব", title: l.name, subtitle: [l.test_type, l.district].filter(Boolean).join(" • "), href: `/labs?id=${l.id}` });
