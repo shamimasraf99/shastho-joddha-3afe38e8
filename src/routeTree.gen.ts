@@ -29,6 +29,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HospitalSlugRouteImport } from './routes/hospital.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BodySlugRouteImport } from './routes/body.$slug'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
@@ -138,6 +139,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HospitalSlugRoute = HospitalSlugRouteImport.update({
+  id: '/hospital/$slug',
+  path: '/hospital/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategorySlugRoute = CategorySlugRouteImport.update({
   id: '/category/$slug',
   path: '/category/$slug',
@@ -211,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/article/$slug': typeof ArticleSlugRoute
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/hospital/$slug': typeof HospitalSlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/article/$slug': typeof ArticleSlugRoute
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/hospital/$slug': typeof HospitalSlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -272,6 +280,7 @@ export interface FileRoutesById {
   '/article/$slug': typeof ArticleSlugRoute
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/hospital/$slug': typeof HospitalSlugRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/_authenticated/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/article/$slug'
     | '/body/$slug'
     | '/category/$slug'
+    | '/hospital/$slug'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin/pages'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/article/$slug'
     | '/body/$slug'
     | '/category/$slug'
+    | '/hospital/$slug'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin/pages'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/article/$slug'
     | '/body/$slug'
     | '/category/$slug'
+    | '/hospital/$slug'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/admins'
     | '/_authenticated/admin/pages'
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   VideosRoute: typeof VideosRoute
   ArticleSlugRoute: typeof ArticleSlugRoute
   CategorySlugRoute: typeof CategorySlugRoute
+  HospitalSlugRoute: typeof HospitalSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -538,6 +551,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hospital/$slug': {
+      id: '/hospital/$slug'
+      path: '/hospital/$slug'
+      fullPath: '/hospital/$slug'
+      preLoaderRoute: typeof HospitalSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/category/$slug': {
       id: '/category/$slug'
       path: '/category/$slug'
@@ -668,6 +688,7 @@ const rootRouteChildren: RootRouteChildren = {
   VideosRoute: VideosRoute,
   ArticleSlugRoute: ArticleSlugRoute,
   CategorySlugRoute: CategorySlugRoute,
+  HospitalSlugRoute: HospitalSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
