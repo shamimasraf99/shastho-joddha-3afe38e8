@@ -179,6 +179,43 @@ function SearchPage() {
 
         {/* Results */}
         <section className="container mx-auto px-4 py-8 md:py-10">
+          {/* Category filter chips */}
+          {q.trim().length > 0 && (
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">বিভাগ:</span>
+              <button
+                type="button"
+                onClick={() => setFilter("")}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                  !type
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
+                }`}
+              >
+                সব
+              </button>
+              {allTypes.map((t) => {
+                const Icon = typeIcons[t];
+                const active = type === t;
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setFilter(t)}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                      active
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-muted-foreground hover:border-primary hover:text-foreground"
+                    }`}
+                  >
+                    {Icon && <Icon className="h-3 w-3" />}
+                    {t}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {!q.trim() ? (
             <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-8 text-center">
               <SearchIcon className="mx-auto h-10 w-10 text-muted-foreground/60" />
