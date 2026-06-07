@@ -14,6 +14,8 @@ export type SiteSettings = {
     whatsapp?: string;
     telegram?: string;
   };
+  footer: { title?: string; description?: string };
+  emergency: { items?: Array<{ label: string; number: string }> };
 };
 
 export function useSiteSettings() {
@@ -23,9 +25,9 @@ export function useSiteSettings() {
       const { data, error } = await supabase
         .from("settings")
         .select("key,value")
-        .in("key", ["site", "meta", "contact"]);
+        .in("key", ["site", "meta", "contact", "footer", "emergency"]);
       if (error) throw error;
-      const out: SiteSettings = { site: {}, meta: {}, contact: {} };
+      const out: SiteSettings = { site: {}, meta: {}, contact: {}, footer: {}, emergency: {} };
       (data ?? []).forEach((r) => {
         (out as Record<string, unknown>)[r.key] = (r.value as Record<string, unknown>) ?? {};
       });
