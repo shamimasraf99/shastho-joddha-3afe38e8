@@ -18,7 +18,7 @@ type Hospital = {
   category: string | null;
 };
 
-export const Route = createFileRoute("/hospitals/$slug")({
+export const Route = createFileRoute("/hospital/$slug")({
   head: () => ({
     meta: [
       { title: "হাসপাতাল তথ্য — স্বাস্থ্যপিডিয়া" },
