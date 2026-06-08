@@ -36,6 +36,7 @@ import { Route as BodySlugRouteImport } from './routes/body.$slug'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRouteImport } from './routes/api/public/__reveal-d5e22da102c9970130e4a9842ff69b416424b35387c1eecc'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminPagesRouteImport } from './routes/_authenticated/admin.pages'
 import { Route as AuthenticatedAdminAdminsRouteImport } from './routes/_authenticated/admin.admins'
@@ -175,6 +176,14 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRoute =
+  ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRouteImport.update(
+    {
+      id: '/api/public/__reveal-d5e22da102c9970130e4a9842ff69b416424b35387c1eecc',
+      path: '/api/public',
+      getParentRoute: () => rootRouteImport,
+    } as any,
+  )
 const AuthenticatedAdminSettingsRoute =
   AuthenticatedAdminSettingsRouteImport.update({
     id: '/settings',
@@ -229,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public': typeof ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -260,6 +270,7 @@ export interface FileRoutesByTo {
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public': typeof ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -294,6 +305,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/_authenticated/admin/pages': typeof AuthenticatedAdminPagesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/api/public/__reveal-d5e22da102c9970130e4a9842ff69b416424b35387c1eecc': typeof ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -328,6 +340,7 @@ export interface FileRouteTypes {
     | '/admin/admins'
     | '/admin/pages'
     | '/admin/settings'
+    | '/api/public'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -359,6 +372,7 @@ export interface FileRouteTypes {
     | '/admin/admins'
     | '/admin/pages'
     | '/admin/settings'
+    | '/api/public'
     | '/admin'
   id:
     | '__root__'
@@ -392,6 +406,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/admins'
     | '/_authenticated/admin/pages'
     | '/_authenticated/admin/settings'
+    | '/api/public/__reveal-d5e22da102c9970130e4a9842ff69b416424b35387c1eecc'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -420,6 +435,7 @@ export interface RootRouteChildren {
   ArticleSlugRoute: typeof ArticleSlugRoute
   CategorySlugRoute: typeof CategorySlugRoute
   HospitalSlugRoute: typeof HospitalSlugRoute
+  ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRoute: typeof ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -613,6 +629,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/__reveal-d5e22da102c9970130e4a9842ff69b416424b35387c1eecc': {
+      id: '/api/public/__reveal-d5e22da102c9970130e4a9842ff69b416424b35387c1eecc'
+      path: '/api/public'
+      fullPath: '/api/public'
+      preLoaderRoute: typeof ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/settings': {
       id: '/_authenticated/admin/settings'
       path: '/settings'
@@ -710,6 +733,8 @@ const rootRouteChildren: RootRouteChildren = {
   ArticleSlugRoute: ArticleSlugRoute,
   CategorySlugRoute: CategorySlugRoute,
   HospitalSlugRoute: HospitalSlugRoute,
+  ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRoute:
+    ApiPublic_revealD5e22da102c9970130e4a9842ff69b416424b35387c1eeccRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
