@@ -89,8 +89,8 @@ export function SiteHeader() {
             </div>
           </a>
 
-          {headerAd ? (
-            <div className="hidden flex-1 md:flex justify-center">
+          <div className="hidden flex-1 md:flex justify-center">
+            {headerAd ? (
               <div className="w-full max-w-2xl overflow-hidden rounded-md">
                 {headerAd.html_code ? (
                   <div dangerouslySetInnerHTML={{ __html: headerAd.html_code }} />
@@ -104,40 +104,12 @@ export function SiteHeader() {
                   )
                 ) : null}
               </div>
-            </div>
-          ) : (
-          <form className="hidden flex-1 md:block" onSubmit={(e) => { e.preventDefault(); go(q, cat); }}>
-            <div className="relative mx-auto flex max-w-2xl items-stretch overflow-hidden rounded-md border border-border bg-background ring-primary/30 focus-within:ring-2">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="search"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="রোগ, লক্ষণ, ঔষধ, ডাক্তার বা হাসপাতাল খুঁজুন..."
-                className="min-w-0 flex-1 bg-transparent py-2.5 pl-9 pr-3 text-sm outline-none placeholder:text-muted-foreground"
-              />
-              <select
-                value={cat}
-                onChange={(e) => setCat(e.target.value)}
-                aria-label="বিভাগ"
-                className="shrink-0 border-l border-border bg-secondary/60 px-3 text-sm text-foreground outline-none hover:bg-secondary"
-              >
-                <option value="">সব বিভাগ</option>
-                <option value="সংবাদ">সংবাদ</option>
-                <option value="স্বাস্থ্যকোষ">স্বাস্থ্যকোষ</option>
-                <option value="ক্যাটাগরি">ক্যাটাগরি</option>
-                <option value="ডাক্তার">ডাক্তার</option>
-                <option value="হাসপাতাল">হাসপাতাল</option>
-                <option value="ল্যাব">ল্যাব</option>
-                <option value="রক্তদাতা">রক্তদাতা</option>
-                <option value="ভিডিও">ভিডিও</option>
-                <option value="পডকাস্ট">পডকাস্ট</option>
-                <option value="Myth">Myth</option>
-                <option value="বডি">বডি</option>
-              </select>
-            </div>
-          </form>
-          )}
+            ) : (
+              <div className="grid h-16 w-full max-w-2xl place-items-center rounded-md border border-dashed border-border bg-secondary/30 text-xs text-muted-foreground">
+                বিজ্ঞাপনের স্থান (হেডার বার এডস)
+              </div>
+            )}
+          </div>
 
           <button
             type="button"
