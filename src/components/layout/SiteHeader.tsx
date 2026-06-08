@@ -144,6 +144,7 @@ export function SiteHeader() {
                     value={mq}
                     onChange={(e) => setMq(e.target.value)}
                     placeholder="খুঁজুন..."
+                  aria-label="ওয়েবসাইটে খুঁজুন"
                     className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none"
                   />
                 </div>

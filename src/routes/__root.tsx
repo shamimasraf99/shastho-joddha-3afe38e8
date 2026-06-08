@@ -86,12 +86,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "স্বাস্থ্যপিডিয়া — বাংলাদেশের ডিজিটাল স্বাস্থ্য তথ্য ভান্ডার" },
       { property: "og:description", content: "নির্ভরযোগ্য বাংলা স্বাস্থ্য তথ্য, বিশেষজ্ঞ ডাক্তার, হাসপাতাল, ল্যাব ও রক্তদাতা ডিরেক্টরি।" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "স্বাস্থ্যপিডিয়া" },
+      { property: "og:locale", content: "bn_BD" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "স্বাস্থ্যপিডিয়া — বাংলাদেশের ডিজিটাল স্বাস্থ্য তথ্য ভান্ডার" },
       { name: "twitter:description", content: "নির্ভরযোগ্য বাংলা স্বাস্থ্য তথ্য, বিশেষজ্ঞ ডাক্তার, হাসপাতাল, ল্যাব ও রক্তদাতা ডিরেক্টরি।" },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/15d64593-0ecc-4e02-b88d-df38a9c1fad2" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/15d64593-0ecc-4e02-b88d-df38a9c1fad2" },
     ],
     links: [
       {
@@ -103,6 +103,39 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Kalpurush:wght@400&display=swap",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://helthpidia.pp.ua/#organization",
+              name: "স্বাস্থ্যপিডিয়া",
+              alternateName: "Shasthopedia",
+              url: "https://helthpidia.pp.ua",
+              logo: "https://helthpidia.pp.ua/favicon.ico",
+              sameAs: [],
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://helthpidia.pp.ua/#website",
+              url: "https://helthpidia.pp.ua",
+              name: "স্বাস্থ্যপিডিয়া",
+              inLanguage: "bn-BD",
+              publisher: { "@id": "https://helthpidia.pp.ua/#organization" },
+              potentialAction: {
+                "@type": "SearchAction",
+                target:
+                  "https://helthpidia.pp.ua/search?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }),
       },
     ],
   }),
