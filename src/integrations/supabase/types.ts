@@ -770,7 +770,12 @@ export type Database = {
       }
     }
     Enums: {
-      ad_placement: "top_banner" | "sidebar" | "article" | "popup"
+      ad_placement:
+        | "top_banner"
+        | "sidebar"
+        | "article"
+        | "popup"
+        | "header_bar"
       app_role: "admin" | "editor" | "user"
       article_type: "encyclopedia" | "news" | "tip" | "research"
       blood_group: "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-" | "O+" | "O-"
@@ -901,7 +906,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      ad_placement: ["top_banner", "sidebar", "article", "popup"],
+      ad_placement: ["top_banner", "sidebar", "article", "popup", "header_bar"],
       app_role: ["admin", "editor", "user"],
       article_type: ["encyclopedia", "news", "tip", "research"],
       blood_group: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],

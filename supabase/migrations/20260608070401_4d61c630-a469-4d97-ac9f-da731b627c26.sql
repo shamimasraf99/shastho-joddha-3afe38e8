@@ -1,0 +1,1 @@
+ALTER TYPE ad_placement ADD VALUE IF NOT EXISTS 'header_bar';
