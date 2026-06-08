@@ -1,6 +1,8 @@
 import { Search, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { TopBar } from "./TopBar";
 import { BreakingTicker } from "./BreakingTicker";
 import logoAsset from "@/assets/shasthopedia-logo-user.png.asset.json";
