@@ -14,11 +14,45 @@ type QA = {
 };
 
 export const Route = createFileRoute("/qa")({
-  head: () => ({
+  loader: async () => {
+    const { data } = await supabase
+      .from("questions")
+      .select("question,answer")
+      .eq("is_published", true)
+      .not("answer", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    return (data ?? []) as { question: string; answer: string | null }[];
+  },
+  head: ({ loaderData }) => ({
     meta: [
       { title: "প্রশ্ন-উত্তর — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "স্বাস্থ্য বিষয়ক সাধারণ প্রশ্ন ও বিশেষজ্ঞ উত্তর।" },
+      { property: "og:title", content: "প্রশ্ন-উত্তর — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "স্বাস্থ্য বিষয়ক সাধারণ প্রশ্ন ও বিশেষজ্ঞ উত্তর।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/qa" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/qa" }],
+    scripts:
+      loaderData && loaderData.length
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: loaderData.map((q) => ({
+                  "@type": "Question",
+                  name: q.question,
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: (q.answer ?? "").replace(/<[^>]+>/g, "").slice(0, 1000),
+                  },
+                })),
+              }),
+            },
+          ]
+        : [],
   }),
   component: QAPage,
   errorComponent: ({ error, reset }) => {
@@ -80,6 +114,7 @@ function QAPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="প্রশ্ন খুঁজুন..."
+              aria-label="প্রশ্ন খুঁজুন"
               className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>

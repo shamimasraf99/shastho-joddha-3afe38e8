@@ -23,7 +23,11 @@ export const Route = createFileRoute("/donors")({
     meta: [
       { title: "রক্তদাতা — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "বাংলাদেশের রক্তদাতাদের তালিকা — ব্লাড গ্রুপ ও জেলা অনুযায়ী খুঁজুন।" },
+      { property: "og:title", content: "রক্তদাতা — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "বাংলাদেশের রক্তদাতাদের তালিকা — ব্লাড গ্রুপ ও জেলা অনুযায়ী খুঁজুন।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/donors" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/donors" }],
   }),
   component: DonorsPage,
   errorComponent: ({ error, reset }) => {
@@ -109,6 +113,7 @@ function DonorsPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="নাম, জেলা বা ব্লাড গ্রুপ..."
+              aria-label="রক্তদাতা খুঁজুন"
               className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>

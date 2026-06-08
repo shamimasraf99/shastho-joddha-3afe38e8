@@ -70,6 +70,10 @@ export function SiteHeader() {
             <img
               src={logoUrl}
               alt={siteName}
+              width={80}
+              height={80}
+              fetchPriority="high"
+              decoding="async"
               className="h-16 w-16 shrink-0 object-contain md:h-20 md:w-20"
             />
             <div className="leading-tight">
@@ -144,6 +148,7 @@ export function SiteHeader() {
                     value={mq}
                     onChange={(e) => setMq(e.target.value)}
                     placeholder="খুঁজুন..."
+                  aria-label="ওয়েবসাইটে খুঁজুন"
                     className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none"
                   />
                 </div>

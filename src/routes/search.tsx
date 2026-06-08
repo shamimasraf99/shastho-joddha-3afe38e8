@@ -20,7 +20,12 @@ export const Route = createFileRoute("/search")({
     meta: [
       { title: "অনুসন্ধান — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "স্বাস্থ্যপিডিয়ায় রোগ, ডাক্তার, হাসপাতাল ও আরও অনেক কিছু খুঁজুন।" },
+      { property: "og:title", content: "অনুসন্ধান — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "স্বাস্থ্যপিডিয়ায় রোগ, ডাক্তার, হাসপাতাল ও আরও অনেক কিছু খুঁজুন।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/search" },
+      { name: "robots", content: "noindex,follow" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/search" }],
   }),
   errorComponent: ({ error }) => (
     <div className="min-h-screen bg-background">

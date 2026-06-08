@@ -11,7 +11,11 @@ export const Route = createFileRoute("/tools")({
     meta: [
       { title: "স্বাস্থ্য ক্যালকুলেটর — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "BMI সহ বিভিন্ন স্বাস্থ্য ক্যালকুলেটর — এশীয় গাইডলাইন অনুযায়ী।" },
+      { property: "og:title", content: "স্বাস্থ্য ক্যালকুলেটর — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "BMI, ক্যালরি, ডায়েট এবং গর্ভকালীন ক্যালকুলেটর।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/tools" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/tools" }],
   }),
   component: ToolsPage,
 });

@@ -125,6 +125,66 @@ type Article = {
 };
 
 export const Route = createFileRoute("/article/$slug")({
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("articles")
+      .select(
+        "title,slug,excerpt,cover_image,published_at,created_at,article_type,meta_title,meta_description",
+      )
+      .eq("slug", params.slug)
+      .eq("is_published", true)
+      .maybeSingle();
+    return data;
+  },
+  head: ({ params, loaderData }) => {
+    const a = loaderData;
+    const title = a?.meta_title || a?.title || "আর্টিকেল — স্বাস্থ্যপিডিয়া";
+    const desc =
+      a?.meta_description ||
+      a?.excerpt ||
+      "স্বাস্থ্যপিডিয়ায় বাংলা স্বাস্থ্য তথ্য পড়ুন।";
+    const url = `https://helthpidia.pp.ua/article/${params.slug}`;
+    const meta: { title?: string; name?: string; property?: string; content?: string }[] = [
+      { title: `${title} — স্বাস্থ্যপিডিয়া` },
+      { name: "description", content: desc.slice(0, 160) },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc.slice(0, 200) },
+      { property: "og:url", content: url },
+      { property: "og:type", content: "article" },
+    ];
+    if (a?.cover_image) {
+      meta.push({ property: "og:image", content: a.cover_image });
+      meta.push({ name: "twitter:image", content: a.cover_image });
+      meta.push({ name: "twitter:card", content: "summary_large_image" });
+    }
+    const scripts = a
+      ? [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Article",
+              headline: a.title,
+              description: desc,
+              image: a.cover_image ? [a.cover_image] : undefined,
+              datePublished: a.published_at || a.created_at,
+              dateModified: a.published_at || a.created_at,
+              mainEntityOfPage: url,
+              publisher: {
+                "@type": "Organization",
+                name: "স্বাস্থ্যপিডিয়া",
+                url: "https://helthpidia.pp.ua",
+              },
+            }),
+          },
+        ]
+      : [];
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+      scripts,
+    };
+  },
   component: ArticlePage,
   errorComponent: ArticleError,
   notFoundComponent: () => <div className="p-8 text-center">পাওয়া যায়নি</div>,

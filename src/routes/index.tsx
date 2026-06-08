@@ -19,7 +19,10 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "বাংলায় নির্ভরযোগ্য স্বাস্থ্য তথ্য, বিশেষজ্ঞ ডাক্তার, হাসপাতাল, ল্যাব ও রক্তদাতা — এক ঠিকানায়।" },
       { property: "og:title", content: "স্বাস্থ্যপিডিয়া" },
       { property: "og:description", content: "বাংলাদেশের সবচেয়ে বড় ডিজিটাল স্বাস্থ্য তথ্য ভান্ডার।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/" }],
   }),
   component: Index,
 });
@@ -81,6 +84,7 @@ function Index() {
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="যেমন: হার্ট অ্যাটাক, ডায়াবেটিস, প্যারাসিটামল..."
+                  aria-label="স্বাস্থ্য তথ্য খুঁজুন"
                   className="w-full rounded-lg border border-white/20 bg-card py-4 pl-12 pr-32 text-base text-foreground shadow-lg outline-none placeholder:text-muted-foreground"
                 />
                 <button
@@ -228,7 +232,7 @@ function NewsSection() {
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {data.map((n) => (
+          {data.map((n, idx) => (
             <a
               key={n.id}
               href={`/news/${n.slug}`}
@@ -239,7 +243,11 @@ function NewsSection() {
                   <img
                     src={n.cover_image}
                     alt={n.title}
-                    loading="lazy"
+                    loading={idx === 0 ? "eager" : "lazy"}
+                    fetchPriority={idx === 0 ? "high" : "auto"}
+                    decoding="async"
+                    width={640}
+                    height={360}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />
                 ) : (

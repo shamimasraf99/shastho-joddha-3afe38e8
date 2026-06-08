@@ -19,12 +19,66 @@ type Hospital = {
 };
 
 export const Route = createFileRoute("/hospital/$slug")({
-  head: () => ({
-    meta: [
-      { title: "হাসপাতাল তথ্য — স্বাস্থ্যপিডিয়া" },
-      { name: "description", content: "নির্দিষ্ট হাসপাতালের ঠিকানা, ফোন ও জরুরি তথ্য দেখুন।" },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("hospitals")
+      .select("name,district,address,phone,emergency_number,image,description")
+      .eq("slug", params.slug)
+      .eq("is_active", true)
+      .maybeSingle();
+    return data;
+  },
+  head: ({ params, loaderData }) => {
+    const h = loaderData;
+    const title = h?.name
+      ? `${h.name} — হাসপাতাল`
+      : "হাসপাতাল তথ্য — স্বাস্থ্যপিডিয়া";
+    const desc =
+      h?.description ||
+      [h?.name, h?.address, h?.district].filter(Boolean).join(", ") ||
+      "হাসপাতালের ঠিকানা, ফোন ও জরুরি নম্বর।";
+    const url = `https://helthpidia.pp.ua/hospital/${params.slug}`;
+    const meta: { title?: string; name?: string; property?: string; content?: string }[] = [
+      { title: `${title} — স্বাস্থ্যপিডিয়া` },
+      { name: "description", content: desc.slice(0, 160) },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc.slice(0, 200) },
+      { property: "og:url", content: url },
+      { property: "og:type", content: "website" },
+    ];
+    if (h?.image) {
+      meta.push({ property: "og:image", content: h.image });
+      meta.push({ name: "twitter:image", content: h.image });
+      meta.push({ name: "twitter:card", content: "summary_large_image" });
+    }
+    const scripts = h
+      ? [
+          {
+            type: "application/ld+json",
+            children: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Hospital",
+              name: h.name,
+              description: h.description,
+              image: h.image,
+              telephone: h.phone,
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: h.address,
+                addressLocality: h.district,
+                addressCountry: "BD",
+              },
+              url,
+            }),
+          },
+        ]
+      : [];
+    return {
+      meta,
+      links: [{ rel: "canonical", href: url }],
+      scripts,
+    };
+  },
   component: HospitalDetailsPage,
   errorComponent: ({ error, reset }) => {
     const router = useRouter();

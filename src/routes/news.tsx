@@ -26,7 +26,12 @@ export const Route = createFileRoute("/news")({
     meta: [
       { title: "স্বাস্থ্য সংবাদ — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "সর্বশেষ স্বাস্থ্য সংবাদ ও আপডেট বাংলায়।" },
+      { property: "og:title", content: "স্বাস্থ্য সংবাদ — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "সর্বশেষ স্বাস্থ্য সংবাদ ও আপডেট বাংলায়।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/news" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/news" }],
   }),
   component: NewsPage,
   errorComponent: ({ error, reset }) => {

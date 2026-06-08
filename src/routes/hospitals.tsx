@@ -34,7 +34,11 @@ export const Route = createFileRoute("/hospitals")({
     meta: [
       { title: "হাসপাতাল — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "বাংলাদেশের হাসপাতালের তালিকা — ঠিকানা, ফোন ও জরুরি নম্বর সহ।" },
+      { property: "og:title", content: "হাসপাতাল — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "বাংলাদেশের হাসপাতালের তালিকা — ঠিকানা, ফোন ও জরুরি নম্বর সহ।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/hospitals" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/hospitals" }],
   }),
   component: HospitalsPage,
   errorComponent: ({ error, reset }) => {
@@ -126,6 +130,7 @@ function HospitalsPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="হাসপাতাল বা ঠিকানা..."
+              aria-label="হাসপাতাল খুঁজুন"
               className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>

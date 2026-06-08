@@ -9,7 +9,12 @@ export const Route = createFileRoute("/contact")({
     meta: [
       { title: "যোগাযোগ — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "স্বাস্থ্যপিডিয়ার সাথে যোগাযোগ করুন।" },
+      { property: "og:title", content: "যোগাযোগ — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "স্বাস্থ্যপিডিয়ার সাথে যোগাযোগ করুন।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/contact" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/contact" }],
   }),
   component: ContactPage,
   notFoundComponent: () => <div className="p-8 text-center">পাওয়া যায়নি</div>,

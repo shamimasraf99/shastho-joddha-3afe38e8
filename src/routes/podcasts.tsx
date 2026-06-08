@@ -22,7 +22,11 @@ export const Route = createFileRoute("/podcasts")({
     meta: [
       { title: "পডকাস্ট — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "স্বাস্থ্য বিষয়ক পডকাস্ট সংগ্রহ।" },
+      { property: "og:title", content: "পডকাস্ট — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "বাংলায় স্বাস্থ্য বিষয়ক বাছাই করা পডকাস্ট।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/podcasts" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/podcasts" }],
   }),
   component: PodcastsPage,
   errorComponent: ({ error, reset }) => {

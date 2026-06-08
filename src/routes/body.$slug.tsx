@@ -6,6 +6,35 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { Calendar, Newspaper, Heart, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/body/$slug")({
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("body_parts")
+      .select("name,description")
+      .eq("slug", params.slug)
+      .eq("is_active", true)
+      .maybeSingle();
+    return data;
+  },
+  head: ({ params, loaderData }) => {
+    const bp = loaderData;
+    const title = bp?.name
+      ? `${bp.name} সম্পর্কিত স্বাস্থ্য তথ্য`
+      : "শরীরের অঙ্গ — স্বাস্থ্যপিডিয়া";
+    const desc =
+      bp?.description ||
+      "শরীরের এই অঙ্গ সম্পর্কিত রোগ, লক্ষণ ও আর্টিকেল।";
+    const url = `https://helthpidia.pp.ua/body/${params.slug}`;
+    return {
+      meta: [
+        { title: `${title} — স্বাস্থ্যপিডিয়া` },
+        { name: "description", content: desc.slice(0, 160) },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc.slice(0, 200) },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+    };
+  },
   component: BodyPartPage,
   notFoundComponent: () => {
     const { slug } = Route.useParams();

@@ -24,7 +24,11 @@ export const Route = createFileRoute("/labs")({
     meta: [
       { title: "ল্যাব — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "বাংলাদেশের ডায়াগনস্টিক ল্যাবের তালিকা — টেস্ট, মূল্য ও যোগাযোগ।" },
+      { property: "og:title", content: "ল্যাব — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "বাংলাদেশের ডায়াগনস্টিক ল্যাবের তালিকা — টেস্ট, মূল্য ও যোগাযোগ।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/labs" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/labs" }],
   }),
   component: LabsPage,
   errorComponent: ({ error, reset }) => {
@@ -97,6 +101,7 @@ function LabsPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="ল্যাব, টেস্ট বা ঠিকানা..."
+              aria-label="ল্যাব খুঁজুন"
               className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
