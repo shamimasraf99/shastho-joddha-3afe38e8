@@ -1,0 +1,28 @@
+# স্বাস্থ্যপিডিয়া (Shasthopedia)
+
+> বাংলাদেশের সবচেয়ে বড় ডিজিটাল স্বাস্থ্য তথ্য ভান্ডার — বাংলায় নির্ভরযোগ্য স্বাস্থ্য তথ্য, বিশেষজ্ঞ ডাক্তার, হাসপাতাল, ল্যাব ও রক্তদাতা ডিরেক্টরি।
+
+Shasthopedia (স্বাস্থ্যপিডিয়া) is a Bangla health-information platform for Bangladesh. It provides a health encyclopedia, directories of specialist doctors / hospitals / diagnostic labs / blood donors, health news, Q&A with doctors, podcasts, videos, myth-busters, and health calculators (BMI, calorie, diet, pregnancy).
+
+## Pages
+
+- [হোম / Home](/): Overview of the site with featured categories and latest health news.
+- [স্বাস্থ্যকোষ / Encyclopedia](/encyclopedia): Bangla health encyclopedia — diseases, symptoms and treatments.
+- [বিশেষজ্ঞ ডাক্তার / Doctors](/doctors): Directory of specialist doctors with chambers, fees and phone numbers.
+- [হাসপাতাল / Hospitals](/hospitals): Hospital directory with addresses, phones, and emergency numbers.
+- [ল্যাব / Labs](/labs): Diagnostic lab directory with test types, prices and locations.
+- [রক্তদাতা / Blood Donors](/donors): Blood-donor directory by group and district.
+- [স্বাস্থ্য সংবাদ / News](/news): Latest health news in Bangla.
+- [প্রশ্ন-উত্তর / Q&A](/qa): Frequently asked health questions answered by specialists.
+- [ক্যালকুলেটর / Calculators](/tools): BMI, calorie, diet and pregnancy calculators.
+- [শরীরের অঙ্গ / Body parts](/body): Information indexed by human-body parts.
+- [ভিডিও / Videos](/videos): Curated health videos.
+- [পডকাস্ট / Podcasts](/podcasts): Health podcasts.
+- [Myth Busters](/myths): Common health myths vs facts.
+- [আমাদের সম্পর্কে / About](/about): About Shasthopedia.
+- [যোগাযোগ / Contact](/contact): Contact information and form.
+
+## Optional
+
+- [গোপনীয়তা নীতি / Privacy](/privacy)
+- [শর্তাবলী / Terms](/terms)
