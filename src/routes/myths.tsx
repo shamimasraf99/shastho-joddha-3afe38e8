@@ -23,7 +23,11 @@ export const Route = createFileRoute("/myths")({
     meta: [
       { title: "মিথবাস্টার — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "সাধারণ স্বাস্থ্য বিষয়ক ভুল ধারণা এবং প্রকৃত তথ্য।" },
+      { property: "og:title", content: "মিথবাস্টার — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "সাধারণ স্বাস্থ্য বিষয়ক ভুল ধারণা এবং প্রকৃত তথ্য।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/myths" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/myths" }],
   }),
   component: MythsPage,
   errorComponent: ({ error, reset }) => {
@@ -87,6 +91,7 @@ function MythsPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="মিথ খুঁজুন..."
+              aria-label="মিথ খুঁজুন"
               className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>

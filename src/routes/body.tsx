@@ -11,7 +11,11 @@ export const Route = createFileRoute("/body")({
     meta: [
       { title: "শরীরের অঙ্গ — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "শরীরের বিভিন্ন অঙ্গ অনুযায়ী স্বাস্থ্য তথ্য ব্রাউজ করুন।" },
+      { property: "og:title", content: "শরীরের অঙ্গ — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "শরীরের বিভিন্ন অঙ্গ অনুযায়ী স্বাস্থ্য তথ্য ব্রাউজ করুন।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/body" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/body" }],
   }),
 });
 

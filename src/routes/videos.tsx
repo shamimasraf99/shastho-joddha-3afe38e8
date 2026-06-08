@@ -22,7 +22,11 @@ export const Route = createFileRoute("/videos")({
     meta: [
       { title: "ভিডিও — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "স্বাস্থ্য বিষয়ক ভিডিও সংগ্রহ।" },
+      { property: "og:title", content: "ভিডিও — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "বাংলায় স্বাস্থ্য বিষয়ক বাছাই করা ভিডিও।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/videos" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/videos" }],
   }),
   component: VideosPage,
   errorComponent: ({ error, reset }) => {

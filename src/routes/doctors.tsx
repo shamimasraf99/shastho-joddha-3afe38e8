@@ -26,7 +26,11 @@ export const Route = createFileRoute("/doctors")({
     meta: [
       { title: "বিশেষজ্ঞ ডাক্তার — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "বাংলাদেশের বিশেষজ্ঞ ডাক্তারদের তালিকা — কার্ডিয়াক সার্জনসহ সকল বিশেষজ্ঞ, চেম্বার ও ফোন নম্বর সহ।" },
+      { property: "og:title", content: "বিশেষজ্ঞ ডাক্তার — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "বাংলাদেশের বিশেষজ্ঞ ডাক্তারদের ডিরেক্টরি — চেম্বার, ফি ও ফোন।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/doctors" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/doctors" }],
   }),
   component: DoctorsPage,
   errorComponent: ({ error, reset }) => {
@@ -112,6 +116,7 @@ function DoctorsPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="ডাক্তার বা হাসপাতালের নাম..."
+              aria-label="ডাক্তার খুঁজুন"
               className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>

@@ -19,7 +19,11 @@ export const Route = createFileRoute("/encyclopedia")({
     meta: [
       { title: "স্বাস্থ্যকোষ (Encyclopedia) — স্বাস্থ্যপিডিয়া" },
       { name: "description", content: "রোগ, লক্ষণ ও চিকিৎসা সম্পর্কিত বাংলা এনসাইক্লোপিডিয়া।" },
+      { property: "og:title", content: "স্বাস্থ্যকোষ — স্বাস্থ্যপিডিয়া" },
+      { property: "og:description", content: "রোগ, লক্ষণ ও চিকিৎসা সম্পর্কিত বাংলা এনসাইক্লোপিডিয়া।" },
+      { property: "og:url", content: "https://helthpidia.pp.ua/encyclopedia" },
     ],
+    links: [{ rel: "canonical", href: "https://helthpidia.pp.ua/encyclopedia" }],
   }),
   component: EncyclopediaPage,
   errorComponent: ({ error, reset }) => {
@@ -81,6 +85,7 @@ function EncyclopediaPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="রোগ, লক্ষণ বা টপিক খুঁজুন..."
+              aria-label="স্বাস্থ্যকোষে খুঁজুন"
               className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
