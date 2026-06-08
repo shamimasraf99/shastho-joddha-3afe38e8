@@ -28,9 +28,7 @@ const nav = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const [q, setQ] = useState("");
   const [mq, setMq] = useState("");
-  const [cat, setCat] = useState("");
   const [mcat, setMcat] = useState("");
   const go = (val: string, category: string) => {
     const t = val.trim();
