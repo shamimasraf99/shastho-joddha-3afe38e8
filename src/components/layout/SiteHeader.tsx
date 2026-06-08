@@ -70,6 +70,10 @@ export function SiteHeader() {
             <img
               src={logoUrl}
               alt={siteName}
+              width={80}
+              height={80}
+              fetchPriority="high"
+              decoding="async"
               className="h-16 w-16 shrink-0 object-contain md:h-20 md:w-20"
             />
             <div className="leading-tight">
