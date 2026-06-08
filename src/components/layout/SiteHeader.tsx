@@ -39,6 +39,27 @@ export function SiteHeader() {
     setOpen(false);
   };
   const { data: settings } = useSiteSettings();
+  const { data: headerAd } = useQuery({
+    queryKey: ["header-bar-ad"],
+    queryFn: async () => {
+      const today = new Date().toISOString().slice(0, 10);
+      const { data, error } = await supabase
+        .from("advertisements")
+        .select("id,title,image_url,link_url,html_code,start_date,end_date")
+        .eq("placement", "header_bar")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (error) throw error;
+      const ad = (data ?? []).find((a) => {
+        if (a.start_date && a.start_date > today) return false;
+        if (a.end_date && a.end_date < today) return false;
+        return true;
+      });
+      return ad ?? null;
+    },
+    staleTime: 60_000,
+  });
   const logoUrl = settings?.site.logo_url || logoAsset.url;
   const siteName = settings?.site.name || "স্বাস্থ্যপিডিয়া";
   const tagline = settings?.site.tagline || "HealthPedia • Bangladesh";
@@ -68,6 +89,23 @@ export function SiteHeader() {
             </div>
           </a>
 
+          {headerAd ? (
+            <div className="hidden flex-1 md:flex justify-center">
+              <div className="w-full max-w-2xl overflow-hidden rounded-md">
+                {headerAd.html_code ? (
+                  <div dangerouslySetInnerHTML={{ __html: headerAd.html_code }} />
+                ) : headerAd.image_url ? (
+                  headerAd.link_url ? (
+                    <a href={headerAd.link_url} target="_blank" rel="noopener noreferrer">
+                      <img src={headerAd.image_url} alt={headerAd.title} className="h-16 w-full object-contain" />
+                    </a>
+                  ) : (
+                    <img src={headerAd.image_url} alt={headerAd.title} className="h-16 w-full object-contain" />
+                  )
+                ) : null}
+              </div>
+            </div>
+          ) : (
           <form className="hidden flex-1 md:block" onSubmit={(e) => { e.preventDefault(); go(q, cat); }}>
             <div className="relative mx-auto flex max-w-2xl items-stretch overflow-hidden rounded-md border border-border bg-background ring-primary/30 focus-within:ring-2">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -99,6 +137,7 @@ export function SiteHeader() {
               </select>
             </div>
           </form>
+          )}
 
           <button
             type="button"
