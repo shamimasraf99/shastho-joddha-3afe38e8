@@ -14,6 +14,20 @@ async function assertAdmin(userId: string) {
   if (!data) throw new Error("Admin permission required");
 }
 
+async function findAuthUserByEmail(email: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const target = email.trim().toLowerCase();
+  const perPage = 1000;
+  for (let page = 1; page <= 10; page += 1) {
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage });
+    if (error) throw new Error(error.message);
+    const user = data.users.find((item) => item.email?.toLowerCase() === target);
+    if (user) return user;
+    if (data.users.length < perPage) return null;
+  }
+  return null;
+}
+
 export const hasAnyAdmin = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { count, error } = await supabaseAdmin
@@ -95,7 +109,11 @@ export const addAdminUser = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+    const normalizedEmail = data.email.trim().toLowerCase();
+    const existingUser = await findAuthUserByEmail(normalizedEmail);
+    const { data: created, error } = existingUser
+      ? { data: { user: existingUser }, error: null }
+      : await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
       email_confirm: true,
