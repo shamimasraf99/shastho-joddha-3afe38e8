@@ -2,6 +2,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { useSitePage } from "@/hooks/useSitePage";
 import { TTSButton } from "@/components/TTSButton";
+import DOMPurify from "isomorphic-dompurify";
 
 export function SitePageView({ pageKey, fallbackTitle }: { pageKey: string; fallbackTitle: string }) {
   const { data, isLoading } = useSitePage(pageKey);
@@ -28,7 +29,7 @@ export function SitePageView({ pageKey, fallbackTitle }: { pageKey: string; fall
         ) : body ? (
           <article
             className="prose prose-sm max-w-none rounded-lg border border-border bg-card p-6 md:prose-base dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: body }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(body) }}
           />
         ) : (
           <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
