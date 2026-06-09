@@ -95,7 +95,12 @@ export function SiteHeader() {
             {headerAd ? (
               <div className="w-full max-w-2xl overflow-hidden rounded-md">
                 {headerAd.html_code ? (
-                  <div dangerouslySetInnerHTML={{ __html: headerAd.html_code }} />
+                  <iframe
+                    title={headerAd.title || "advertisement"}
+                    srcDoc={headerAd.html_code}
+                    sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+                    className="h-16 w-full border-0"
+                  />
                 ) : headerAd.image_url ? (
                   headerAd.link_url ? (
                     <a href={headerAd.link_url} target="_blank" rel="noopener noreferrer">
