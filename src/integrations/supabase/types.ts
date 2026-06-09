@@ -676,6 +676,36 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_events: {
+        Row: {
+          country: string | null
+          created_at: string
+          id: number
+          path: string | null
+          referrer: string | null
+          session_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          id?: number
+          path?: string | null
+          referrer?: string | null
+          session_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          id?: number
+          path?: string | null
+          referrer?: string | null
+          session_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       donors_public: {

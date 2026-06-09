@@ -32,6 +32,7 @@ import {
   Settings as SettingsIcon,
   Users,
   LogOut,
+  BarChart3,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -63,6 +64,7 @@ const items: { url: string; title: string; icon: typeof LayoutDashboard; exact?:
   { url: "/admin/questions", title: "Q&A", icon: HelpCircle },
   { url: "/admin/blood-donors", title: "রক্তদান (Roktodan)", icon: Droplet },
   { url: "/admin/advertisements", title: "বিজ্ঞাপন", icon: Megaphone },
+  { url: "/admin/visitors", title: "ভিজিটর", icon: BarChart3 },
   { url: "/admin/seo", title: "SEO", icon: Search },
   { url: "/admin/settings", title: "সাইট সেটিংস", icon: SettingsIcon },
   { url: "/admin/pages", title: "পেজ (About/Privacy/Terms)", icon: FileText },
