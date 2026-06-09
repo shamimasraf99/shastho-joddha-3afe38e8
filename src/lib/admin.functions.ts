@@ -14,6 +14,20 @@ async function assertAdmin(userId: string) {
   if (!data) throw new Error("Admin permission required");
 }
 
+async function findAuthUserByEmail(email: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const target = email.trim().toLowerCase();
+  const perPage = 1000;
+  for (let page = 1; page <= 10; page += 1) {
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage });
+    if (error) throw new Error(error.message);
+    const user = data.users.find((item) => item.email?.toLowerCase() === target);
+    if (user) return user;
+    if (data.users.length < perPage) return null;
+  }
+  return null;
+}
+
 export const hasAnyAdmin = createServerFn({ method: "GET" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { count, error } = await supabaseAdmin
@@ -71,13 +85,19 @@ export const listAdmins = createServerFn({ method: "GET" })
       ids.map((id) => supabaseAdmin.auth.admin.getUserById(id).then((r) => r.data.user)),
     );
     const userMap = new Map(users.filter(Boolean).map((u) => [u!.id, u!]));
-    return (roles ?? []).map((r) => ({
-      id: r.id,
-      user_id: r.user_id,
-      role: r.role,
-      created_at: r.created_at,
-      email: userMap.get(r.user_id)?.email ?? "",
-    }));
+    const grouped = new Map<string, { id: string; user_id: string; role: string; created_at: string; email: string }>();
+    for (const r of roles ?? []) {
+      const current = grouped.get(r.user_id);
+      const role = current?.role === "admin" || r.role === "admin" ? "admin" : current?.role ?? r.role;
+      grouped.set(r.user_id, {
+        id: current?.id ?? r.id,
+        user_id: r.user_id,
+        role,
+        created_at: current?.created_at ?? r.created_at,
+        email: userMap.get(r.user_id)?.email ?? "",
+      });
+    }
+    return Array.from(grouped.values());
   });
 
 export const addAdminUser = createServerFn({ method: "POST" })
@@ -95,7 +115,11 @@ export const addAdminUser = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+    const normalizedEmail = data.email.trim().toLowerCase();
+    const existingUser = await findAuthUserByEmail(normalizedEmail);
+    const { data: created, error } = existingUser
+      ? { data: { user: existingUser }, error: null }
+      : await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
       email_confirm: true,
@@ -104,6 +128,14 @@ export const addAdminUser = createServerFn({ method: "POST" })
     if (error || !created.user) throw new Error(error?.message ?? "Failed");
     await supabaseAdmin.from("user_roles").upsert({ user_id: created.user.id, role: data.role });
     await supabaseAdmin.from("profiles").upsert({ id: created.user.id, full_name: data.fullName });
+    if (existingUser) {
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+        password: data.password,
+        email_confirm: true,
+        user_metadata: { full_name: data.fullName },
+      });
+      if (updateError) return { ok: true, passwordWarning: updateError.message };
+    }
     return { ok: true };
   });
 
