@@ -110,8 +110,9 @@ function PodcastsPage() {
                         loading="lazy"
                         className="h-full w-full"
                       />
-                      <div className="pointer-events-auto absolute right-0 top-0 h-10 w-28 bg-transparent" aria-hidden />
-                      <div className="pointer-events-none absolute left-0 top-0 h-10 w-3/4 bg-transparent" aria-hidden />
+                      <div className="pointer-events-none absolute inset-x-0 top-0 h-9 bg-black" aria-hidden />
+                      <div className="pointer-events-none absolute right-0 top-0 h-10 w-32 bg-black" aria-hidden />
+                      <div className="pointer-events-none absolute left-0 bottom-0 h-10 w-1/2 bg-black" aria-hidden />
                     </div>
                   ) : p.thumbnail ? (
                     <img src={p.thumbnail} alt={p.title} className="h-44 w-full object-cover" loading="lazy" />
