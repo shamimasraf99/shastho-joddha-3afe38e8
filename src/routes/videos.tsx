@@ -110,10 +110,10 @@ function VideosPage() {
                       loading="lazy"
                       className="h-full w-full"
                     />
-                    {/* Mask YouTube logo (top-right) */}
-                    <div className="pointer-events-auto absolute right-0 top-0 h-10 w-28 bg-transparent" aria-hidden />
-                    {/* Mask title bar (top) when paused */}
-                    <div className="pointer-events-none absolute left-0 top-0 h-10 w-3/4 bg-transparent" aria-hidden />
+                    {/* Hide YouTube title bar / logo overlays */}
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-9 bg-black" aria-hidden />
+                    <div className="pointer-events-none absolute right-0 top-0 h-10 w-32 bg-black" aria-hidden />
+                    <div className="pointer-events-none absolute left-0 bottom-0 h-10 w-1/2 bg-black" aria-hidden />
                   </div>
                   <div className="p-4">
                     <h2 className="line-clamp-2 text-base font-bold leading-snug text-foreground">{v.title}</h2>
