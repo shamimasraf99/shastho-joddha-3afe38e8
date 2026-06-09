@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, HelpCircle, MessageCircle, User } from "lucide-react";
+import DOMPurify from "isomorphic-dompurify";
 
 type QA = {
   id: string;
