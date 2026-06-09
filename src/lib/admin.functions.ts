@@ -85,13 +85,19 @@ export const listAdmins = createServerFn({ method: "GET" })
       ids.map((id) => supabaseAdmin.auth.admin.getUserById(id).then((r) => r.data.user)),
     );
     const userMap = new Map(users.filter(Boolean).map((u) => [u!.id, u!]));
-    return (roles ?? []).map((r) => ({
-      id: r.id,
-      user_id: r.user_id,
-      role: r.role,
-      created_at: r.created_at,
-      email: userMap.get(r.user_id)?.email ?? "",
-    }));
+    const grouped = new Map<string, { id: string; user_id: string; role: string; created_at: string; email: string }>();
+    for (const r of roles ?? []) {
+      const current = grouped.get(r.user_id);
+      const role = current?.role === "admin" || r.role === "admin" ? "admin" : current?.role ?? r.role;
+      grouped.set(r.user_id, {
+        id: current?.id ?? r.id,
+        user_id: r.user_id,
+        role,
+        created_at: current?.created_at ?? r.created_at,
+        email: userMap.get(r.user_id)?.email ?? "",
+      });
+    }
+    return Array.from(grouped.values());
   });
 
 export const addAdminUser = createServerFn({ method: "POST" })
@@ -120,6 +126,14 @@ export const addAdminUser = createServerFn({ method: "POST" })
       user_metadata: { full_name: data.fullName },
     });
     if (error || !created.user) throw new Error(error?.message ?? "Failed");
+    if (existingUser) {
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+        password: data.password,
+        email_confirm: true,
+        user_metadata: { full_name: data.fullName },
+      });
+      if (updateError) throw new Error(updateError.message);
+    }
     await supabaseAdmin.from("user_roles").upsert({ user_id: created.user.id, role: data.role });
     await supabaseAdmin.from("profiles").upsert({ id: created.user.id, full_name: data.fullName });
     return { ok: true };
