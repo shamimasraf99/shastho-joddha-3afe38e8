@@ -101,15 +101,17 @@ function PodcastsPage() {
               return (
                 <article key={p.id} className="group overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:border-primary hover:shadow-md">
                   {vid ? (
-                    <div className="aspect-video w-full overflow-hidden bg-black">
+                    <div className="relative aspect-video w-full overflow-hidden bg-black">
                       <iframe
-                        src={`https://www.youtube.com/embed/${vid}?autoplay=${ap}&mute=${ap}&rel=0`}
+                        src={`https://www.youtube-nocookie.com/embed/${vid}?autoplay=${ap}&mute=${ap}&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&fs=1&color=white`}
                         title={p.title}
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                         loading="lazy"
                         className="h-full w-full"
                       />
+                      <div className="pointer-events-auto absolute right-0 top-0 h-10 w-28 bg-transparent" aria-hidden />
+                      <div className="pointer-events-none absolute left-0 top-0 h-10 w-3/4 bg-transparent" aria-hidden />
                     </div>
                   ) : p.thumbnail ? (
                     <img src={p.thumbnail} alt={p.title} className="h-44 w-full object-cover" loading="lazy" />
