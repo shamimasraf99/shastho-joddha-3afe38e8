@@ -74,9 +74,13 @@ function AdminsPage() {
 
   const addMut = useMutation({
     mutationFn: () => addFn({ data: form }),
-    onSuccess: () => {
+    onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["admins-list"] });
-      toast.success("ইউজার যোগ হয়েছে");
+      if (result.passwordWarning) {
+        toast.warning(`ইউজার/ভূমিকা যোগ হয়েছে, কিন্তু পাসওয়ার্ড আপডেট হয়নি: ${result.passwordWarning}`);
+      } else {
+        toast.success("ইউজার যোগ হয়েছে");
+      }
       setOpen(false);
       setForm({ fullName: "", email: "", password: "", role: "admin" });
     },
