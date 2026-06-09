@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { listAdmins, addAdminUser, removeAdminUser } from "@/lib/admin.functions";
+import { listAdmins, addAdminUser, removeAdminUser, resetUserPassword } from "@/lib/admin.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, KeyRound } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -25,6 +26,7 @@ function AdminsPage() {
   const listFn = useServerFn(listAdmins);
   const addFn = useServerFn(addAdminUser);
   const removeFn = useServerFn(removeAdminUser);
+  const resetFn = useServerFn(resetUserPassword);
 
   const { data: admins = [], isLoading } = useQuery({
     queryKey: ["admins-list"],
@@ -34,6 +36,41 @@ function AdminsPage() {
   const [open, setOpen] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [form, setForm] = useState({ fullName: "", email: "", password: "", role: "admin" as "admin" | "editor" | "user" });
+
+  // Change own password
+  const [ownPw, setOwnPw] = useState({ next: "", confirm: "" });
+  const [ownPwLoading, setOwnPwLoading] = useState(false);
+
+  // Reset other user's password
+  const [resetUser, setResetUser] = useState<{ id: string; email: string } | null>(null);
+  const [resetPw, setResetPw] = useState("");
+
+  const handleOwnPasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (ownPw.next !== ownPw.confirm) { toast.error("পাসওয়ার্ড মিলছে না"); return; }
+    if (ownPw.next.length < 8) { toast.error("কমপক্ষে ৮ অক্ষর হতে হবে"); return; }
+    setOwnPwLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: ownPw.next });
+      if (error) throw error;
+      toast.success("আপনার পাসওয়ার্ড পরিবর্তন হয়েছে");
+      setOwnPw({ next: "", confirm: "" });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "ত্রুটি ঘটেছে");
+    } finally {
+      setOwnPwLoading(false);
+    }
+  };
+
+  const resetMut = useMutation({
+    mutationFn: () => resetFn({ data: { userId: resetUser!.id, password: resetPw } }),
+    onSuccess: () => {
+      toast.success("পাসওয়ার্ড রিসেট হয়েছে");
+      setResetUser(null);
+      setResetPw("");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const addMut = useMutation({
     mutationFn: () => addFn({ data: form }),
@@ -66,6 +103,29 @@ function AdminsPage() {
         <Button onClick={() => setOpen(true)}><Plus className="h-4 w-4 mr-1" /> নতুন ইউজার</Button>
       </div>
 
+      <div className="border rounded-xl bg-card p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <KeyRound className="h-4 w-4 text-primary" />
+          <h3 className="font-semibold">আমার পাসওয়ার্ড পরিবর্তন</h3>
+        </div>
+        <form onSubmit={handleOwnPasswordChange} className="grid gap-3 sm:grid-cols-3">
+          <div>
+            <Label>নতুন পাসওয়ার্ড</Label>
+            <Input type="password" minLength={8} required value={ownPw.next} onChange={(e) => setOwnPw({ ...ownPw, next: e.target.value })} />
+          </div>
+          <div>
+            <Label>পুনরায় টাইপ করুন</Label>
+            <Input type="password" minLength={8} required value={ownPw.confirm} onChange={(e) => setOwnPw({ ...ownPw, confirm: e.target.value })} />
+          </div>
+          <div className="flex items-end">
+            <Button type="submit" disabled={ownPwLoading} className="w-full">
+              {ownPwLoading ? "আপডেট হচ্ছে..." : "পাসওয়ার্ড পরিবর্তন"}
+            </Button>
+          </div>
+        </form>
+        <p className="mt-2 text-xs text-muted-foreground">কমপক্ষে ৮ অক্ষর। পরিবর্তনের পর পরবর্তী লগইনে নতুন পাসওয়ার্ড ব্যবহার করুন।</p>
+      </div>
+
       <div className="border rounded-xl bg-card overflow-x-auto">
         <Table>
           <TableHeader>
@@ -87,7 +147,10 @@ function AdminsPage() {
                   <TableCell>{a.email || a.user_id}</TableCell>
                   <TableCell><span className="px-2 py-1 rounded bg-muted text-xs">{a.role}</span></TableCell>
                   <TableCell className="text-sm text-muted-foreground">{new Date(a.created_at).toLocaleDateString("bn-BD")}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right space-x-1">
+                    <Button variant="ghost" size="icon" title="পাসওয়ার্ড রিসেট" onClick={() => { setResetUser({ id: a.user_id, email: a.email || a.user_id }); setResetPw(""); }}>
+                      <KeyRound className="h-4 w-4" />
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => setRemovingId(a.user_id)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
@@ -137,6 +200,23 @@ function AdminsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={resetUser !== null} onOpenChange={(v) => !v && setResetUser(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>পাসওয়ার্ড রিসেট</DialogTitle></DialogHeader>
+          <form onSubmit={(e) => { e.preventDefault(); resetMut.mutate(); }} className="space-y-4">
+            <p className="text-sm text-muted-foreground">ইউজার: <span className="font-medium text-foreground">{resetUser?.email}</span></p>
+            <div>
+              <Label>নতুন পাসওয়ার্ড (কমপক্ষে ৮ অক্ষর)</Label>
+              <Input type="password" minLength={8} required value={resetPw} onChange={(e) => setResetPw(e.target.value)} autoFocus />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setResetUser(null)}>বাতিল</Button>
+              <Button type="submit" disabled={resetMut.isPending}>{resetMut.isPending ? "রিসেট হচ্ছে..." : "রিসেট করুন"}</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
