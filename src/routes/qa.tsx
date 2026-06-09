@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, HelpCircle, MessageCircle, User } from "lucide-react";
+import DOMPurify from "isomorphic-dompurify";
 
 type QA = {
   id: string;
@@ -146,7 +147,7 @@ function QAPage() {
                         <div className="text-xs font-semibold uppercase text-primary">উত্তর</div>
                         <div
                           className="mt-1 text-sm text-foreground"
-                          dangerouslySetInnerHTML={{ __html: item.answer }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.answer) }}
                         />
                         {item.answered_by && (
                           <div className="mt-1 text-xs text-muted-foreground">— {item.answered_by}</div>

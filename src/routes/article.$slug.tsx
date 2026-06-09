@@ -73,35 +73,32 @@ function isFullHtmlDocument(raw: string): boolean {
 function HtmlDocumentFrame({ html, title }: { html: string; title: string }) {
   const ref = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(800);
+  // Inject a small script that posts the document height to the parent,
+  // so we can resize without needing allow-same-origin (which would defeat the sandbox).
+  const FRAME_TAG = "__lvFrameId";
+  const frameId = useRef<string>(`f_${Math.random().toString(36).slice(2)}`);
+  const wrappedHtml = (() => {
+    const script = `<script>(function(){function s(){try{var h=Math.max(document.documentElement.scrollHeight,document.body?document.body.scrollHeight:0);parent.postMessage({${FRAME_TAG}:"${frameId.current}",height:h},"*");}catch(e){}}window.addEventListener("load",s);setInterval(s,800);var ro=window.ResizeObserver?new ResizeObserver(s):null;if(ro&&document.body)ro.observe(document.body);})();</script>`;
+    if (/<\/body>/i.test(html)) return html.replace(/<\/body>/i, script + "</body>");
+    return html + script;
+  })();
   useEffect(() => {
-    const iframe = ref.current;
-    if (!iframe) return;
-    const resize = () => {
-      try {
-        const doc = iframe.contentDocument;
-        if (!doc) return;
-        const h = Math.max(
-          doc.body?.scrollHeight ?? 0,
-          doc.documentElement?.scrollHeight ?? 0,
-        );
-        if (h > 0) setHeight(h + 24);
-      } catch {
-        // cross-origin guard — sandbox may block; ignore
+    const id = frameId.current;
+    const onMsg = (e: MessageEvent) => {
+      const d = e.data;
+      if (d && typeof d === "object" && d[FRAME_TAG] === id && typeof d.height === "number") {
+        setHeight(Math.max(200, d.height + 24));
       }
     };
-    iframe.addEventListener("load", resize);
-    const id = window.setInterval(resize, 800);
-    return () => {
-      iframe.removeEventListener("load", resize);
-      window.clearInterval(id);
-    };
-  }, [html]);
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
   return (
     <iframe
       ref={ref}
       title={title}
-      srcDoc={html}
-      sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+      srcDoc={wrappedHtml}
+      sandbox="allow-scripts"
       className="mt-6 w-full rounded-lg border border-border bg-white"
       style={{ height }}
     />
