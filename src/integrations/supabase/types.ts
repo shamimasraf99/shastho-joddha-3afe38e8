@@ -462,6 +462,7 @@ export type Database = {
       }
       podcasts: {
         Row: {
+          autoplay: boolean
           created_at: string
           description: string | null
           id: string
@@ -473,6 +474,7 @@ export type Database = {
           youtube_link: string | null
         }
         Insert: {
+          autoplay?: boolean
           created_at?: string
           description?: string | null
           id?: string
@@ -484,6 +486,7 @@ export type Database = {
           youtube_link?: string | null
         }
         Update: {
+          autoplay?: boolean
           created_at?: string
           description?: string | null
           id?: string
@@ -636,6 +639,7 @@ export type Database = {
       }
       videos: {
         Row: {
+          autoplay: boolean
           category: string | null
           created_at: string
           description: string | null
@@ -647,6 +651,7 @@ export type Database = {
           youtube_id: string
         }
         Insert: {
+          autoplay?: boolean
           category?: string | null
           created_at?: string
           description?: string | null
@@ -658,6 +663,7 @@ export type Database = {
           youtube_id: string
         }
         Update: {
+          autoplay?: boolean
           category?: string | null
           created_at?: string
           description?: string | null

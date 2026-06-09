@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
-import { Mic, Youtube } from "lucide-react";
+import { Mic } from "lucide-react";
 
 type Podcast = {
   id: string;
@@ -12,7 +12,25 @@ type Podcast = {
   youtube_link: string | null;
   spotify_link: string | null;
   thumbnail: string | null;
+  autoplay: boolean | null;
 };
+
+function extractYouTubeId(input: string | null): string {
+  if (!input) return "";
+  const s = input.trim();
+  if (!/[\/.?=&]/.test(s) && s.length >= 8) return s;
+  const patterns = [
+    /(?:youtube\.com\/watch\?(?:.*&)?v=)([\w-]{11})/,
+    /(?:youtu\.be\/)([\w-]{11})/,
+    /(?:youtube\.com\/(?:embed|shorts|v)\/)([\w-]{11})/,
+  ];
+  for (const re of patterns) {
+    const m = s.match(re);
+    if (m) return m[1];
+  }
+  const fallback = s.match(/([\w-]{11})/);
+  return fallback ? fallback[1] : "";
+}
 
 export const Route = createFileRoute("/podcasts")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -50,7 +68,7 @@ function PodcastsPage() {
     let alive = true;
     supabase
       .from("podcasts")
-      .select("id,title,description,youtube_link,spotify_link,thumbnail")
+      .select("id,title,description,youtube_link,spotify_link,thumbnail,autoplay")
       .eq("is_published", true)
       .order("created_at", { ascending: false })
       .limit(200)
@@ -77,31 +95,39 @@ function PodcastsPage() {
           <div className="rounded-lg border border-dashed border-border p-12 text-center text-muted-foreground">কোনো পডকাস্ট পাওয়া যায়নি।</div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {(focusId ? items.filter((p) => p.id === focusId) : items).map((p) => (
-              <article key={p.id} className="group overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
-                {p.thumbnail ? (
-                  <img src={p.thumbnail} alt={p.title} className="h-44 w-full object-cover" loading="lazy" />
-                ) : (
-                  <div className="flex h-44 w-full items-center justify-center bg-secondary"><Mic className="h-12 w-12 text-muted-foreground" /></div>
-                )}
-                <div className="p-4">
-                  <h2 className="line-clamp-2 text-base font-bold leading-snug text-foreground group-hover:text-primary">{p.title}</h2>
-                  {p.description && <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.description}</p>}
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {p.youtube_link && (
-                      <a href={p.youtube_link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md bg-destructive/10 px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/20">
-                        <Youtube className="h-3.5 w-3.5" /> YouTube
-                      </a>
-                    )}
+            {(focusId ? items.filter((p) => p.id === focusId) : items).map((p) => {
+              const vid = extractYouTubeId(p.youtube_link);
+              const ap = p.autoplay ? 1 : 0;
+              return (
+                <article key={p.id} className="group overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:border-primary hover:shadow-md">
+                  {vid ? (
+                    <div className="aspect-video w-full overflow-hidden bg-black">
+                      <iframe
+                        src={`https://www.youtube.com/embed/${vid}?autoplay=${ap}&mute=${ap}&rel=0`}
+                        title={p.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        loading="lazy"
+                        className="h-full w-full"
+                      />
+                    </div>
+                  ) : p.thumbnail ? (
+                    <img src={p.thumbnail} alt={p.title} className="h-44 w-full object-cover" loading="lazy" />
+                  ) : (
+                    <div className="flex h-44 w-full items-center justify-center bg-secondary"><Mic className="h-12 w-12 text-muted-foreground" /></div>
+                  )}
+                  <div className="p-4">
+                    <h2 className="line-clamp-2 text-base font-bold leading-snug text-foreground">{p.title}</h2>
+                    {p.description && <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.description}</p>}
                     {p.spotify_link && (
-                      <a href={p.spotify_link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20">
-                        Spotify
+                      <a href={p.spotify_link} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 rounded-md bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary/20">
+                        Spotify এ শুনুন
                       </a>
                     )}
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
       </main>
