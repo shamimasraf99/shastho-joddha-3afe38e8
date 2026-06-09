@@ -126,16 +126,16 @@ export const addAdminUser = createServerFn({ method: "POST" })
       user_metadata: { full_name: data.fullName },
     });
     if (error || !created.user) throw new Error(error?.message ?? "Failed");
+    await supabaseAdmin.from("user_roles").upsert({ user_id: created.user.id, role: data.role });
+    await supabaseAdmin.from("profiles").upsert({ id: created.user.id, full_name: data.fullName });
     if (existingUser) {
       const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
         password: data.password,
         email_confirm: true,
         user_metadata: { full_name: data.fullName },
       });
-      if (updateError) throw new Error(updateError.message);
+      if (updateError) return { ok: true, passwordWarning: updateError.message };
     }
-    await supabaseAdmin.from("user_roles").upsert({ user_id: created.user.id, role: data.role });
-    await supabaseAdmin.from("profiles").upsert({ id: created.user.id, full_name: data.fullName });
     return { ok: true };
   });
 
