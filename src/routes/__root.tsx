@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { FloatingChatButtons } from "../components/layout/FloatingChatButtons";
 import { ContentProtection } from "../components/ContentProtection";
 import { Toaster } from "../components/ui/sonner";
+import { logVisit } from "../lib/visitor.functions";
 
 function NotFoundComponent() {
   return (
@@ -161,6 +162,35 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let sid = "";
+    try {
+      sid = localStorage.getItem("vsid") ?? "";
+      if (!sid) {
+        sid = crypto.randomUUID();
+        localStorage.setItem("vsid", sid);
+      }
+    } catch {
+      sid = Math.random().toString(36).slice(2);
+    }
+    const track = () => {
+      const path = window.location.pathname;
+      if (path.startsWith("/admin") || path.startsWith("/auth")) return;
+      logVisit({
+        data: {
+          session_id: sid,
+          path,
+          referrer: document.referrer || null,
+        },
+      }).catch(() => {});
+    };
+    track();
+    const unsub = router.subscribe("onResolved", track);
+    return () => unsub();
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
