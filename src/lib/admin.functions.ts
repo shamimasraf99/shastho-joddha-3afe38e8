@@ -4,7 +4,8 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 
-const getRuntimeEnv = (name: string) => process.env[name] || (import.meta.env[name] as string | undefined) || "";
+const getRuntimeEnv = (name: string) =>
+  process.env[name] || (import.meta.env[name] as string | undefined) || "";
 
 function getSupabaseUrl() {
   return getRuntimeEnv("SUPABASE_URL") || getRuntimeEnv("VITE_SUPABASE_URL");
@@ -140,8 +141,7 @@ export const setupFirstAdmin = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const listAdmins = createServerFn({ method: "GET" })
-  .handler(async () => {
+export const listAdmins = createServerFn({ method: "GET" }).handler(async () => {
     await assertCurrentUserIsAdmin();
     const supabaseAdmin = getSupabaseAdminClient();
     const { data: roles, error } = await supabaseAdmin
@@ -171,7 +171,7 @@ export const listAdmins = createServerFn({ method: "GET" })
       });
     }
     return Array.from(grouped.values());
-  });
+});
 
 export const addAdminUser = createServerFn({ method: "POST" })
   .inputValidator((input) =>
@@ -250,8 +250,7 @@ export const resetUserPassword = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-export const getDashboardCounts = createServerFn({ method: "GET" })
-  .handler(async () => {
+export const getDashboardCounts = createServerFn({ method: "GET" }).handler(async () => {
     await assertCurrentUserIsAdmin();
     const supabaseAdmin = getSupabaseAdminClient();
     const tables = [
@@ -274,4 +273,4 @@ export const getDashboardCounts = createServerFn({ method: "GET" })
       }),
     );
     return Object.fromEntries(entries) as Record<(typeof tables)[number], number>;
-  });
+});
