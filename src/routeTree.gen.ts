@@ -30,6 +30,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as HospitalSlugRouteImport } from './routes/hospital.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as BodySlugRouteImport } from './routes/body.$slug'
@@ -146,6 +147,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsSlugRoute = NewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NewsRoute,
+} as any)
 const HospitalSlugRoute = HospitalSlugRouteImport.update({
   id: '/hospital/$slug',
   path: '/hospital/$slug',
@@ -218,7 +224,7 @@ export interface FileRoutesByFullPath {
   '/hospitals': typeof HospitalsRoute
   '/labs': typeof LabsRoute
   '/myths': typeof MythsRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/hospital/$slug': typeof HospitalSlugRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -251,7 +258,7 @@ export interface FileRoutesByTo {
   '/hospitals': typeof HospitalsRoute
   '/labs': typeof LabsRoute
   '/myths': typeof MythsRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
@@ -264,6 +271,7 @@ export interface FileRoutesByTo {
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/hospital/$slug': typeof HospitalSlugRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -285,7 +293,7 @@ export interface FileRoutesById {
   '/hospitals': typeof HospitalsRoute
   '/labs': typeof LabsRoute
   '/myths': typeof MythsRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/podcasts': typeof PodcastsRoute
   '/privacy': typeof PrivacyRoute
   '/qa': typeof QaRoute
@@ -299,6 +307,7 @@ export interface FileRoutesById {
   '/body/$slug': typeof BodySlugRoute
   '/category/$slug': typeof CategorySlugRoute
   '/hospital/$slug': typeof HospitalSlugRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/_authenticated/admin/$resource': typeof AuthenticatedAdminResourceRoute
   '/_authenticated/admin/admins': typeof AuthenticatedAdminAdminsRoute
   '/_authenticated/admin/pages': typeof AuthenticatedAdminPagesRoute
@@ -334,6 +343,7 @@ export interface FileRouteTypes {
     | '/body/$slug'
     | '/category/$slug'
     | '/hospital/$slug'
+    | '/news/$slug'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin/pages'
@@ -366,6 +376,7 @@ export interface FileRouteTypes {
     | '/body/$slug'
     | '/category/$slug'
     | '/hospital/$slug'
+    | '/news/$slug'
     | '/admin/$resource'
     | '/admin/admins'
     | '/admin/pages'
@@ -400,6 +411,7 @@ export interface FileRouteTypes {
     | '/body/$slug'
     | '/category/$slug'
     | '/hospital/$slug'
+    | '/news/$slug'
     | '/_authenticated/admin/$resource'
     | '/_authenticated/admin/admins'
     | '/_authenticated/admin/pages'
@@ -421,7 +433,7 @@ export interface RootRouteChildren {
   HospitalsRoute: typeof HospitalsRoute
   LabsRoute: typeof LabsRoute
   MythsRoute: typeof MythsRoute
-  NewsRoute: typeof NewsRoute
+  NewsRoute: typeof NewsRouteWithChildren
   PodcastsRoute: typeof PodcastsRoute
   PrivacyRoute: typeof PrivacyRoute
   QaRoute: typeof QaRoute
@@ -584,6 +596,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news/$slug': {
+      id: '/news/$slug'
+      path: '/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof NewsSlugRouteImport
+      parentRoute: typeof NewsRoute
+    }
     '/hospital/$slug': {
       id: '/hospital/$slug'
       path: '/hospital/$slug'
@@ -707,6 +726,16 @@ const BodyRouteChildren: BodyRouteChildren = {
 
 const BodyRouteWithChildren = BodyRoute._addFileChildren(BodyRouteChildren)
 
+interface NewsRouteChildren {
+  NewsSlugRoute: typeof NewsSlugRoute
+}
+
+const NewsRouteChildren: NewsRouteChildren = {
+  NewsSlugRoute: NewsSlugRoute,
+}
+
+const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
@@ -720,7 +749,7 @@ const rootRouteChildren: RootRouteChildren = {
   HospitalsRoute: HospitalsRoute,
   LabsRoute: LabsRoute,
   MythsRoute: MythsRoute,
-  NewsRoute: NewsRoute,
+  NewsRoute: NewsRouteWithChildren,
   PodcastsRoute: PodcastsRoute,
   PrivacyRoute: PrivacyRoute,
   QaRoute: QaRoute,
