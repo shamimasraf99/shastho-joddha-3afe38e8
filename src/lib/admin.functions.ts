@@ -110,7 +110,6 @@ export const listAdmins = createServerFn({ method: "GET" })
     return Array.from(grouped.values());
   });
 
-
 export const addAdminUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
@@ -158,6 +157,7 @@ export const addAdminUser = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
 
 export const removeAdminUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
