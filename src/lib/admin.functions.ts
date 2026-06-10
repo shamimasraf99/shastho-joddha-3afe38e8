@@ -136,17 +136,23 @@ export const addAdminUser = createServerFn({ method: "POST" })
           user_metadata: { full_name: data.fullName },
         });
     if (error || !created.user) throw new Error(error?.message ?? "Failed");
-    await supabaseAdmin.from("user_roles").upsert(
-      { user_id: created.user.id, role: data.role },
-      { onConflict: "user_id,role" },
-    );
-    await supabaseAdmin.from("profiles").upsert({ id: created.user.id, full_name: data.fullName });
+    const { error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: created.user.id, role: data.role }, { onConflict: "user_id,role" });
+    if (roleError) throw new Error(roleError.message);
+    const { error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .upsert({ id: created.user.id, full_name: data.fullName });
+    if (profileError) throw new Error(profileError.message);
     if (existingUser) {
-      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
-        password: data.password,
-        email_confirm: true,
-        user_metadata: { full_name: data.fullName },
-      });
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+        existingUser.id,
+        {
+          password: data.password,
+          email_confirm: true,
+          user_metadata: { full_name: data.fullName },
+        },
+      );
       if (updateError) return { ok: true, passwordWarning: updateError.message };
     }
     return { ok: true };
@@ -204,9 +210,7 @@ export const getDashboardCounts = createServerFn({ method: "GET" })
     ] as const;
     const entries = await Promise.all(
       tables.map(async (t) => {
-        const { count } = await supabaseAdmin
-          .from(t)
-          .select("*", { count: "exact", head: true });
+        const { count } = await supabaseAdmin.from(t).select("*", { count: "exact", head: true });
         return [t, count ?? 0] as const;
       }),
     );
