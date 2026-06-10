@@ -6,7 +6,21 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const backendUrl = "https://qdzacdyticfaqstihfyh.supabase.co";
+const backendPublishableKey = "sb_publishable_g_tnhysQG5SsZeFresasjg_BqK9rFpG";
+const backendProjectId = "qdzacdyticfaqstihfyh";
+
 export default defineConfig({
+  vite: {
+    define: {
+      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(backendUrl),
+      "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(backendPublishableKey),
+      "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify(backendProjectId),
+      "process.env.SUPABASE_URL": JSON.stringify(backendUrl),
+      "process.env.SUPABASE_PUBLISHABLE_KEY": JSON.stringify(backendPublishableKey),
+      "process.env.SUPABASE_PROJECT_ID": JSON.stringify(backendProjectId),
+    },
+  },
   nitro: {
     preset: "vercel",
   },
