@@ -10,11 +10,7 @@ export type AdminUserRow = {
   email: string;
 };
 
-type AdminAction =
-  | "list"
-  | "add"
-  | "remove"
-  | "resetPassword";
+type AdminAction = "list" | "add" | "remove" | "resetPassword";
 
 async function callAdminUsers<T>(action: AdminAction, payload: Record<string, unknown> = {}) {
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -51,4 +47,7 @@ export const removeAdminFromBackend = (userId: string) =>
   callAdminUsers<{ ok: true }>("remove", { userId });
 
 export const resetAdminPasswordFromBackend = (userId: string, password: string) =>
-  callAdminUsers<{ ok: true }>("resetPassword", { userId, password });
+  callAdminUsers<{ ok: true }>("resetPassword", {
+    userId,
+    password,
+  });
