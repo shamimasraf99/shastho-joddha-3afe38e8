@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { listAdmins, addAdminUser, removeAdminUser, resetUserPassword } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  addAdminFromBackend,
+  listAdminsFromBackend,
+  removeAdminFromBackend,
+  resetAdminPasswordFromBackend,
+} from "@/lib/admin-edge-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,14 +27,10 @@ export const Route = createFileRoute("/_authenticated/admin/admins")({
 
 function AdminsPage() {
   const qc = useQueryClient();
-  const listFn = useServerFn(listAdmins);
-  const addFn = useServerFn(addAdminUser);
-  const removeFn = useServerFn(removeAdminUser);
-  const resetFn = useServerFn(resetUserPassword);
 
   const { data: admins = [], isLoading } = useQuery({
     queryKey: ["admins-list"],
-    queryFn: () => listFn(),
+    queryFn: listAdminsFromBackend,
   });
 
   const [open, setOpen] = useState(false);
@@ -63,7 +63,7 @@ function AdminsPage() {
   };
 
   const resetMut = useMutation({
-    mutationFn: () => resetFn({ data: { userId: resetUser!.id, password: resetPw } }),
+    mutationFn: () => resetAdminPasswordFromBackend(resetUser!.id, resetPw),
     onSuccess: () => {
       toast.success("পাসওয়ার্ড রিসেট হয়েছে");
       setResetUser(null);
@@ -73,7 +73,7 @@ function AdminsPage() {
   });
 
   const addMut = useMutation({
-    mutationFn: () => addFn({ data: form }),
+    mutationFn: () => addAdminFromBackend(form),
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["admins-list"] });
       if (result.passwordWarning) {
@@ -88,7 +88,7 @@ function AdminsPage() {
   });
 
   const removeMut = useMutation({
-    mutationFn: (userId: string) => removeFn({ data: { userId } }),
+    mutationFn: removeAdminFromBackend,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admins-list"] });
       toast.success("সরানো হয়েছে");
