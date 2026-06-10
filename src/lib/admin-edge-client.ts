@@ -35,7 +35,7 @@ async function callAdminUsers<T>(action: AdminAction, payload: Record<string, un
 
   const result = (await response.json().catch(() => ({}))) as { error?: string } & T;
   if (!response.ok) throw new Error(result.error || "Admin request failed");
-  return result;
+  return result as T;
 }
 
 export const listAdminsFromBackend = () => callAdminUsers<AdminUserRow[]>("list");
