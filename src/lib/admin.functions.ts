@@ -170,7 +170,6 @@ export const removeAdminUser = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-
 export const resetUserPassword = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
