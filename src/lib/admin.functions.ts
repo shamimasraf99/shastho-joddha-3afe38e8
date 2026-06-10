@@ -65,7 +65,10 @@ export const setupFirstAdmin = createServerFn({ method: "POST" })
     if (error || !created.user) throw new Error(error?.message ?? "Failed to create user");
 
     const userId = created.user.id;
-    await supabaseAdmin.from("user_roles").upsert({ user_id: userId, role: "admin" });
+    await supabaseAdmin.from("user_roles").upsert(
+      { user_id: userId, role: "admin" },
+      { onConflict: "user_id,role" },
+    );
     await supabaseAdmin.from("profiles").upsert({ id: userId, full_name: data.fullName });
     return { ok: true };
   });
@@ -120,13 +123,16 @@ export const addAdminUser = createServerFn({ method: "POST" })
     const { data: created, error } = existingUser
       ? { data: { user: existingUser }, error: null }
       : await supabaseAdmin.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-      user_metadata: { full_name: data.fullName },
-    });
+          email: normalizedEmail,
+          password: data.password,
+          email_confirm: true,
+          user_metadata: { full_name: data.fullName },
+        });
     if (error || !created.user) throw new Error(error?.message ?? "Failed");
-    await supabaseAdmin.from("user_roles").upsert({ user_id: created.user.id, role: data.role });
+    await supabaseAdmin.from("user_roles").upsert(
+      { user_id: created.user.id, role: data.role },
+      { onConflict: "user_id,role" },
+    );
     await supabaseAdmin.from("profiles").upsert({ id: created.user.id, full_name: data.fullName });
     if (existingUser) {
       const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
