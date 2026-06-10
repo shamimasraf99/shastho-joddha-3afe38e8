@@ -17,7 +17,9 @@ function readAccessTokenFromStorage() {
   };
 
   const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID as string | undefined;
-  const directToken = parseToken(projectId ? localStorage.getItem(`sb-${projectId}-auth-token`) : null);
+  const directToken = parseToken(
+    projectId ? localStorage.getItem(`sb-${projectId}-auth-token`) : null,
+  );
   if (directToken) return directToken;
 
   for (let index = 0; index < localStorage.length; index += 1) {
@@ -31,9 +33,11 @@ function readAccessTokenFromStorage() {
   return "";
 }
 
-export const attachAuthToken = createMiddleware({ type: "function" }).client(async ({ next }) => {
-  const token = readAccessTokenFromStorage();
-  return next({
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-});
+export const attachAuthToken = createMiddleware({ type: "function" }).client(
+  async ({ next }) => {
+    const token = readAccessTokenFromStorage();
+    return next({
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+  },
+);
