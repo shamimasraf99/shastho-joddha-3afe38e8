@@ -158,7 +158,6 @@ export const addAdminUser = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-
 export const removeAdminUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ userId: z.string().uuid() }).parse(input))
@@ -170,6 +169,7 @@ export const removeAdminUser = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
 
 export const resetUserPassword = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
