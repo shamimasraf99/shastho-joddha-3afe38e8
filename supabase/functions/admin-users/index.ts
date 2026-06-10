@@ -24,7 +24,10 @@ const getAdminClient = () => {
   });
 };
 
-const normalizeEmail = (email: unknown) => String(email ?? "").trim().toLowerCase();
+const normalizeEmail = (email: unknown) =>
+  String(email ?? "")
+    .trim()
+    .toLowerCase();
 const normalizeText = (value: unknown) => String(value ?? "").trim();
 
 async function assertAdmin(req: Request, supabaseAdmin: ReturnType<typeof getAdminClient>) {
@@ -46,7 +49,10 @@ async function assertAdmin(req: Request, supabaseAdmin: ReturnType<typeof getAdm
   return data.user.id;
 }
 
-async function findAuthUserByEmail(email: string, supabaseAdmin: ReturnType<typeof getAdminClient>) {
+async function findAuthUserByEmail(
+  email: string,
+  supabaseAdmin: ReturnType<typeof getAdminClient>,
+) {
   const perPage = 1000;
   for (let page = 1; page <= 10; page += 1) {
     const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage });
@@ -80,7 +86,10 @@ async function listAdmins(supabaseAdmin: ReturnType<typeof getAdminClient>) {
     grouped.set(role.user_id, {
       id: current?.id ?? role.id,
       user_id: role.user_id,
-      role: current?.role === "admin" || role.role === "admin" ? "admin" : (current?.role ?? role.role),
+      role:
+        current?.role === "admin" || role.role === "admin"
+          ? "admin"
+          : (current?.role ?? role.role),
       created_at: current?.created_at ?? role.created_at,
       email: userMap.get(role.user_id)?.email ?? "",
     });
@@ -133,11 +142,14 @@ serve(async (req) => {
       if (profileError) throw new Error(profileError.message);
 
       if (existingUser) {
-        const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
-          password,
-          email_confirm: true,
-          user_metadata: { full_name: fullName },
-        });
+        const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+          existingUser.id,
+          {
+            password,
+            email_confirm: true,
+            user_metadata: { full_name: fullName },
+          },
+        );
         if (updateError) return json({ ok: true, passwordWarning: updateError.message });
       }
 
@@ -164,7 +176,11 @@ serve(async (req) => {
     return json({ error: "Unknown action" }, 400);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Admin request failed";
-    const status = message.startsWith("Unauthorized") ? 401 : message.includes("permission") ? 403 : 400;
+    const status = message.startsWith("Unauthorized")
+      ? 401
+      : message.includes("permission")
+        ? 403
+        : 400;
     return json({ error: message }, status);
   }
 });
