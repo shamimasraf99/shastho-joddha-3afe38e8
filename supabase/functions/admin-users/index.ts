@@ -86,7 +86,8 @@ async function listAdmins(supabaseAdmin: ReturnType<typeof getAdminClient>) {
     grouped.set(role.user_id, {
       id: current?.id ?? role.id,
       user_id: role.user_id,
-      role: current?.role === "admin" || role.role === "admin" ? "admin" : (current?.role ?? role.role),
+      role:
+        current?.role === "admin" || role.role === "admin" ? "admin" : (current?.role ?? role.role),
       created_at: current?.created_at ?? role.created_at,
       email: userMap.get(role.user_id)?.email ?? "",
     });
