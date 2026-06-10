@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { LocationMap } from "@/components/LocationMap";
@@ -233,9 +233,10 @@ function NewsSection() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.map((n, idx) => (
-            <a
+            <Link
               key={n.id}
-              href={`/news/${n.slug}`}
+              to="/article/$slug"
+              params={{ slug: n.slug }}
               className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className="aspect-[16/9] w-full overflow-hidden bg-secondary">
@@ -272,7 +273,7 @@ function NewsSection() {
                   })}
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       )}
