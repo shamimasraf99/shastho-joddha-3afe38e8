@@ -65,8 +65,14 @@ export const setupFirstAdmin = createServerFn({ method: "POST" })
     if (error || !created.user) throw new Error(error?.message ?? "Failed to create user");
 
     const userId = created.user.id;
-    await supabaseAdmin.from("user_roles").upsert({ user_id: userId, role: "admin" });
-    await supabaseAdmin.from("profiles").upsert({ id: userId, full_name: data.fullName });
+    const { error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: userId, role: "admin" }, { onConflict: "user_id,role" });
+    if (roleError) throw new Error(roleError.message);
+    const { error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .upsert({ id: userId, full_name: data.fullName });
+    if (profileError) throw new Error(profileError.message);
     return { ok: true };
   });
 
@@ -85,10 +91,14 @@ export const listAdmins = createServerFn({ method: "GET" })
       ids.map((id) => supabaseAdmin.auth.admin.getUserById(id).then((r) => r.data.user)),
     );
     const userMap = new Map(users.filter(Boolean).map((u) => [u!.id, u!]));
-    const grouped = new Map<string, { id: string; user_id: string; role: string; created_at: string; email: string }>();
+    const grouped = new Map<
+      string,
+      { id: string; user_id: string; role: string; created_at: string; email: string }
+    >();
     for (const r of roles ?? []) {
       const current = grouped.get(r.user_id);
-      const role = current?.role === "admin" || r.role === "admin" ? "admin" : current?.role ?? r.role;
+      const role =
+        current?.role === "admin" || r.role === "admin" ? "admin" : (current?.role ?? r.role);
       grouped.set(r.user_id, {
         id: current?.id ?? r.id,
         user_id: r.user_id,
@@ -120,20 +130,29 @@ export const addAdminUser = createServerFn({ method: "POST" })
     const { data: created, error } = existingUser
       ? { data: { user: existingUser }, error: null }
       : await supabaseAdmin.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-      user_metadata: { full_name: data.fullName },
-    });
+          email: normalizedEmail,
+          password: data.password,
+          email_confirm: true,
+          user_metadata: { full_name: data.fullName },
+        });
     if (error || !created.user) throw new Error(error?.message ?? "Failed");
-    await supabaseAdmin.from("user_roles").upsert({ user_id: created.user.id, role: data.role });
-    await supabaseAdmin.from("profiles").upsert({ id: created.user.id, full_name: data.fullName });
+    const { error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: created.user.id, role: data.role }, { onConflict: "user_id,role" });
+    if (roleError) throw new Error(roleError.message);
+    const { error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .upsert({ id: created.user.id, full_name: data.fullName });
+    if (profileError) throw new Error(profileError.message);
     if (existingUser) {
-      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
-        password: data.password,
-        email_confirm: true,
-        user_metadata: { full_name: data.fullName },
-      });
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+        existingUser.id,
+        {
+          password: data.password,
+          email_confirm: true,
+          user_metadata: { full_name: data.fullName },
+        },
+      );
       if (updateError) return { ok: true, passwordWarning: updateError.message };
     }
     return { ok: true };
@@ -191,9 +210,7 @@ export const getDashboardCounts = createServerFn({ method: "GET" })
     ] as const;
     const entries = await Promise.all(
       tables.map(async (t) => {
-        const { count } = await supabaseAdmin
-          .from(t)
-          .select("*", { count: "exact", head: true });
+        const { count } = await supabaseAdmin.from(t).select("*", { count: "exact", head: true });
         return [t, count ?? 0] as const;
       }),
     );
