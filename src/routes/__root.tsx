@@ -15,6 +15,7 @@ import { FloatingChatButtons } from "../components/layout/FloatingChatButtons";
 import { ContentProtection } from "../components/ContentProtection";
 import { Toaster } from "../components/ui/sonner";
 import { logVisit } from "../lib/visitor.functions";
+import logoAsset from "../assets/shasthopedia-logo-user.png.asset.json";
 
 function NotFoundComponent() {
   return (
@@ -103,7 +104,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Kalpurush:wght@400&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&family=Hind+Siliguri:wght@400;700&display=swap",
+      },
+      {
+        rel: "preload",
+        as: "image",
+        href: logoAsset.url,
+        fetchPriority: "high",
       },
     ],
     scripts: [
