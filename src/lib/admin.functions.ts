@@ -1,9 +1,73 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
+
+const getRuntimeEnv = (name: string) => process.env[name] || (import.meta.env[name] as string | undefined) || "";
+
+function getSupabaseUrl() {
+  return getRuntimeEnv("SUPABASE_URL") || getRuntimeEnv("VITE_SUPABASE_URL");
+}
+
+function getSupabasePublishableKey() {
+  return (
+    getRuntimeEnv("SUPABASE_PUBLISHABLE_KEY") ||
+    getRuntimeEnv("SUPABASE_ANON_KEY") ||
+    getRuntimeEnv("VITE_SUPABASE_PUBLISHABLE_KEY") ||
+    getRuntimeEnv("VITE_SUPABASE_ANON_KEY")
+  );
+}
+
+let adminClient: SupabaseClient<Database> | undefined;
+
+function getSupabaseAdminClient() {
+  const url = getSupabaseUrl();
+  const serviceRoleKey = getRuntimeEnv("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !serviceRoleKey) throw new Error("Backend admin configuration is missing");
+
+  adminClient ??= createClient<Database>(url, serviceRoleKey, {
+    auth: {
+      storage: undefined,
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+  return adminClient;
+}
+
+async function getAuthenticatedUserId() {
+  const url = getSupabaseUrl();
+  const publishableKey = getSupabasePublishableKey();
+  if (!url || !publishableKey) throw new Error("Backend auth configuration is missing");
+
+  const request = getRequest();
+  const authHeader = request.headers.get("authorization");
+  if (!authHeader?.startsWith("Bearer ")) throw new Error("Unauthorized: login required");
+
+  const token = authHeader.replace("Bearer ", "").trim();
+  const supabase = createClient<Database>(url, publishableKey, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+    auth: {
+      storage: undefined,
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data.user) throw new Error("Unauthorized: invalid session");
+  return data.user.id;
+}
+
+async function assertCurrentUserIsAdmin() {
+  const userId = await getAuthenticatedUserId();
+  await assertAdmin(userId);
+  return userId;
+}
 
 async function assertAdmin(userId: string) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const supabaseAdmin = getSupabaseAdminClient();
   const { data, error } = await supabaseAdmin
     .from("user_roles")
     .select("role")
@@ -15,7 +79,7 @@ async function assertAdmin(userId: string) {
 }
 
 async function findAuthUserByEmail(email: string) {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const supabaseAdmin = getSupabaseAdminClient();
   const target = email.trim().toLowerCase();
   const perPage = 1000;
   for (let page = 1; page <= 10; page += 1) {
@@ -29,7 +93,7 @@ async function findAuthUserByEmail(email: string) {
 }
 
 export const hasAnyAdmin = createServerFn({ method: "GET" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const supabaseAdmin = getSupabaseAdminClient();
   const { count, error } = await supabaseAdmin
     .from("user_roles")
     .select("*", { count: "exact", head: true })
@@ -49,7 +113,7 @@ export const setupFirstAdmin = createServerFn({ method: "POST" })
       .parse(input),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const supabaseAdmin = getSupabaseAdminClient();
     const { count } = await supabaseAdmin
       .from("user_roles")
       .select("*", { count: "exact", head: true })
@@ -77,10 +141,9 @@ export const setupFirstAdmin = createServerFn({ method: "POST" })
   });
 
 export const listAdmins = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  .handler(async () => {
+    await assertCurrentUserIsAdmin();
+    const supabaseAdmin = getSupabaseAdminClient();
     const { data: roles, error } = await supabaseAdmin
       .from("user_roles")
       .select("id, user_id, role, created_at")
@@ -111,7 +174,6 @@ export const listAdmins = createServerFn({ method: "GET" })
   });
 
 export const addAdminUser = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
     z
       .object({
@@ -122,9 +184,9 @@ export const addAdminUser = createServerFn({ method: "POST" })
       })
       .parse(input),
   )
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  .handler(async ({ data }) => {
+    await assertCurrentUserIsAdmin();
+    const supabaseAdmin = getSupabaseAdminClient();
     const normalizedEmail = data.email.trim().toLowerCase();
     const existingUser = await findAuthUserByEmail(normalizedEmail);
     const { data: created, error } = existingUser
@@ -159,19 +221,17 @@ export const addAdminUser = createServerFn({ method: "POST" })
   });
 
 export const removeAdminUser = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ userId: z.string().uuid() }).parse(input))
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
-    if (data.userId === context.userId) throw new Error("নিজেকে remove করা যাবে না");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  .handler(async ({ data }) => {
+    const currentUserId = await assertCurrentUserIsAdmin();
+    if (data.userId === currentUserId) throw new Error("নিজেকে remove করা যাবে না");
+    const supabaseAdmin = getSupabaseAdminClient();
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
 
 export const resetUserPassword = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input) =>
     z
       .object({
@@ -180,9 +240,9 @@ export const resetUserPassword = createServerFn({ method: "POST" })
       })
       .parse(input),
   )
-  .handler(async ({ data, context }) => {
-    await assertAdmin(context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  .handler(async ({ data }) => {
+    await assertCurrentUserIsAdmin();
+    const supabaseAdmin = getSupabaseAdminClient();
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
       password: data.password,
     });
@@ -191,10 +251,9 @@ export const resetUserPassword = createServerFn({ method: "POST" })
   });
 
 export const getDashboardCounts = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    await assertAdmin(context.userId);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  .handler(async () => {
+    await assertCurrentUserIsAdmin();
+    const supabaseAdmin = getSupabaseAdminClient();
     const tables = [
       "articles",
       "categories",
