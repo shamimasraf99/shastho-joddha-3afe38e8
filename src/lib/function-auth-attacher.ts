@@ -33,11 +33,9 @@ function readAccessTokenFromStorage() {
   return "";
 }
 
-export const attachAuthToken = createMiddleware({ type: "function" }).client(
-  async ({ next }) => {
-    const token = readAccessTokenFromStorage();
-    return next({
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
-  },
-);
+export const attachAuthToken = createMiddleware({ type: "function" }).client(async ({ next }) => {
+  const token = readAccessTokenFromStorage();
+  return next({
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+});
