@@ -76,7 +76,6 @@ export const setupFirstAdmin = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-
 export const listAdmins = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -110,6 +109,7 @@ export const listAdmins = createServerFn({ method: "GET" })
     }
     return Array.from(grouped.values());
   });
+
 
 export const addAdminUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
