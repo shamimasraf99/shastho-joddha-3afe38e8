@@ -28,7 +28,5 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
-    // SPA shell so static hosts (Vercel) can serve all routes via index.html fallback
-    spa: { enabled: true },
   },
 });
