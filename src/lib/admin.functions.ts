@@ -142,35 +142,35 @@ export const setupFirstAdmin = createServerFn({ method: "POST" })
   });
 
 export const listAdmins = createServerFn({ method: "GET" }).handler(async () => {
-    await assertCurrentUserIsAdmin();
-    const supabaseAdmin = getSupabaseAdminClient();
-    const { data: roles, error } = await supabaseAdmin
-      .from("user_roles")
-      .select("id, user_id, role, created_at")
-      .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
-    const ids = Array.from(new Set((roles ?? []).map((r) => r.user_id)));
-    const users = await Promise.all(
-      ids.map((id) => supabaseAdmin.auth.admin.getUserById(id).then((r) => r.data.user)),
-    );
-    const userMap = new Map(users.filter(Boolean).map((u) => [u!.id, u!]));
-    const grouped = new Map<
-      string,
-      { id: string; user_id: string; role: string; created_at: string; email: string }
-    >();
-    for (const r of roles ?? []) {
-      const current = grouped.get(r.user_id);
-      const role =
-        current?.role === "admin" || r.role === "admin" ? "admin" : (current?.role ?? r.role);
-      grouped.set(r.user_id, {
-        id: current?.id ?? r.id,
-        user_id: r.user_id,
-        role,
-        created_at: current?.created_at ?? r.created_at,
-        email: userMap.get(r.user_id)?.email ?? "",
-      });
-    }
-    return Array.from(grouped.values());
+  await assertCurrentUserIsAdmin();
+  const supabaseAdmin = getSupabaseAdminClient();
+  const { data: roles, error } = await supabaseAdmin
+    .from("user_roles")
+    .select("id, user_id, role, created_at")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  const ids = Array.from(new Set((roles ?? []).map((r) => r.user_id)));
+  const users = await Promise.all(
+    ids.map((id) => supabaseAdmin.auth.admin.getUserById(id).then((r) => r.data.user)),
+  );
+  const userMap = new Map(users.filter(Boolean).map((u) => [u!.id, u!]));
+  const grouped = new Map<
+    string,
+    { id: string; user_id: string; role: string; created_at: string; email: string }
+  >();
+  for (const r of roles ?? []) {
+    const current = grouped.get(r.user_id);
+    const role =
+      current?.role === "admin" || r.role === "admin" ? "admin" : (current?.role ?? r.role);
+    grouped.set(r.user_id, {
+      id: current?.id ?? r.id,
+      user_id: r.user_id,
+      role,
+      created_at: current?.created_at ?? r.created_at,
+      email: userMap.get(r.user_id)?.email ?? "",
+    });
+  }
+  return Array.from(grouped.values());
 });
 
 export const addAdminUser = createServerFn({ method: "POST" })
@@ -251,26 +251,26 @@ export const resetUserPassword = createServerFn({ method: "POST" })
   });
 
 export const getDashboardCounts = createServerFn({ method: "GET" }).handler(async () => {
-    await assertCurrentUserIsAdmin();
-    const supabaseAdmin = getSupabaseAdminClient();
-    const tables = [
-      "articles",
-      "categories",
-      "doctors",
-      "hospitals",
-      "labs",
-      "videos",
-      "podcasts",
-      "mythbusters",
-      "questions",
-      "blood_donors",
-      "advertisements",
-    ] as const;
-    const entries = await Promise.all(
-      tables.map(async (t) => {
-        const { count } = await supabaseAdmin.from(t).select("*", { count: "exact", head: true });
-        return [t, count ?? 0] as const;
-      }),
-    );
-    return Object.fromEntries(entries) as Record<(typeof tables)[number], number>;
+  await assertCurrentUserIsAdmin();
+  const supabaseAdmin = getSupabaseAdminClient();
+  const tables = [
+    "articles",
+    "categories",
+    "doctors",
+    "hospitals",
+    "labs",
+    "videos",
+    "podcasts",
+    "mythbusters",
+    "questions",
+    "blood_donors",
+    "advertisements",
+  ] as const;
+  const entries = await Promise.all(
+    tables.map(async (t) => {
+      const { count } = await supabaseAdmin.from(t).select("*", { count: "exact", head: true });
+      return [t, count ?? 0] as const;
+    }),
+  );
+  return Object.fromEntries(entries) as Record<(typeof tables)[number], number>;
 });
