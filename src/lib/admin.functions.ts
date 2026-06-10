@@ -65,11 +65,14 @@ export const setupFirstAdmin = createServerFn({ method: "POST" })
     if (error || !created.user) throw new Error(error?.message ?? "Failed to create user");
 
     const userId = created.user.id;
-    await supabaseAdmin.from("user_roles").upsert(
-      { user_id: userId, role: "admin" },
-      { onConflict: "user_id,role" },
-    );
-    await supabaseAdmin.from("profiles").upsert({ id: userId, full_name: data.fullName });
+    const { error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: userId, role: "admin" }, { onConflict: "user_id,role" });
+    if (roleError) throw new Error(roleError.message);
+    const { error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .upsert({ id: userId, full_name: data.fullName });
+    if (profileError) throw new Error(profileError.message);
     return { ok: true };
   });
 
@@ -88,10 +91,14 @@ export const listAdmins = createServerFn({ method: "GET" })
       ids.map((id) => supabaseAdmin.auth.admin.getUserById(id).then((r) => r.data.user)),
     );
     const userMap = new Map(users.filter(Boolean).map((u) => [u!.id, u!]));
-    const grouped = new Map<string, { id: string; user_id: string; role: string; created_at: string; email: string }>();
+    const grouped = new Map<
+      string,
+      { id: string; user_id: string; role: string; created_at: string; email: string }
+    >();
     for (const r of roles ?? []) {
       const current = grouped.get(r.user_id);
-      const role = current?.role === "admin" || r.role === "admin" ? "admin" : current?.role ?? r.role;
+      const role =
+        current?.role === "admin" || r.role === "admin" ? "admin" : (current?.role ?? r.role);
       grouped.set(r.user_id, {
         id: current?.id ?? r.id,
         user_id: r.user_id,
